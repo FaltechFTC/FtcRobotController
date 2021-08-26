@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.coachexamples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /**
  * This is an example minimal implementation of the mecanum drivetrain
@@ -12,11 +11,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  * @author Brandon Gong
  */
 
-//Mau was here again again again
-
-@TeleOp(name="Coach: Mecanum Drive", group="7079")
-//@Disabled
-public class MecanumDrive extends OpMode {
+@TeleOp(name="Mecanum Drive Example", group="Iterative Opmode")
+public class MauMekinsm extends OpMode {
 
     /*
      * The mecanum drivetrain involves four separate motors that spin in
@@ -35,12 +31,10 @@ public class MecanumDrive extends OpMode {
 
         // Name strings must match up with the config on the Robot Controller
         // app.
-        front_left   = hardwareMap.get(DcMotor.class, "flDrive");
-        front_right  = hardwareMap.get(DcMotor.class, "frDrive");
-        back_left    = hardwareMap.get(DcMotor.class, "blDrive");
-        back_right   = hardwareMap.get(DcMotor.class, "brDrive");
-        front_right.setDirection(DcMotorSimple.Direction.REVERSE);
-        back_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        front_left   = hardwareMap.get(DcMotor.class, "front_left");
+        front_right  = hardwareMap.get(DcMotor.class, "front_right");
+        back_left    = hardwareMap.get(DcMotor.class, "back_left");
+        back_right   = hardwareMap.get(DcMotor.class, "back_right");
     }
 
     @Override
@@ -49,8 +43,8 @@ public class MecanumDrive extends OpMode {
         // Mecanum drive is controlled with three axes: drive (front-and-back),
         // strafe (left-and-right), and twist (rotating the whole chassis).
         double drive  = gamepad1.left_stick_y;
-        double strafe = -gamepad1.left_stick_x;
-        double twist  = -gamepad1.right_stick_x;
+        double strafe = gamepad1.left_stick_x;
+        double twist  = gamepad1.right_stick_x;
 
         /*
          * If we had a gyro and wanted to do field-oriented control, here
@@ -87,8 +81,10 @@ public class MecanumDrive extends OpMode {
 
         // Loop through all values in the speeds[] array and find the greatest
         // *magnitude*.  Not the greatest velocity.
-        double max = 0.0;
-        for(int i = 0; i < speeds.length; i++) max=Math.max(max,Math.abs(speeds[i]));
+        double max = Math.abs(speeds[0]);
+        for (double speed : speeds) {
+            if (max < Math.abs(speed)) max = Math.abs(speed);
+        }
 
         // If and only if the maximum is outside of the range we want it to be,
         // normalize all the other speeds based on the given speed value.
@@ -102,4 +98,5 @@ public class MecanumDrive extends OpMode {
         back_left.setPower(speeds[2]);
         back_right.setPower(speeds[3]);
     }
+
 }
