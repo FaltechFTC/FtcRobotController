@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp(name="Mecanum Drive Example", group="Iterative Opmode")
 public class MauMekinsm extends OpMode {
 
+
     /*
      * The mecanum drivetrain involves four separate motors that spin in
      * different directions and different speeds to produce the desired
@@ -21,7 +22,7 @@ public class MauMekinsm extends OpMode {
      */
 
     // declare and initialize four DcMotors.
-    private DcMotor front_left  = null;
+    private DcMotor front_left  = null; // this
     private DcMotor front_right = null;
     private DcMotor back_left   = null;
     private DcMotor back_right  = null;
