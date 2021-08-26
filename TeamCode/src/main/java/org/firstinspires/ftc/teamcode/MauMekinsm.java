@@ -21,7 +21,7 @@ public class MauMekinsm extends OpMode {
      */
 
     // declare and initialize four DcMotors.
-    private DcMotor front_left  = null;
+    private DcMotor front_left  = null;// that
     private DcMotor front_right = null;
     private DcMotor back_left   = null;
     private DcMotor back_right  = null;
