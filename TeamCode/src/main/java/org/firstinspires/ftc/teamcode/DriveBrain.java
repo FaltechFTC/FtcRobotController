@@ -16,7 +16,7 @@ public class DriveBrain {
     }
 
 
-    public void DriveBrain(faltechBot therobot, OpMode theopmode) {
+    public DriveBrain(faltechBot therobot, OpMode theopmode) {
         robot = therobot;
         opmode = theopmode;
     }
@@ -29,7 +29,7 @@ public class DriveBrain {
             opmode.telemetry.update();
 
         }
-        robot.setStop();
+        robot.setDriveStop();
     }
 
 
