@@ -67,6 +67,11 @@ public class faltechBot
 //    public static final double MID_SERVO       =  0.5 ;
 //    public static final double ARM_UP_POWER    =  0.45 ;
 //    public static final double ARM_DOWN_POWER  = -0.45 ;
+    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * 3.1415);
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -93,12 +98,12 @@ public class faltechBot
         driveMotors[3]=back_right;
 //        leftArm    = hwMap.get(DcMotor.class, "left_arm");
         front_left.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        front_right.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        front_right.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         back_left.setDirection(DcMotor.Direction.FORWARD);
-        back_right.setDirection(DcMotor.Direction.REVERSE);
+        back_right.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to zero power
-        setStop();
+        setDriveStop();
 //        leftArm.setPower(0);
 
         // Set all motors to run without encoders.
@@ -139,7 +144,7 @@ public class faltechBot
         back_left.setPower(wheelpowers[2]);
         back_right.setPower(wheelpowers[3]);
     }
-    public void setStop(){
+    public void setDriveStop(){
         setDrive(0,0,0,0);
     }
     public void setRunMode(DcMotor.RunMode RunMode){
@@ -147,6 +152,24 @@ public class faltechBot
         front_right.setMode(RunMode);
         back_left.setMode(RunMode);
         back_right.setMode(RunMode);
+    }
+    public void setDriveStopMode(boolean haltOnStop){
+        if (haltOnStop){
+            front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+        else {
+            front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
+    }
+    public double convertInchesToCounts(double inches){
+        return COUNTS_PER_INCH * inches;
+    }
+
+    public double convertCountsToInches(double counts){
+        return counts / COUNTS_PER_INCH;
     }
 
     public void setDriveDeltaPos(int deltaPos, double power) {
