@@ -65,6 +65,11 @@ public class faltechBot
 //    public static final double MID_SERVO       =  0.5 ;
 //    public static final double ARM_UP_POWER    =  0.45 ;
 //    public static final double ARM_DOWN_POWER  = -0.45 ;
+    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * 3.1415);
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -141,6 +146,24 @@ public class faltechBot
         front_right.setMode(RunMode);
         back_left.setMode(RunMode);
         back_right.setMode(RunMode);
+    }
+    public void setDriveStopMode(boolean haltOnStop){
+        if (haltOnStop){
+            front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+        else {
+            front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
+    }
+    public double convertInchesToCounts(double inches){
+        return COUNTS_PER_INCH * inches;
+    }
+
+    public double convertCountsToInches(double counts){
+        return counts / COUNTS_PER_INCH;
     }
  }
 
