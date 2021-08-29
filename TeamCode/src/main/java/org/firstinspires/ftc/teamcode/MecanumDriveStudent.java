@@ -1,22 +1,17 @@
-package org.firstinspires.ftc.teamcode.coachexamples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /**
  * This is an example minimal implementation of the mecanum drivetrain
  * for demonstration purposes.  Not tested and not guaranteed to be bug free.
  *
- * @author Brandon Gong
+ *
  */
-
-//Mau was here again again again
-
-@TeleOp(name="Coach: Mecanum Drive", group="7079")
-//@Disabled
-public class MecanumDrive extends OpMode {
+@TeleOp(name="Harshid Mecanum Drive Example", group="7079")
+public class MecanumDriveStudent extends OpMode {
 
     /*
      * The mecanum drivetrain involves four separate motors that spin in
@@ -35,12 +30,10 @@ public class MecanumDrive extends OpMode {
 
         // Name strings must match up with the config on the Robot Controller
         // app.
-        front_left   = hardwareMap.get(DcMotor.class, "flDrive");
-        front_right  = hardwareMap.get(DcMotor.class, "frDrive");
-        back_left    = hardwareMap.get(DcMotor.class, "blDrive");
-        back_right   = hardwareMap.get(DcMotor.class, "brDrive");
-        front_right.setDirection(DcMotorSimple.Direction.REVERSE);
-        back_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        front_left   = hardwareMap.get(DcMotor.class, "fldrive");
+        front_right  = hardwareMap.get(DcMotor.class, "frdrive");
+        back_left    = hardwareMap.get(DcMotor.class, "bldrive");
+        back_right   = hardwareMap.get(DcMotor.class, "brdrive");
     }
 
     @Override
@@ -87,8 +80,10 @@ public class MecanumDrive extends OpMode {
 
         // Loop through all values in the speeds[] array and find the greatest
         // *magnitude*.  Not the greatest velocity.
-        double max = 0.0;
-        for(int i = 0; i < speeds.length; i++) max=Math.max(max,Math.abs(speeds[i]));
+        double max = Math.abs(speeds[0]);
+        for(int i = 0; i < speeds.length; i++) {
+            if ( max < Math.abs(speeds[i]) ) max = Math.abs(speeds[i]);
+        }
 
         // If and only if the maximum is outside of the range we want it to be,
         // normalize all the other speeds based on the given speed value.
