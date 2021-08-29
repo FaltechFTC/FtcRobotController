@@ -92,18 +92,12 @@ public class faltechBot
         back_right.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
-        front_left.setPower(0);
-        front_right.setPower(0);
-        back_left.setPower(0);
-        back_right.setPower(0);
+        setStop();
 //        leftArm.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        front_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        front_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        back_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        back_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
@@ -111,6 +105,42 @@ public class faltechBot
 //        rightClaw = hwMap.get(Servo.class, "right_hand");
 //        leftClaw.setPosition(MID_SERVO);
 //        rightClaw.setPosition(MID_SERVO);
+
+
+    }
+    public void setDrive(double forward, double strafe, double rotate, double power){ //this function will combine wheel commands
+
+        double[] wheelpowers = {
+                (forward + strafe + rotate),
+                (forward - strafe - rotate),
+                (forward - strafe + rotate),
+                (forward + strafe - rotate),
+        };
+        double max = Math.abs(wheelpowers[0]);
+        for(int i = 0; i < wheelpowers.length; i++) {
+            if ( max < Math.abs(wheelpowers[i]) ) max = Math.abs(wheelpowers[i]);
+        }
+
+        // If and only if the maximum is outside of the range we want it to be,
+        // normalize all the other speeds based on the given speed value.
+        if (max > 1) {
+            for (int i = 0; i < wheelpowers.length; i++) wheelpowers[i] /= max;
+        }
+
+        // apply the calculated values to the motors.
+        front_left.setPower(wheelpowers[0]);
+        front_right.setPower(wheelpowers[1]);
+        back_left.setPower(wheelpowers[2]);
+        back_right.setPower(wheelpowers[3]);
+    }
+    public void setStop(){
+        setDrive(0,0,0,0);
+    }
+    public void setRunMode(DcMotor.RunMode RunMode){
+        front_left.setMode(RunMode);
+        front_right.setMode(RunMode);
+        back_left.setMode(RunMode);
+        back_right.setMode(RunMode);
     }
  }
 

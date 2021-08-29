@@ -1,7 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
-public class DriveBrain {
-    public void init{
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+public class DriveBrain extends OpMode {
+
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public void loop() {
 
     }
 }
