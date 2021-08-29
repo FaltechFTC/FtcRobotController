@@ -21,15 +21,15 @@ public class DriveBrain {
         opmode = theopmode;
     }
 
-    public void driveFSRPTimed(double forward, double strafe, double rotate, double power, double timeoutSeconds) {
-        robot.setDriveFSRP(forward, strafe, rotate, power);
+    public void setDrive(double forward, double strafe, double rotate, double power, double timeoutSeconds) {
+        robot.setDrive(forward, strafe, rotate, power);
         runtime.reset();
         while (/*TODO  opmode.opModeIsActive() && */(runtime.seconds() < timeoutSeconds)) {
             opmode.telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
             opmode.telemetry.update();
 
         }
-        robot.setDriveStop();
+        robot.setStop();
     }
 
 
