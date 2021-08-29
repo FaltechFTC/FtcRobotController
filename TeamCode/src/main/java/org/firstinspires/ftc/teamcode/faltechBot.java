@@ -92,9 +92,9 @@ public class faltechBot
         back_right = hwMap.get(DcMotor.class, "brdrive");
 //        leftArm    = hwMap.get(DcMotor.class, "left_arm");
         front_left.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        front_right.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        front_right.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         back_left.setDirection(DcMotor.Direction.FORWARD);
-        back_right.setDirection(DcMotor.Direction.REVERSE);
+        back_right.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to zero power
         setDriveStop();
