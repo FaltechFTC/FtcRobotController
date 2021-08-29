@@ -142,5 +142,8 @@ public class faltechBot
         back_left.setMode(RunMode);
         back_right.setMode(RunMode);
     }
+    public void setDriveStopMode(boolean haltOnStop){
+
+    }
  }
 
