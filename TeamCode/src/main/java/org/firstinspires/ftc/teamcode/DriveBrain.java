@@ -1,16 +1,37 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class DriveBrain extends OpMode {
 
-    @Override
+public class DriveBrain {
+
+    faltechBot robot;
+    OpMode opmode;
+    private ElapsedTime runtime = new ElapsedTime();
+
     public void init() {
 
     }
 
-    @Override
-    public void loop() {
 
+    public void DriveBrain(faltechBot therobot, OpMode theopmode) {
+        robot = therobot;
+        opmode = theopmode;
     }
+
+    public void setDrive(double forward, double strafe, double rotate, double power, double timeoutSeconds) {
+        robot.setDrive(forward, strafe, rotate, power);
+        runtime.reset();
+        while (/*TODO  opmode.opModeIsActive() && */(runtime.seconds() < timeoutSeconds)) {
+            opmode.telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            opmode.telemetry.update();
+
+        }
+        robot.setStop();
+    }
+
+
+
 }
