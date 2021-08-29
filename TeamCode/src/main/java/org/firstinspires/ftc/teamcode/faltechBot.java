@@ -58,6 +58,8 @@ public class faltechBot
     private DcMotor front_right = null;
     private DcMotor back_left   = null;
     private DcMotor back_right  = null;
+    public DcMotor[] driveMotors= new DcMotor[4];
+
 //    public DcMotor  leftArm     = null;
 //    public Servo    leftClaw    = null;
 //    public Servo    rightClaw   = null;
@@ -85,6 +87,10 @@ public class faltechBot
         front_right = hwMap.get(DcMotor.class, "frdrive");
         back_left = hwMap.get(DcMotor.class,"bldrive");
         back_right = hwMap.get(DcMotor.class, "brdrive");
+        driveMotors[0]=front_left;
+        driveMotors[1]=front_right;
+        driveMotors[2]=back_left;
+        driveMotors[3]=back_right;
 //        leftArm    = hwMap.get(DcMotor.class, "left_arm");
         front_left.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         front_right.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
@@ -142,5 +148,23 @@ public class faltechBot
         back_left.setMode(RunMode);
         back_right.setMode(RunMode);
     }
+
+    public void setDriveDeltaPos(int deltaPos, double power) {
+        for (DcMotor m: driveMotors) {
+            int curPos = m.getCurrentPosition();
+            int newPos = curPos + deltaPos;
+
+
+            m.setTargetPosition(newPos);
+
+            // Turn On RUN_TO_POSITION
+            m.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        for (DcMotor m: driveMotors) {
+            m.setPower(Math.abs(power));
+        }
+    }
+
  }
 

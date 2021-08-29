@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -32,6 +33,26 @@ public class DriveBrain {
         robot.setStop();
     }
 
+    public void driveDistance(double inches, double power, double timeoutSeconds) {
+        runtime.reset();
+
+        double forward = 1.0;
+
+        if (inches < 0) forward = forward*1.0;
+//  TODO      if (opmode.opModeIsActive()) {
+            robot.setDriveDeltaPos();
+            robot.setDrive(forward, 0, 0, 1.0);
+
+        while (/*TODO  opModeIsActive() && */(runtime.seconds() < timeoutSeconds)/* && (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())*/) {
+
+            // Display it for the driver.
+            opmode.telemetry.addData("Path1",  "Running to %7d :%7d", inches, inches);
+            opmode.telemetry.addData("Path2",  "Running at %7d :%7d", robot.leftDrive.getCurrentPosition(), robot.rightDrive.getCurrentPosition());
+            opmode.telemetry.update();
+        }
+        robot.setStop();
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
 
 
 }
