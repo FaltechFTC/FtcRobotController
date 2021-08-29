@@ -92,7 +92,7 @@ public class faltechBot
         back_right.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
-        setStop();
+        setDriveStop();
 //        leftArm.setPower(0);
 
         // Set all motors to run without encoders.
@@ -133,7 +133,7 @@ public class faltechBot
         back_left.setPower(wheelpowers[2]);
         back_right.setPower(wheelpowers[3]);
     }
-    public void setStop(){
+    public void setDriveStop(){
         setDrive(0,0,0,0);
     }
     public void setRunMode(DcMotor.RunMode RunMode){
