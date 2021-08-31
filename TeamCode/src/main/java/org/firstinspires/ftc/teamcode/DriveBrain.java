@@ -50,7 +50,7 @@ public class DriveBrain {
             opmode.telemetry.addData("Path2",  "Running at %7d :%7d", robot.leftDrive.getCurrentPosition(), robot.rightDrive.getCurrentPosition());
             opmode.telemetry.update();
         }
-        robot.setStop();
+        robot.setDriveStop();
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
