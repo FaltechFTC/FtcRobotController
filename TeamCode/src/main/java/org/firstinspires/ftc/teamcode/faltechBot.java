@@ -97,10 +97,10 @@ public class faltechBot
         driveMotors[2]=back_left;
         driveMotors[3]=back_right;
 //        leftArm    = hwMap.get(DcMotor.class, "left_arm");
-        front_left.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        front_right.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        front_left.setDirection(DcMotor.Direction.FORWARD);
+        front_right.setDirection(DcMotor.Direction.REVERSE);
         back_left.setDirection(DcMotor.Direction.FORWARD);
-        back_right.setDirection(DcMotor.Direction.FORWARD);
+        back_right.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
         setDriveStop();
@@ -168,7 +168,7 @@ public class faltechBot
         return COUNTS_PER_INCH * inches;
     }
 
-    public double convertCountsToInches(double counts){
+    public double convertCountsToInches(double counts) {
         return counts / COUNTS_PER_INCH;
     }
 
