@@ -59,6 +59,7 @@ public class faltechBot
     private DcMotor back_left   = null;
     private DcMotor back_right  = null;
     public DcMotor[] driveMotors= new DcMotor[4];
+    public int[] curPos = new int[4];
 
 //    public DcMotor  leftArm     = null;
 //    public Servo    leftClaw    = null;
@@ -172,9 +173,22 @@ public class faltechBot
         return counts / COUNTS_PER_INCH;
     }
 
+    public boolean isDriveBusy() {
+        boolean motor = false;
+        if (front_left.isBusy()||front_right.isBusy()||back_right.isBusy()||back_left.isBusy()) {motor = true;}
+        return motor;
+    }
+    public int[] getCurPos() {
+        curPos[0] = front_left.getCurrentPosition();
+        curPos[1] = front_right.getCurrentPosition();
+        curPos[2] = back_left.getCurrentPosition();
+        curPos[3] = back_right.getCurrentPosition();
+        return curPos;
+    }
     public void setDriveDeltaPos(int deltaPos, double power) {
+        int count = 0;
         for (DcMotor m: driveMotors) {
-            int curPos = m.getCurrentPosition();
+            int curPos = getCurPos()[count];
             int newPos = curPos + deltaPos;
 
 
@@ -182,6 +196,7 @@ public class faltechBot
 
             // Turn On RUN_TO_POSITION
             m.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            count+=1;
         }
 
         for (DcMotor m: driveMotors) {
