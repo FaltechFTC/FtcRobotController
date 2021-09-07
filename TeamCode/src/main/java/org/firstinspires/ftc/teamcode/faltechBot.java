@@ -30,9 +30,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -78,6 +78,9 @@ public class faltechBot
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
 
+    /* setting up color sensor*/
+    float gain = 2;
+    NormalizedColorSensor colorSensor;
     /* Constructor */
     public faltechBot(){
 
@@ -87,6 +90,8 @@ public class faltechBot
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
+
+        colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
 
         // Define and Initialize Motors
         front_left  = hwMap.get(DcMotor.class, "fldrive");
@@ -117,7 +122,7 @@ public class faltechBot
 //        rightClaw = hwMap.get(Servo.class, "right_hand");
 //        leftClaw.setPosition(MID_SERVO);
 //        rightClaw.setPosition(MID_SERVO);
-
+        colorSensor.setGain(gain);
 
     }
     public void setDrive(double forward, double strafe, double rotate, double power){ //this function will combine wheel commands
@@ -204,5 +209,8 @@ public class faltechBot
         }
     }
 
- }
+    public NormalizedRGBA getRGBA() {
+        return colorSensor.getNormalizedColors();
+    }
+}
 
