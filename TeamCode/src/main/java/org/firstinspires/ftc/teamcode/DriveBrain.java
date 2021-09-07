@@ -53,5 +53,21 @@ public class DriveBrain {
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public void gyroDrive() {
 
+    }
+
+    public void gyroHold() {
+
+    }
+
+    public void gyroTurn() {
+
+    }
+    public void color() {
+
+    }
+    public void driveToColor() {
+
+    }
 }
