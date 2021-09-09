@@ -186,22 +186,25 @@ public class faltechBot
         return curPos;
     }
     public void setDriveDeltaPos(int deltaPos, double power) {
-        int count = 0;
+
         for (DcMotor m: driveMotors) {
-            int curPos = getCurPos()[count];
+            int curPos = m.getCurrentPosition();
             int newPos = curPos + deltaPos;
-
-
             m.setTargetPosition(newPos);
 
             // Turn On RUN_TO_POSITION
             m.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            count+=1;
         }
 
         for (DcMotor m: driveMotors) {
             m.setPower(Math.abs(power));
         }
+    }
+    public void setDrivePowersTank(double leftPower, double rightPower) {
+        front_left.setPower(leftPower);
+        back_left.setPower(leftPower);
+        front_right.setPower(rightPower);
+        back_right.setPower(rightPower);
     }
 
  }
