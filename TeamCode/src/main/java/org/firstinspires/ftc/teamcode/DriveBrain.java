@@ -73,8 +73,12 @@ public class DriveBrain{
 
             // Determine new target position, and pass to motor controller
             moveCounts = (int)(distance * robot.convertCountsToInches(distance));
-            for (DcMotor i: robot.driveMotors)
-                newTarget[0] = i.getCurrentPosition() + moveCounts;
+
+            newTarget[0] = robot.curPos[0] + moveCounts;
+            newTarget[1] = robot.curPos[1] + moveCounts;
+            newTarget[2] = robot.curPos[2] + moveCounts;
+            newTarget[3] = robot.curPos[3] + moveCounts;
+
             robot.setDriveDeltaPos(moveCounts, .5);
 
             // start motion.
@@ -104,8 +108,7 @@ public class DriveBrain{
                     rightSpeed /= max;
                 }
 
-                robot.leftDrive.setPower(leftSpeed);
-                robot.rightDrive.setPower(rightSpeed);
+                robot.setDrivePowersTank(leftSpeed, rightSpeed);
 
                 // Display drive status for the driver.
                 opmode.telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
@@ -116,12 +119,7 @@ public class DriveBrain{
             }
 
             // Stop all motion;
-            robot.leftDrive.setPower(0);
-            robot.rightDrive.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.setDriveStop();
         }
     }
 
