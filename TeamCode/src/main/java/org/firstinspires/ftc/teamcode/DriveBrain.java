@@ -1,31 +1,29 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
 public class DriveBrain{
 
-
-    ModernRoboticsI2cGyro gyro = null;
     faltechBot robot;
-    LinearOpMode opmode;
-    private ElapsedTime runtime = new ElapsedTime();
+    OpMode opmode;
+
+    private final ElapsedTime runtime = new ElapsedTime();
 
     static final double     P_DRIVE_COEFF           = 0.15;
+    static final double     P_TURN_COEFF            = 0.1;
+    static final double     HEADING_THRESHOLD       = 1 ;
 
-
-    public DriveBrain(faltechBot therobot, LinearOpMode theopmode) {
+    public DriveBrain(faltechBot therobot, OpMode theopmode) {
         robot = therobot;
         opmode = theopmode;
     }
 
-    public void setDrive(double forward, double strafe, double rotate, double power, double timeoutSeconds) {
+    public void driveTime(double forward, double strafe, double rotate, double power, double timeoutSeconds) {
         robot.setDrive(forward, strafe, rotate, power);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < timeoutSeconds)) {
@@ -37,14 +35,14 @@ public class DriveBrain{
     }
     public boolean opModeIsActive() {
         return true;
-        //TODO fix opmode.opModeIsActive()
+//        opmode.OpModeIsActive();
     }
     public void driveDistance(double inches, double power, double timeoutSeconds) {
         runtime.reset();
 
         double forward = power;
 
-        if (inches < 0) forward = forward * 1.0;
+        if (inches < 0) forward = forward;
             if (opModeIsActive()) {
             robot.setDriveDeltaPos(10, .5);
             robot.setDrive(forward, 0, 0, 1.0);
@@ -59,7 +57,7 @@ public class DriveBrain{
         robot.setDriveStop();
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void gyroDrive(double speed,double distance,double angle) {
+    public void gyroDrive(double speed, double distance, double angle) {
         int     moveCounts;
         int[] newTarget = new int[3];
         double  max;
@@ -73,11 +71,6 @@ public class DriveBrain{
 
             // Determine new target position, and pass to motor controller
             moveCounts = (int)(distance * robot.convertCountsToInches(distance));
-
-            newTarget[0] = robot.curPos[0] + moveCounts;
-            newTarget[1] = robot.curPos[1] + moveCounts;
-            newTarget[2] = robot.curPos[2] + moveCounts;
-            newTarget[3] = robot.curPos[3] + moveCounts;
 
             robot.setDriveDeltaPos(moveCounts, .5);
 
@@ -112,8 +105,8 @@ public class DriveBrain{
 
                 // Display drive status for the driver.
                 opmode.telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                opmode.telemetry.addData("Target",  "%7d:%7d",      newTarget);
-                opmode.telemetry.addData("Actual",  "%7d:%7d",      robot.getCurPos());
+                opmode.telemetry.addData("Target",  "%7d",      newTarget);
+                opmode.telemetry.addData("Actual",  "%7d",      robot.getCurPos());
                 opmode.telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
                 opmode.telemetry.update();
             }
@@ -128,7 +121,7 @@ public class DriveBrain{
         double robotError;
 
         // calculate error in -179 to +180 range  (
-        robotError = targetAngle - gyro.getIntegratedZValue();
+        robotError = targetAngle - robot.gyro.getIntegratedZValue();
         while (robotError > 180)  robotError -= 360;
         while (robotError <= -180) robotError += 360;
         return robotError;
@@ -144,15 +137,89 @@ public class DriveBrain{
         return Range.clip(error * PCoeff, -1, 1);
     }
 
-    public void runOpMode() throws InterruptedException {
+    public void gyroHold( double speed, double angle, double holdTime) {
 
+        ElapsedTime holdTimer = new ElapsedTime();
+
+        // keep looping while we have time remaining.
+        holdTimer.reset();
+        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
+            // Update telemetry & Allow time for other processes to run.
+            onHeading(speed, angle, P_TURN_COEFF);
+            opmode.telemetry.update();
+        }
+
+        // Stop all motion;
+        robot.setDriveStop();
+    }
+    public void gyroTurn(double speed, double angle) {
+
+        // keep looping while we are still active, and not on heading.
+        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
+            // Update telemetry & Allow time for other processes to run.
+            opmode.telemetry.update();
+        }
+    }
+    public boolean onHeading(double speed, double angle, double PCoeff) {
+        double error;
+        double steer;
+        boolean onTarget = false;
+        double leftSpeed;
+        double rightSpeed;
+
+        error = getError(angle);
+
+        if (Math.abs(error) <= HEADING_THRESHOLD) {
+            steer = 0.0;
+            leftSpeed  = 0.0;
+            rightSpeed = 0.0;
+            onTarget = true;
+        }
+        else {
+            steer = getSteer(error, PCoeff);
+            rightSpeed  = speed * steer;
+            leftSpeed   = -rightSpeed;
+        }
+
+        // Send desired speeds to motors.
+        robot.setDrivePowersTank(leftSpeed, rightSpeed);
+
+        // Display it for the driver.
+        opmode.telemetry.addData("Target", "%5.2f", angle);
+        opmode.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        opmode.telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+
+        return onTarget;
+    }
+    public boolean checkWhite(NormalizedRGBA color) {
+        if(color.blue > 200 && color.red > 200  && color.green >200)
+            return true;
+        return false;
     }
 
-    public void gyroHold() {
+    public void driveToWhite(double power, double timeoutSeconds) {
+        runtime.reset();
 
-    }
-    public void gyroTurn() {
+        double forward = power;
 
+        if (opModeIsActive()) {
+            robot.setDrive(forward, 0, 0, power);
+        }
+
+        NormalizedRGBA rgba = robot.getRGBA();
+        boolean white = checkWhite(rgba);
+
+        while (  opModeIsActive() && (runtime.seconds() < timeoutSeconds) && !white) {
+            rgba = robot.getRGBA();
+            white = checkWhite(rgba);
+
+            // Display it for the driver.
+            opmode.telemetry.addData("white",  "%b", white);
+            opmode.telemetry.update();
+        }
+
+        robot.setDriveStop();
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
 
