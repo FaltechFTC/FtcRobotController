@@ -121,7 +121,7 @@ public class DriveBrain{
         double robotError;
 
         // calculate error in -179 to +180 range  (
-        robotError = targetAngle - robot.gyro.getIntegratedZValue();
+        robotError = targetAngle - robot.imu.getIntegratedZValue();
         while (robotError > 180)  robotError -= 360;
         while (robotError <= -180) robotError += 360;
         return robotError;
