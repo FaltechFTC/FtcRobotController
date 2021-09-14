@@ -54,7 +54,7 @@ import java.util.List;
  */
 @TeleOp(name = "visionBrain", group = "7079")
 //@Disabled
-public class visionBrain {
+public class VisionBrain {
     faltechBot robot       = new faltechBot();
     OpMode opmode;
     TFObjectDetector tfod = null;
