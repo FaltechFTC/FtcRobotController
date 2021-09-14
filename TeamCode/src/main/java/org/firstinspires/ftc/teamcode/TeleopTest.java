@@ -48,6 +48,7 @@ public class TeleopTest extends OpMode {
         double forward  = gamepad1.left_stick_y;
         double strafe = -gamepad1.left_stick_x;
         double rotate  = -gamepad1.right_stick_x;
+
         /* TO DO:
         - Incorporate dead stick logic
         */
@@ -59,5 +60,9 @@ public class TeleopTest extends OpMode {
                 .addData("Green", "%.3f", colors.green)
                 .addData("Blue", "%.3f", colors.blue);
        telemetry.update();
+       if (gamepad1.a) {
+           driveBrain.gyroDrive(.5, 10, 10);
+           driveBrain.gyroTurn(.5, 10);
+       }
     }
 }
