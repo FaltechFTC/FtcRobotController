@@ -39,6 +39,7 @@ public class DriveBrain{
     public boolean opModeIsActive() {
         return true;
         //TODO fix opmode.opModeIsActive()
+        //nothing
     }
     public void driveDistance(double inches, double power, double timeoutSeconds) {
         runtime.reset();
