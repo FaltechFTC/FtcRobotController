@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -60,6 +61,7 @@ public class faltechBot
     private DcMotor back_right  = null;
     public DcMotor[] driveMotors= new DcMotor[4];
     public int[] curPos = new int[4];
+    public ModernRoboticsI2cGyro gyro = null;
 
 //    public DcMotor  leftArm     = null;
 //    public Servo    leftClaw    = null;
@@ -215,5 +217,7 @@ public class faltechBot
     public NormalizedRGBA getRGBA() {
         return colorSensor.getNormalizedColors();
     }
+
+
 }
 

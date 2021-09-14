@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -39,7 +38,6 @@ public class DriveBrain{
     public boolean opModeIsActive() {
         return true;
         //TODO fix opmode.opModeIsActive()
-        //nothing
     }
     public void driveDistance(double inches, double power, double timeoutSeconds) {
         runtime.reset();
@@ -156,32 +154,5 @@ public class DriveBrain{
     public void gyroTurn() {
 
     }
-    public boolean checkWhite(NormalizedRGBA color) {
-        if(color.blue > 200 && color.red > 200  && color.green >200)
-            return true;
-        return false;
-    }
-
-    public void driveToWhite(double power, double timeoutSeconds) {
-        runtime.reset();
-
-        double forward = power;
-
-//  TODO      if (opmode.opModeIsActive()) {
-        robot.setDrive(forward, 0, 0, power);
 }
 
-        NormalizedRGBA rgba = robot.getRGBA();
-        boolean white = checkWhite(rgba);
-
-        while (/*TODO  opModeIsActive() && */(runtime.seconds() < timeoutSeconds) && !white) {
-            rgba = robot.getRGBA();
-            white = checkWhite(rgba);
-
-            // Display it for the driver.
-            opmode.telemetry.addData("white",  "%b", white);
-            opmode.telemetry.update();
-        }
-        robot.setDriveStop();
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-}

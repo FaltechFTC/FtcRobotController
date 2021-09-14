@@ -54,13 +54,20 @@ import java.util.List;
  */
 @TeleOp(name = "visionBrain", group = "7079")
 //@Disabled
-public class visionBrain {
+public class VisionBrain {
     faltechBot robot       = new faltechBot();
+    OpMode opmode;
+    TFObjectDetector tfod = null;
+    int cameraMonitorViewId = opmode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", opmode.hardwareMap.appContext.getPackageName());
+    VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+    VuforiaLocalizer vuforia = ClassFactory.getInstance().createVuforia(parameters);
+    final String VUFORIA_KEY = "AY7lK0j/////AAABmffl0hEQlUFfjdc9h8Aw+t5/CrgiSiIgNkZKZcw3qdOlnNEv3HarcW4e1pfYY5Nq+4XVrrnhKKNBeR/S08U41ogd0NpmWwOPgttli7io4p8WtbgWj+c/WL9uDzZK9u03K3Kfx+XFxdk/vy0tnFKCPg5w9M5iy7QQP2SDHFDJuhcAOtsayV8n8hQvB528RDRDykBtXei/V6xhN/qLc+S1Gp7eS0ZzpDFnT+uED0CwYK+oaWKNsPPv+3u9tCwofQ5PaRHlN05kH4V97Nn0N7WquSmDpcCZpAVqI1QnMEi7Fm9rvJgET+4OIlx4ZueF3ZTuXtJJSaEJ8Y6CEy9F7FS0RnlVtt4QlqpQVSmWmJQWYBNu";
+    final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
+    final String LABEL_FIRST_ELEMENT = "Gold Mineral";
+    final String LABEL_SECOND_ELEMENT = "Silver Mineral";
 
     public void init() {
-        final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
-        final String LABEL_FIRST_ELEMENT = "Gold Mineral";
-        final String LABEL_SECOND_ELEMENT = "Silver Mineral";
+
 
         /*
          * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -74,20 +81,13 @@ public class visionBrain {
          * Once you've obtained a license key, copy the string from the Vuforia web site
          * and paste it in to your code on the next line, between the double quotes.
          */
-        final String VUFORIA_KEY = "AY7lK0j/////AAABmffl0hEQlUFfjdc9h8Aw+t5/CrgiSiIgNkZKZcw3qdOlnNEv3HarcW4e1pfYY5Nq+4XVrrnhKKNBeR/S08U41ogd0NpmWwOPgttli7io4p8WtbgWj+c/WL9uDzZK9u03K3Kfx+XFxdk/vy0tnFKCPg5w9M5iy7QQP2SDHFDJuhcAOtsayV8n8hQvB528RDRDykBtXei/V6xhN/qLc+S1Gp7eS0ZzpDFnT+uED0CwYK+oaWKNsPPv+3u9tCwofQ5PaRHlN05kH4V97Nn0N7WquSmDpcCZpAVqI1QnMEi7Fm9rvJgET+4OIlx4ZueF3ZTuXtJJSaEJ8Y6CEy9F7FS0RnlVtt4QlqpQVSmWmJQWYBNu";
-
         /**
          * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
          * localization engine.
-         */
-        VuforiaLocalizer vuforia;
-
-        /**
          * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
          * Detection engine.
          */
-        TFObjectDetector tfod = null;
-
+//        TFObjectDetector tfod = null;
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
@@ -97,6 +97,7 @@ public class visionBrain {
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
          **/
+        //TODO OPTIONAL JUST MIGHT BE COOL: make it so that when the distance is greater than 50cm then it zooms in.
         if (tfod != null) {
             tfod.activate();
 
@@ -110,8 +111,8 @@ public class visionBrain {
         }
 
         /** Wait for the game to begin */
-        telemetry.addData(">", "Press Play to start op mode");
-        telemetry.update();
+        opmode.telemetry.addData(">", "Press Play to start op mode");
+        opmode.telemetry.update();
     }
     public void process() {
         if (tfod != null) {
@@ -119,23 +120,23 @@ public class visionBrain {
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
-                telemetry.addData("# Object Detected", updatedRecognitions.size());
+                opmode.telemetry.addData("# Object Detected", updatedRecognitions.size());
                 // step through the list of recognitions and display boundary info.
                 int i = 0;
                 for (Recognition recognition : updatedRecognitions) {
-                    telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                    telemetry.addData(String.format("  confidence (%d)", i), "%.02f", recognition.getConfidence());
-                    telemetry.addData(String.format("  left,top (%d)", i), "%.01f , %.01f", recognition.getLeft(), recognition.getTop());
-                    telemetry.addData(String.format("  right,bottom (%d)", i), "%.01f , %.01f", recognition.getRight(), recognition.getBottom());
+                    opmode.telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                    opmode.telemetry.addData(String.format("  confidence (%d)", i), "%.02f", recognition.getConfidence());
+                    opmode.telemetry.addData(String.format("  left,top (%d)", i), "%.01f , %.01f", recognition.getLeft(), recognition.getTop());
+                    opmode.telemetry.addData(String.format("  right,bottom (%d)", i), "%.01f , %.01f", recognition.getRight(), recognition.getBottom());
                 }
-                telemetry.update();
+                opmode.telemetry.update();
             }
         }
         if (tfod != null) {
             tfod.shutdown();
         }
     }
-}
+
     /**
      * Initialize the Vuforia localization engine.
      */
@@ -143,16 +144,16 @@ public class visionBrain {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        int cameraMonitorViewId = opmode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", opmode.hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 //        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        parameters.cameraName = opmode.hardwareMap.get(WebcamName.class, "Webcam 1");
 
 
         //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        VuforiaLocalizer vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // Loading trackables is not necessary for the TensorFlow Object Detection engine.
     }
@@ -161,8 +162,8 @@ public class visionBrain {
      * Initialize the TensorFlow Object Detection engine.
      */
     private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        int tfodMonitorViewId = opmode.hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", opmode.hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.4f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);

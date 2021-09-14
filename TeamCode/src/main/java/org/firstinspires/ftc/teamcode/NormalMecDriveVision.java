@@ -2,10 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
  * This is an example minimal implementation of the mecanum drivetrain
@@ -13,22 +10,12 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  *
  *
  */
-@TeleOp(name="TeleopTestMecanum", group="7079")
-public class TeleopTest extends OpMode {
+@TeleOp(name="TeleopTestMecanumVision", group="7079")
+public class NormalMecDriveVision extends OpMode {
     faltechBot robot       = new faltechBot(); // use the class created to define a Pushbot's hardware
 
     DriveBrain driveBrain ;
-    /*
-     * The mecanum drivetrain involves four separate motors that spin in
-     * different directions and different speeds to produce the desired
-     * movement at the desired speed.
-     */
-
-    // declare and initialize four DcMotors.
-    private DcMotor front_left  = null;
-    private DcMotor front_right = null;
-    private DcMotor back_left   = null;
-    private DcMotor back_right  = null;
+    VisionBrain vision;
 
     @Override
     public void init() {
@@ -37,6 +24,7 @@ public class TeleopTest extends OpMode {
         // app.
         robot.init(hardwareMap);
         driveBrain = new DriveBrain(robot,this);
+        vision = new VisionBrain();
 
     }
 
