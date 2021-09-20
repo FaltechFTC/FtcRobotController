@@ -94,7 +94,7 @@ public class faltechBot
         hwMap = ahwMap;
 
         colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
-        gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("imu");
+        gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("gyro");
         // Define and Initialize Motors
         front_left  = hwMap.get(DcMotor.class, "fldrive");
         front_right = hwMap.get(DcMotor.class, "frdrive");
@@ -127,7 +127,8 @@ public class faltechBot
         colorSensor.setGain(gain);
 
     }
-    public void setDrive(double forward, double strafe, double rotate, double power){ //this function will combine wheel commands
+    public void setDrive(double forward, double strafe, double rotate, double power){
+        //this function will combine wheel commands
 
         double[] wheelpowers = {
                 (forward + strafe + rotate),
