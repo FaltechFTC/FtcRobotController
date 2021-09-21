@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
  */
 @TeleOp(name="TeleopTestMecanumVision", group="7079")
 public class NormalMecDriveVision extends OpMode {
-    faltechBot robot       = new faltechBot(); // use the class created to define a Pushbot's hardware
+    faltechBotMecanum robot       = new faltechBotMecanum(); // use the class created to define a Pushbot's hardware
 
     DriveBrain driveBrain ;
     VisionBrain vision;

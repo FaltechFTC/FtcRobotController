@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.Range;
 
 public class DriveBrain{
 
-    faltechBot robot;
+    faltechBotMecanum robot;
     OpMode opmode;
 
     private final ElapsedTime runtime = new ElapsedTime();
@@ -18,7 +18,7 @@ public class DriveBrain{
     static final double     P_TURN_COEFF            = 0.1;
     static final double     HEADING_THRESHOLD       = 1 ;
 
-    public DriveBrain(faltechBot therobot, OpMode theopmode) {
+    public DriveBrain(faltechBotMecanum therobot, OpMode theopmode) {
         robot = therobot;
         opmode = theopmode;
     }

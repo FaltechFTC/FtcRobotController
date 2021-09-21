@@ -55,7 +55,7 @@ import java.util.List;
 @TeleOp(name = "visionBrain", group = "7079")
 //@Disabled
 public class VisionBrain {
-    faltechBot robot       = new faltechBot();
+    faltechBotMecanum robot       = new faltechBotMecanum();
     OpMode opmode;
     TFObjectDetector tfod = null;
     int cameraMonitorViewId = opmode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", opmode.hardwareMap.appContext.getPackageName());
