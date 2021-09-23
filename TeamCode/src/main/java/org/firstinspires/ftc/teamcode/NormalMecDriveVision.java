@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 public class NormalMecDriveVision extends OpMode {
     faltechBotMecanum robot       = new faltechBotMecanum(); // use the class created to define a Pushbot's hardware
 
-    DriveBrain driveBrain ;
+    DriveBrainMecanum driveBrain ;
     VisionBrain vision;
 
     @Override
@@ -23,7 +23,7 @@ public class NormalMecDriveVision extends OpMode {
         // Name strings must match up with the config on the Robot Controller
         // app.
         robot.init(hardwareMap);
-        driveBrain = new DriveBrain(robot,this);
+        driveBrain = new DriveBrainMecanum(robot,this);
         vision = new VisionBrain();
 
     }

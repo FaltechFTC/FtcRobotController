@@ -51,7 +51,7 @@ import java.util.List;
  *
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
- */
+ **/    
 @TeleOp(name = "visionBrain", group = "7079")
 //@Disabled
 public class VisionBrain {

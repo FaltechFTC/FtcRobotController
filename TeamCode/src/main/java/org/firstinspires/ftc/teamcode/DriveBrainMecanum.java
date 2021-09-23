@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
-public class DriveBrain{
+public class DriveBrainMecanum {
 
     faltechBotMecanum robot;
     OpMode opmode;
@@ -18,7 +18,7 @@ public class DriveBrain{
     static final double     P_TURN_COEFF            = 0.1;
     static final double     HEADING_THRESHOLD       = 1 ;
 
-    public DriveBrain(faltechBotMecanum therobot, OpMode theopmode) {
+    public DriveBrainMecanum(faltechBotMecanum therobot, OpMode theopmode) {
         robot = therobot;
         opmode = theopmode;
     }

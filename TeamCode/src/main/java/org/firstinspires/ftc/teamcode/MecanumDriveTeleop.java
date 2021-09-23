@@ -2,10 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
  * This is an example minimal implementation of the mecanum drivetrain
@@ -17,7 +14,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 public class MecanumDriveTeleop extends OpMode {
     faltechBotMecanum robot       = new faltechBotMecanum(); // use the class created to define a Pushbot's hardware
 
-    DriveBrain driveBrain ;
+    DriveBrainMecanum driveBrain ;
 
 
     @Override
@@ -26,7 +23,7 @@ public class MecanumDriveTeleop extends OpMode {
         // Name strings must match up with the config on the Robot Controller
         // app.
         robot.init(hardwareMap);
-        driveBrain = new DriveBrain(robot,this);
+        driveBrain = new DriveBrainMecanum(robot,this);
 
     }
 
