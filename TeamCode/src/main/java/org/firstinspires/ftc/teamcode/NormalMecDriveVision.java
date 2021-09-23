@@ -15,7 +15,7 @@ public class NormalMecDriveVision extends OpMode {
     faltechBotMecanum robot       = new faltechBotMecanum(); // use the class created to define a Pushbot's hardware
 
     DriveBrainMecanum driveBrain ;
-    VisionBrain vision;
+    VisionBrainMecanum vision;
 
     @Override
     public void init() {
@@ -24,7 +24,7 @@ public class NormalMecDriveVision extends OpMode {
         // app.
         robot.init(hardwareMap);
         driveBrain = new DriveBrainMecanum(robot,this);
-        vision = new VisionBrain();
+        vision = new VisionBrainMecanum();
 
     }
 
