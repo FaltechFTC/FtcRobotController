@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import android.graphics.drawable.GradientDrawable;
+
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -8,14 +10,23 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
 public class faltechBotXDrive {
+    static final boolean useColorSensor = false;
+    static final boolean useIMU = true;
+
     private DcMotor front_left = null;
     private DcMotor front_right = null;
     private DcMotor back_left = null;
     private DcMotor back_right = null;
     public DcMotor[] driveMotors = new DcMotor[4];
     public int[] curPos = new int[4];
-    public ModernRoboticsI2cGyro gyro = null;
+    public BNO055IMU imu = null;
 
 //    public DcMotor  leftArm     = null;
 //    public Servo    leftClaw    = null;
@@ -35,14 +46,22 @@ public class faltechBotXDrive {
     private ElapsedTime period = new ElapsedTime();
 
     /* setting up color sensor*/
-    float gain = 2;
-    NormalizedColorSensor colorSensor;
+    float colorSensorGain = 2;
+    NormalizedColorSensor colorSensor = null;
 
     public void init(HardwareMap ahwMap) {
         hwMap = ahwMap;
 
-        colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
-        gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("gyro");
+        if (useColorSensor) {
+            colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
+            colorSensor.setGain(colorSensorGain);
+        }
+        if (useIMU) {
+            imu = hwMap.get(BNO055IMU.class, "imu");
+            BNO055IMU.Parameters params = new BNO055IMU.Parameters();
+            //change to default set of parameters go here
+            imu.initialize(params);
+        }
         // Define and Initialize Motors
         front_left  = hwMap.get(DcMotor.class, "fldrive");
         front_right = hwMap.get(DcMotor.class, "frdrive");
@@ -72,7 +91,6 @@ public class faltechBotXDrive {
 //        rightClaw = hwMap.get(Servo.class, "right_hand");
 //        leftClaw.setPosition(MID_SERVO);
 //        rightClaw.setPosition(MID_SERVO);
-        colorSensor.setGain(gain);
 
     }
     public void setDrive(double forward, double strafe, double rotate, double power){
@@ -164,10 +182,26 @@ public class faltechBotXDrive {
     }
 
     public NormalizedRGBA getRGBA() {
-        return colorSensor.getNormalizedColors();
+        if (useColorSensor) {
+            return colorSensor.getNormalizedColors();
+        }
+        else {
+            return new NormalizedRGBA();
+        }
     }
 
-
+    public double getHeading(AngleUnit angleUnit) {
+        if (useIMU) {
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC,
+                    AxesOrder.ZYX,
+                    angleUnit);
+            return angles.firstAngle;
+        }
+        else
+        {
+            return 0;
+        }
+    }
 }
 
 

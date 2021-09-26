@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name = "XDriveTeleop", group = "7079")
 public class XDriveTeleop extends OpMode {
@@ -16,6 +18,8 @@ public class XDriveTeleop extends OpMode {
 
     @Override
     public void loop() {
+
+        telemetry.addData("Our Heading", robotXDrive.getHeading(AngleUnit.DEGREES));
 
         double forward  = gamepad1.left_stick_y;
         double strafe = -gamepad1.left_stick_x;
