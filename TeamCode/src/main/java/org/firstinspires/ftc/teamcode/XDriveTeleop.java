@@ -21,9 +21,9 @@ public class XDriveTeleop extends OpMode {
 
         telemetry.addData("Our Heading", robotXDrive.getHeading(AngleUnit.DEGREES));
 
-        double forward  = gamepad1.left_stick_y;
-        double strafe = -gamepad1.left_stick_x;
-        double rotate  = -gamepad1.right_stick_x;
+        double forward  = 1/2*gamepad1.left_stick_y;
+        double strafe = -1/2*gamepad1.left_stick_x;
+        double rotate  = -1/2*gamepad1.right_stick_x;
 
         robotXDrive.setDrive(forward,strafe,rotate,1);
         NormalizedRGBA colors = robotXDrive.getRGBA();
