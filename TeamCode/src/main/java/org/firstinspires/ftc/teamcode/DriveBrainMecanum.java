@@ -74,57 +74,46 @@ public class DriveBrainMecanum {
 
             robot.setDriveDeltaPos(moveCounts, .5);
 
-            // start motion.
-            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
-            robot.setDrivePowersTank(speed, speed);
-
-            // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() &&
-                    (robot.isDriveBusy())) {
-
-                // adjust relative speed based on heading error.
-                error = getError(angle);
-                steer = getSteer(error, P_DRIVE_COEFF);
-
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    steer *= -1.0;
-
-                leftSpeed = speed - steer;
-                rightSpeed = speed + steer;
-
-                // Normalize speeds if either one exceeds +/- 1.0;
-                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-                if (max > 1.0)
-                {
-                    leftSpeed /= max;
-                    rightSpeed /= max;
-                }
-
-                robot.setDrivePowersTank(leftSpeed, rightSpeed);
-
-                // Display drive status for the driver.
-                opmode.telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                opmode.telemetry.addData("Target",  "%7d",      newTarget);
-                opmode.telemetry.addData("Actual",  "%7d",      robot.getCurPos());
-                opmode.telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
-                opmode.telemetry.update();
-            }
-
-            // Stop all motion;
-            robot.setDriveStop();
+//            // start motion.
+//            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
+//            robot.setDrivePowersTank(speed, speed);
+//
+//            // keep looping while we are still active, and BOTH motors are running.
+//            while (opModeIsActive() &&
+//                    (robot.isDriveBusy())) {
+//
+//                // adjust relative speed based on heading error.
+////                error = getError(angle);
+////                steer = getSteer(error, P_DRIVE_COEFF);
+//
+//                // if driving in reverse, the motor correction also needs to be reversed
+//                if (distance < 0)
+////                    steer *= -1.0;
+//
+//                leftSpeed = speed - steer;
+//                rightSpeed = speed + steer;
+//
+//                // Normalize speeds if either one exceeds +/- 1.0;
+//                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+//                if (max > 1.0)
+//                {
+//                    leftSpeed /= max;
+//                    rightSpeed /= max;
+//                }
+//
+//                robot.setDrivePowersTank(leftSpeed, rightSpeed);
+//
+//                // Display drive status for the driver.
+//                opmode.telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+//                opmode.telemetry.addData("Target",  "%7d",      newTarget);
+//                opmode.telemetry.addData("Actual",  "%7d",      robot.getCurPos());
+//                opmode.telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+//                opmode.telemetry.update();
+//            }
+//
+//            // Stop all motion;
+//            robot.setDriveStop();
         }
-    }
-
-    public double getError(double targetAngle) {
-
-        double robotError;
-
-        // calculate error in -179 to +180 range  (
-        robotError = targetAngle - robot.gyro.getIntegratedZValue();
-        while (robotError > 180)  robotError -= 360;
-        while (robotError <= -180) robotError += 360;
-        return robotError;
     }
 
     /**
@@ -137,60 +126,60 @@ public class DriveBrainMecanum {
         return Range.clip(error * PCoeff, -1, 1);
     }
 
-    public void gyroHold( double speed, double angle, double holdTime) {
-
-        ElapsedTime holdTimer = new ElapsedTime();
-
-        // keep looping while we have time remaining.
-        holdTimer.reset();
-        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
-            // Update telemetry & Allow time for other processes to run.
-            onHeading(speed, angle, P_TURN_COEFF);
-            opmode.telemetry.update();
-        }
-
-        // Stop all motion;
-        robot.setDriveStop();
-    }
-    public void gyroTurn(double speed, double angle) {
-
-        // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
-            // Update telemetry & Allow time for other processes to run.
-            opmode.telemetry.update();
-        }
-    }
-    public boolean onHeading(double speed, double angle, double PCoeff) {
-        double error;
-        double steer;
-        boolean onTarget = false;
-        double leftSpeed;
-        double rightSpeed;
-
-        error = getError(angle);
-
-        if (Math.abs(error) <= HEADING_THRESHOLD) {
-            steer = 0.0;
-            leftSpeed  = 0.0;
-            rightSpeed = 0.0;
-            onTarget = true;
-        }
-        else {
-            steer = getSteer(error, PCoeff);
-            rightSpeed  = speed * steer;
-            leftSpeed   = -rightSpeed;
-        }
-
-        // Send desired speeds to motors.
-        robot.setDrivePowersTank(leftSpeed, rightSpeed);
-
-        // Display it for the driver.
-        opmode.telemetry.addData("Target", "%5.2f", angle);
-        opmode.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-        opmode.telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
-
-        return onTarget;
-    }
+//    public void gyroHold( double speed, double angle, double holdTime) {
+//
+//        ElapsedTime holdTimer = new ElapsedTime();
+//
+//        // keep looping while we have time remaining.
+//        holdTimer.reset();
+//        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
+//            // Update telemetry & Allow time for other processes to run.
+//            onHeading(speed, angle, P_TURN_COEFF);
+//            opmode.telemetry.update();
+//        }
+//
+//        // Stop all motion;
+//        robot.setDriveStop();
+//    }
+//    public void gyroTurn(double speed, double angle) {
+//
+//        // keep looping while we are still active, and not on heading.
+//        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
+//            // Update telemetry & Allow time for other processes to run.
+//            opmode.telemetry.update();
+//        }
+//    }
+////    public boolean onHeading(double speed, double angle, double PCoeff) {
+////        double error;
+////        double steer;
+////        boolean onTarget = false;
+////        double leftSpeed;
+////        double rightSpeed;
+////
+////       // error = getError(angle);
+////
+////        //if (Math.abs(error) <= HEADING_THRESHOLD) {
+////            steer = 0.0;
+////            leftSpeed  = 0.0;
+////            rightSpeed = 0.0;
+////            onTarget = true;
+//        }
+//        else {
+//            steer = getSteer(error, PCoeff);
+//            rightSpeed  = speed * steer;
+//            leftSpeed   = -rightSpeed;
+//        }
+//
+//        // Send desired speeds to motors.
+//        robot.setDrivePowersTank(leftSpeed, rightSpeed);
+//
+//        // Display it for the driver.
+//        opmode.telemetry.addData("Target", "%5.2f", angle);
+//        opmode.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+//        opmode.telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+//
+//        return onTarget;
+//    }
     public boolean checkWhite(NormalizedRGBA color) {
         if(color.blue > 200 && color.red > 200  && color.green >200)
             return true;

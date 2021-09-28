@@ -32,9 +32,9 @@ public class XDriveTeleop extends OpMode {
                 .addData("Green", "%.3f", colors.green)
                 .addData("Blue", "%.3f", colors.blue);
         telemetry.update();
-        if (gamepad1.a) {
-            driveBrain.gyroDrive(.5, 10, 10);
-            driveBrain.gyroTurn(.5, 10);
-        }
+       // if (gamepad1.a) {
+         //   driveBrain.gyroDrive(.5, 10, 10);
+           // driveBrain.gyroTurn(.5, 10);
+        //}
     }
 }

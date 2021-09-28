@@ -61,7 +61,7 @@ public class faltechBotMecanum
     private DcMotor back_right  = null;
     public DcMotor[] driveMotors= new DcMotor[4];
     public int[] curPos = new int[4];
-    public ModernRoboticsI2cGyro gyro = null;
+//    public ModernRoboticsI2cGyro gyro = null;
 
 //    public DcMotor  leftArm     = null;
 //    public Servo    leftClaw    = null;
@@ -92,7 +92,7 @@ public class faltechBotMecanum
         hwMap = ahwMap;
 
         colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
-        gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("gyro");
+        //gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("gyro");
         // Define and Initialize Motors
         front_left  = hwMap.get(DcMotor.class, "fldrive");
         front_right = hwMap.get(DcMotor.class, "frdrive");
