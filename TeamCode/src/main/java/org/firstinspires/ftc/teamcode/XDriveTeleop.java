@@ -21,20 +21,20 @@ public class XDriveTeleop extends OpMode {
 
         telemetry.addData("Our Heading", robotXDrive.getHeading(AngleUnit.DEGREES));
 
-        double forward  = 1/2*gamepad1.left_stick_y;
-        double strafe = -1/2*gamepad1.left_stick_x;
-        double rotate  = -1/2*gamepad1.right_stick_x;
+        double forward = 1 / 2 * gamepad1.left_stick_y;
+        double strafe = -1 / 2 * gamepad1.left_stick_x;
+        double rotate = -1 / 2 * gamepad1.right_stick_x;
 
-        robotXDrive.setDrive(forward,strafe,rotate,1);
+        robotXDrive.setDrive(forward, strafe, rotate, 1);
         NormalizedRGBA colors = robotXDrive.getRGBA();
         telemetry.addLine()
                 .addData("Red", "%.3f", colors.red)
                 .addData("Green", "%.3f", colors.green)
                 .addData("Blue", "%.3f", colors.blue);
         telemetry.update();
-//       if (gamepad1.a) {
-//           driveBrain.gyroDrive(.5, 10, 10);
-//           driveBrain.gyroTurn(.5, 10);
-//       }
+        if (gamepad1.a) {
+            driveBrain.gyroDrive(.5, 10, 10);
+            driveBrain.gyroTurn(.5, 10);
+        }
     }
 }
