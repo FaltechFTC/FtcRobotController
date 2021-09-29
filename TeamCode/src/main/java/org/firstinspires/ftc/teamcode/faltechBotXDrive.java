@@ -27,12 +27,13 @@ public class faltechBotXDrive {
     public DcMotor[] driveMotors = new DcMotor[4];
     public int[] curPos = new int[4];
     public BNO055IMU imu = null;
+/* we might need to leave this code for the arm here so that we can use it later is we are using
+a claw system*/
 
 //    public DcMotor  leftArm     = null;
 //    public Servo    leftClaw    = null;
 //    public Servo    rightClaw   = null;
-
-    //    public static final double MID_SERVO       =  0.5 ;
+//    public static final double MID_SERVO       =  0.5 ;
 //    public static final double ARM_UP_POWER    =  0.45 ;
 //    public static final double ARM_DOWN_POWER  = -0.45 ;
     static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
