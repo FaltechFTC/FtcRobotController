@@ -8,6 +8,7 @@ public class Utility {
         }
         return value;
     }
+    //if degrees is > 180 or< -180 then add or subtract 360 to bring it into that range
     public double wrapDegrees360(double degrees) {
         if (degrees > 180) degrees = degrees-360;
 
