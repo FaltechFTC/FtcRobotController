@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
  * This is an example minimal implementation of the mecanum drivetrain
@@ -15,9 +13,9 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  */
 @TeleOp(name="TeleopTestMecanum", group="7079")
 public class MecanumDriveTeleop extends OpMode {
-    faltechBot robot       = new faltechBot(); // use the class created to define a Pushbot's hardware
+    faltechBotMecanum robot       = new faltechBotMecanum(); // use the class created to define a Pushbot's hardware
 
-    DriveBrain driveBrain ;
+    DriveBrainMecanum driveBrain ;
 
 
     @Override
@@ -26,12 +24,14 @@ public class MecanumDriveTeleop extends OpMode {
         // Name strings must match up with the config on the Robot Controller
         // app.
         robot.init(hardwareMap);
-        driveBrain = new DriveBrain(robot,this);
+        driveBrain = new DriveBrainMecanum(robot,this);
 
     }
 
     @Override
     public void loop() {
+
+
 
         // Mecanum drive is controlled with three axes: drive (front-and-back),
         // strafe (left-and-right), and twist (rotating the whole chassis).
@@ -50,9 +50,9 @@ public class MecanumDriveTeleop extends OpMode {
                 .addData("Green", "%.3f", colors.green)
                 .addData("Blue", "%.3f", colors.blue);
        telemetry.update();
-       if (gamepad1.a) {
-           driveBrain.gyroDrive(.5, 10, 10);
-           driveBrain.gyroTurn(.5, 10);
-       }
+//       if (gamepad1.a) {
+//           driveBrain.gyroDrive(.5, 10, 10);
+//           driveBrain.gyroTurn(.5, 10);
+//       }
     }
 }

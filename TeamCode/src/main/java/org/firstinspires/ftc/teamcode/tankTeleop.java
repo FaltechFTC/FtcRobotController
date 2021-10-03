@@ -27,7 +27,7 @@ public class tankTeleop extends OpMode {
     private DcMotor front_right = null;
     private DcMotor back_left = null;
     private DcMotor back_right = null;
-    private DcMotor sweeper = null;
+//    private DcMotor sweeper = null;
     /* Declare OpMode members. */
 
     /*
@@ -42,7 +42,7 @@ public class tankTeleop extends OpMode {
         front_right = hardwareMap.get(DcMotor.class, "frdrive");
         back_left = hardwareMap.get(DcMotor.class, "bldrive");
         back_right = hardwareMap.get(DcMotor.class, "brdrive");
-        sweeper = hardwareMap.get(DcMotor.class, "sweeper");
+//        sweeper = hardwareMap.get(DcMotor.class, "sweeper");
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Hello Driver");    //
@@ -74,7 +74,7 @@ public class tankTeleop extends OpMode {
         front_right.setPower(right);
         back_left.setPower(left);
         back_right.setPower(right);
-        sweeper.setPower(gamepad1.left_trigger);
+//        sweeper.setPower(gamepad1.left_trigger);
 
 
         // Use gamepad left & right Bumpers to open and close the claw
