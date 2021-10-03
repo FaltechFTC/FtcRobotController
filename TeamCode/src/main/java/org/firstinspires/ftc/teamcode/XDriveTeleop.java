@@ -37,6 +37,9 @@ public class XDriveTeleop extends OpMode {
         telemetry.addData("Our Heading", currentHeading);
         if (gamepad1.left_trigger == 0.00){
             fixedHeading = currentHeading;
+            if(gamepad1.right_trigger > 0.00){
+                fixedHeading += 180;
+            }
         }
         if (gamepad1.left_trigger > 0.00){
 
