@@ -2,14 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-public class RoadRunner extends OpMode {
-    @Override
-    public void init() {
+public class RoadRunner{
 
-    }
-
-    @Override
-    public void loop() {
-
-    }
 }
