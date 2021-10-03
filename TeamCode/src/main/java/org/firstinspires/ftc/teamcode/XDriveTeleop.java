@@ -37,7 +37,7 @@ public class XDriveTeleop extends OpMode {
         telemetry.addData("Our Heading", currentHeading);
         if (gamepad1.left_trigger == 0.00){
             fixedHeading = currentHeading;
-            if(gamepad1.right_trigger > 0.00){
+            if(gamepad1.a){
                 fixedHeading += 180;
             }
         }
@@ -50,7 +50,17 @@ public class XDriveTeleop extends OpMode {
             if(headingError < -45){
                 headingError = -45;
             }
+            if (Math.abs(headingError)<.5){
+                headingError = 0;
+            }
+
             double rotationCorrection = headingError*0.3/45.00;
+            if (rotationCorrection>0 && rotationCorrection<0.1){
+                rotationCorrection = 0.1;
+            }
+            if (rotationCorrection<0&&rotationCorrection>-0.1){
+                rotationCorrection = -0.1;
+            }
             rotate = rotationCorrection + rotate;
             telemetry.addData("Fixed Heading", fixedHeading);
             telemetry.addData("Heading Error", headingError);
