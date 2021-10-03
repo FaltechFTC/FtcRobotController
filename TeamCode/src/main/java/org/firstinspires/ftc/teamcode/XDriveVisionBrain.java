@@ -52,8 +52,6 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  **/
-
-//@Disabled
 public class XDriveVisionBrain {
     faltechBotMecanum robot       = new faltechBotMecanum();
     OpMode opmode;
