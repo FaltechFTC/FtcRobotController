@@ -10,6 +10,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class XDriveTeleop extends OpMode {
     faltechBotXDrive robotXDrive = new faltechBotXDrive();
     DriveBrainXDrive driveBrain;
+    double fixedHeading = 0;
+
+
+
     @Override
     public void init() {
         robotXDrive.init(hardwareMap);
@@ -19,7 +23,7 @@ public class XDriveTeleop extends OpMode {
     @Override
     public void loop() {
 
-        telemetry.addData("Our Heading", robotXDrive.getHeading(AngleUnit.DEGREES));
+
 
         double forward = 0.5 * gamepad1.left_stick_y;
         double strafe = -0.5 * gamepad1.left_stick_x;
@@ -29,13 +33,31 @@ public class XDriveTeleop extends OpMode {
           strafe = strafe*2;
           rotate = rotate*2;
         }
+        double currentHeading = robotXDrive.getHeading(AngleUnit.DEGREES);
+        telemetry.addData("Our Heading", currentHeading);
+        if (gamepad1.left_trigger == 0.00){
+            fixedHeading = currentHeading;
+        }
+        if (gamepad1.left_trigger > 0.00){
+
+            double headingError = Utility.wrapDegrees360(fixedHeading-currentHeading);
+            if (headingError>45){
+                headingError = 45;
+            }
+            if(headingError < -45){
+                headingError = -45;
+            }
+            double rotationCorrection = headingError*0.3/45.00;
+            rotate = rotationCorrection + rotate;
+            telemetry.addData("Fixed Heading", fixedHeading);
+            telemetry.addData("Heading Error", headingError);
+            telemetry.addData("Rotation Correction", rotationCorrection);
+
+        }
+
         robotXDrive.setDrive(forward, strafe, rotate, 1);
-        NormalizedRGBA colors = robotXDrive.getRGBA();
-        telemetry.addLine()
-                .addData("Red", "%.3f", colors.red)
-                .addData("Green", "%.3f", colors.green)
-                .addData("Blue", "%.3f", colors.blue);
-        telemetry.update();
+
+
        // if (gamepad1.a) {
          //   driveBrain.gyroDrive(.5, 10, 10);
            // driveBrain.gyroTurn(.5, 10);
