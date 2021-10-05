@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class XDriveTeleop extends OpMode {
     faltechBotXDrive robotXDrive = new faltechBotXDrive();
     DriveBrainXDrive driveBrain;
+    Utility Utility;
     double fixedHeading = 0;
 
 
@@ -23,11 +24,26 @@ public class XDriveTeleop extends OpMode {
     @Override
     public void loop() {
 
-
-
+        boolean T_Mode = false;
+        Utility.deadStick(gamepad1.left_stick_x);
+        Utility.deadStick(gamepad1.left_stick_y);
+        Utility.deadStick(gamepad1.right_stick_x);
         double forward = 0.5 * gamepad1.left_stick_y;
         double strafe = -0.5 * gamepad1.left_stick_x;
         double rotate = -0.5 * gamepad1.right_stick_x;
+        if(gamepad1.right_trigger==0.00){telemetry.addData("T-Mode Off", T_Mode);}
+        if(gamepad1.right_trigger>0.00){
+            T_Mode = true;
+            telemetry.addData("T-Mode On", T_Mode);
+            if(strafe>forward){
+                forward = 0;
+                strafe = strafe;
+            }
+            if(forward>strafe){
+                strafe = 0;
+                forward = forward;
+            }
+        }
         if(gamepad1.right_bumper){
           forward = forward*2;
           strafe = strafe*2;
