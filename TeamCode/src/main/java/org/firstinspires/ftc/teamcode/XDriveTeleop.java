@@ -31,17 +31,19 @@ public class XDriveTeleop extends OpMode {
         double forward = 0.5 * gamepad1.left_stick_y;
         double strafe = -0.5 * gamepad1.left_stick_x;
         double rotate = -0.5 * gamepad1.right_stick_x;
-        if(gamepad1.right_trigger==0.00){telemetry.addData("T-Mode Off", T_Mode);}
+        if(gamepad1.right_trigger==0.00){telemetry.addData("T-Mode", T_Mode);}
         if(gamepad1.right_trigger>0.00){
             T_Mode = true;
-            telemetry.addData("T-Mode On", T_Mode);
-            if(strafe>forward){
+            telemetry.addData("T-Mode", T_Mode);
+            if(Math.abs(strafe)>Math.abs(forward)){
                 forward = 0;
-                strafe = strafe;
+                // because he are strafing we can kill the forward
+              //  strafe = strafe;
             }
-            if(forward>strafe){
+            else{
                 strafe = 0;
-                forward = forward;
+                // because we are going forward, we will kill the strafe
+               // forward = forward;
             }
         }
         if(gamepad1.right_bumper){
@@ -83,7 +85,6 @@ public class XDriveTeleop extends OpMode {
             telemetry.addData("Rotation Correction", rotationCorrection);
 
         }
-
         robotXDrive.setDrive(forward, strafe, rotate, 1);
 
 
