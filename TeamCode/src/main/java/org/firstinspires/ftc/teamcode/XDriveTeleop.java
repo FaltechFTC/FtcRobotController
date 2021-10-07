@@ -35,6 +35,7 @@ public class XDriveTeleop extends OpMode {
             telemetry.addData("T-Mode", T_Mode);
         }
         if(gamepad1.right_trigger>0.00){
+
             T_Mode = true;
             telemetry.addData("T-Mode", T_Mode);
             if(Math.abs(strafe)>Math.abs(forward)){

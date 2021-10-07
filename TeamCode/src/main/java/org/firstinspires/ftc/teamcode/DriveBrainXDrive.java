@@ -222,6 +222,26 @@ public class DriveBrainXDrive {
         robotXDrive.setDriveStop();
         robotXDrive.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+    public boolean rotateToHeadingAbsolute(double heading , double tolerance, double power, double timeout){
+        double secondsPassed = runtime.seconds();
+        double currentHeading = robotXDrive.getHeading(AngleUnit.DEGREES);
+        double targetHeading = heading;
+        double headingError = Utility.wrapDegrees360(heading - currentHeading);
+        headingError = targetHeading - currentHeading;
+        while(headingError-0.05>tolerance && secondsPassed<timeout){
+            double rotationCorrection = headingError*0.3/45.00;
+            if (rotationCorrection>0 && rotationCorrection<0.1){
+                rotationCorrection = 0.1;
+            }
+            if (rotationCorrection<0&&rotationCorrection>-0.1){
+                rotationCorrection = -0.1;
+            }
+            double rotate = rotationCorrection;
+        }
+        boolean fail = false;
+        return fail;
+
+    }
 }
 
 
