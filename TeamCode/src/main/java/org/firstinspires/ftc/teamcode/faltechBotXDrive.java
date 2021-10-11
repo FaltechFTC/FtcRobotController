@@ -204,12 +204,12 @@ a claw system*/
 
     }
     public void reportColor(){
-        NormalizedRGBA colors = robotXDrive.getRGBA();
-        telemetry.addLine()
-                .addData("Red", "%.3f", colors.red)
-                .addData("Green", "%.3f", colors.green)
-                .addData("Blue", "%.3f", colors.blue);
-        telemetry.update();
+       // NormalizedRGBA colors = robotXDrive.getRGBA();
+       // telemetry.addLine()
+         //       .addData("Red", "%.3f", colors.red)
+           //     .addData("Green", "%.3f", colors.green)
+             //   .addData("Blue", "%.3f", colors.blue);
+       // telemetry.update();
     }
     public void reportEncoders(){
        int fl = front_left.getCurrentPosition();

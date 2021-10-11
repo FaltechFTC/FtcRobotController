@@ -230,8 +230,8 @@ public class DriveBrainXDrive {
         double currentHeading = robotXDrive.getHeading(AngleUnit.DEGREES);
         double headingError = Utility.wrapDegrees360(targetHeading - currentHeading);
         while( (Math.abs(headingError)>tolerance) && (secondsPassed<timeout)){
-           Utility.clipToRange(headingError, 45, 45);
-            double rotationCorrection = headingError*0.3/45.00;
+           Utility.clipToRange(headingError, 45, -45);
+            double rotationCorrection = (headingError/45.00)*power;
             if (rotationCorrection>0 && rotationCorrection<0.1){
                 rotationCorrection = 0.1;
             }
@@ -239,13 +239,21 @@ public class DriveBrainXDrive {
                 rotationCorrection = -0.1;
             }
            robotXDrive.setDrive(0,0,rotationCorrection,1);
+
             if(Math.abs(rotationCorrection)>0){
                 fail = false;
             }
             else {
                 fail = true;
             }
+
         }
+      robotXDrive.setDriveStop();
         return fail;
+    }
+    public boolean rotateToHeadingRelative(double targetHeading, double tolerance, double power, double timeout){
+        targetHeading += robotXDrive.getHeading(AngleUnit.DEGREES);
+        return rotateToHeadingAbsolute(targetHeading, tolerance,power,timeout);
+
     }
 }
