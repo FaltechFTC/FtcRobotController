@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class faltechBotXDrive {
     static final boolean useColorSensor = false;
     static final boolean useIMU = true;
-
+    private Telemetry telemetry = null;
     private DcMotor front_left = null;
     private DcMotor front_right = null;
     private DcMotor back_left = null;
@@ -50,9 +51,9 @@ a claw system*/
     float colorSensorGain = 2;
     NormalizedColorSensor colorSensor = null;
 
-    public void init(HardwareMap ahwMap) {
+    public void init(HardwareMap ahwMap, Telemetry t) {
         hwMap = ahwMap;
-
+        telemetry = t;
         if (useColorSensor) {
             colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
             colorSensor.setGain(colorSensorGain);
@@ -203,15 +204,26 @@ a claw system*/
 
     }
     public void reportColor(){
-      //  NormalizedRGBA colors = robotXDrive.getRGBA();
-        //telemetry.addLine()
-          //      .addData("Red", "%.3f", colors.red)
-            ///    .addData("Green", "%.3f", colors.green)
-               // .addData("Blue", "%.3f", colors.blue);
-        //telemetry.update();
+        NormalizedRGBA colors = robotXDrive.getRGBA();
+        telemetry.addLine()
+                .addData("Red", "%.3f", colors.red)
+                .addData("Green", "%.3f", colors.green)
+                .addData("Blue", "%.3f", colors.blue);
+        telemetry.update();
     }
-}
-
+    public void reportEncoders(){
+       int fl = front_left.getCurrentPosition();
+       int fr = front_right.getCurrentPosition();
+       int bl = back_left.getCurrentPosition();
+       int br = back_right.getCurrentPosition();
+        telemetry.addLine()
+                .addData("FL",fl)
+                .addData("FR",fr)
+                .addData("BL",bl)
+                .addData("BR",br);
+        telemetry.update();
+    }
+};
 
 
 

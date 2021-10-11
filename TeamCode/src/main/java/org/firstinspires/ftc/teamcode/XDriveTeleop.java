@@ -17,7 +17,7 @@ public class XDriveTeleop extends OpMode {
 
     @Override
     public void init() {
-        robotXDrive.init(hardwareMap);
+        robotXDrive.init(hardwareMap,telemetry);
         driveBrain = new DriveBrainXDrive(robotXDrive, this);
     }
 
@@ -94,7 +94,8 @@ public class XDriveTeleop extends OpMode {
 
         }
         robotXDrive.setDrive(forward, strafe, rotate, 1);
-
+        robotXDrive.reportEncoders();
+        //robotXDrive.colorSensor();
 
        // if (gamepad1.a) {
          //   driveBrain.gyroDrive(.5, 10, 10);
