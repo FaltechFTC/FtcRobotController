@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -222,13 +223,14 @@ public class DriveBrainXDrive {
         robotXDrive.setDriveStop();
         robotXDrive.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public boolean rotateToHeadingAbsolute(double heading , double tolerance, double power, double timeout){
+    public boolean rotateToHeadingAbsolute(double targetHeading , double tolerance, double power, double timeout){
+        boolean fail = true;
+        runtime.reset();
         double secondsPassed = runtime.seconds();
         double currentHeading = robotXDrive.getHeading(AngleUnit.DEGREES);
-        double targetHeading = heading;
-        double headingError = Utility.wrapDegrees360(heading - currentHeading);
-        headingError = targetHeading - currentHeading;
-        while(headingError-0.05>tolerance && secondsPassed<timeout){
+        double headingError = Utility.wrapDegrees360(targetHeading - currentHeading);
+        while( (Math.abs(headingError)>tolerance) && (secondsPassed<timeout)){
+           Utility.clipToRange(headingError, 45, 45);
             double rotationCorrection = headingError*0.3/45.00;
             if (rotationCorrection>0 && rotationCorrection<0.1){
                 rotationCorrection = 0.1;
@@ -236,12 +238,14 @@ public class DriveBrainXDrive {
             if (rotationCorrection<0&&rotationCorrection>-0.1){
                 rotationCorrection = -0.1;
             }
-            double rotate = rotationCorrection;
+           robotXDrive.setDrive(0,0,rotationCorrection,1);
+            if(Math.abs(rotationCorrection)>0){
+                fail = false;
+            }
+            else {
+                fail = true;
+            }
         }
-        boolean fail = false;
         return fail;
-
     }
 }
-
-

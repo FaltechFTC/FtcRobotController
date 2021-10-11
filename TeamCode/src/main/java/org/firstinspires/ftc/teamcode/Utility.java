@@ -16,4 +16,13 @@ public class Utility {
 
         return degrees;
     }
+  public static double clipToRange(double entryNumber, double max, double min){
+        if(entryNumber>max){
+            entryNumber = max;
+        }
+        else if (entryNumber<min){
+            entryNumber = min;
+        }
+        return entryNumber;
+  }
 }
