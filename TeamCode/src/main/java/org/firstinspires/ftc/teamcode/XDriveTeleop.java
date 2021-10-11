@@ -18,6 +18,7 @@ public class XDriveTeleop extends OpMode {
     public void init() {
         robotXDrive.init(hardwareMap,telemetry);
         driveBrain = new DriveBrainXDrive(robotXDrive, this);
+
     }
 
     @Override
@@ -30,6 +31,12 @@ public class XDriveTeleop extends OpMode {
         double forward = 0.5 * gamepad1.left_stick_y;
         double strafe = -0.5 * gamepad1.left_stick_x;
         double rotate = -0.5 * gamepad1.right_stick_x;
+        if(gamepad1.dpad_up){
+            robotXDrive.setDriveStopModeBreak();
+        }
+        if(gamepad1.dpad_down){
+            robotXDrive.setDriveStopModeFloat();
+        }
         if(gamepad1.b){
             driveBrain.rotateToHeadingAbsolute(90,3,0.3,4);
 

@@ -31,7 +31,7 @@ public class faltechBotXDrive {
 /* we might need to leave this code for the arm here so that we can use it later is we are using
 a claw system*/
 
-//    public DcMotor  leftArm     = null;
+    //    public DcMotor  leftArm     = null;
 //    public Servo    leftClaw    = null;
 //    public Servo    rightClaw   = null;
 //    public static final double MID_SERVO       =  0.5 ;
@@ -65,14 +65,14 @@ a claw system*/
             imu.initialize(params);
         }
         // Define and Initialize Motors
-        front_left  = hwMap.get(DcMotor.class, "fldrive");
+        front_left = hwMap.get(DcMotor.class, "fldrive");
         front_right = hwMap.get(DcMotor.class, "frdrive");
-        back_left = hwMap.get(DcMotor.class,"bldrive");
+        back_left = hwMap.get(DcMotor.class, "bldrive");
         back_right = hwMap.get(DcMotor.class, "brdrive");
-        driveMotors[0]=front_left;
-        driveMotors[1]=front_right;
-        driveMotors[2]=back_left;
-        driveMotors[3]=back_right;
+        driveMotors[0] = front_left;
+        driveMotors[1] = front_right;
+        driveMotors[2] = back_left;
+        driveMotors[3] = back_right;
 //        leftArm    = hwMap.get(DcMotor.class, "left_arm");
         front_left.setDirection(DcMotor.Direction.FORWARD);
         front_right.setDirection(DcMotor.Direction.REVERSE);
@@ -95,7 +95,8 @@ a claw system*/
 //        rightClaw.setPosition(MID_SERVO);
 
     }
-    public void setDrive(double forward, double strafe, double rotate, double power){
+
+    public void setDrive(double forward, double strafe, double rotate, double power) {
         //this function will combine wheel commands
 
         double[] wheelpowers = {
@@ -105,8 +106,8 @@ a claw system*/
                 (forward + strafe - rotate),
         };
         double max = Math.abs(wheelpowers[0]);
-        for(int i = 0; i < wheelpowers.length; i++) {
-            if ( max < Math.abs(wheelpowers[i]) ) max = Math.abs(wheelpowers[i]);
+        for (int i = 0; i < wheelpowers.length; i++) {
+            if (max < Math.abs(wheelpowers[i])) max = Math.abs(wheelpowers[i]);
         }
 
         // If and only if the maximum is outside of the range we want it to be,
@@ -121,27 +122,34 @@ a claw system*/
         back_left.setPower(wheelpowers[2]);
         back_right.setPower(wheelpowers[3]);
     }
-    public void setDriveStop(){
-        setDrive(0,0,0,0);
+
+    public void setDriveStop() {
+        setDrive(0, 0, 0, 0);
     }
-    public void setRunMode(DcMotor.RunMode RunMode){
+
+    public void setRunMode(DcMotor.RunMode RunMode) {
         front_left.setMode(RunMode);
         front_right.setMode(RunMode);
         back_left.setMode(RunMode);
         back_right.setMode(RunMode);
     }
-    public void setDriveStopMode(boolean haltOnStop){
-        if (haltOnStop){
-            front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+    public void setDriveStopModeBreak() {
+        DcMotor.ZeroPowerBehavior mode = DcMotor.ZeroPowerBehavior.BRAKE;
+        for (DcMotor m : driveMotors) {
+            m.setZeroPowerBehavior(mode);
         }
-        else {
-            front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+    }
+
+    public void setDriveStopModeFloat() {
+        DcMotor.ZeroPowerBehavior mode = DcMotor.ZeroPowerBehavior.FLOAT;
+        for (DcMotor m : driveMotors) {
+            m.setZeroPowerBehavior(mode);
         }
     }
-    public double convertInchesToCounts(double inches){
+
+    public double convertInchesToCounts(double inches) {
         return COUNTS_PER_INCH * inches;
     }
 
@@ -152,9 +160,12 @@ a claw system*/
 
     public boolean isDriveBusy() {
         boolean motor = false;
-        if (front_left.isBusy()||front_right.isBusy()||back_right.isBusy()||back_left.isBusy()) {motor = true;}
+        if (front_left.isBusy() || front_right.isBusy() || back_right.isBusy() || back_left.isBusy()) {
+            motor = true;
+        }
         return motor;
     }
+
     public int[] getCurPos() {
         curPos[0] = front_left.getCurrentPosition();
         curPos[1] = front_right.getCurrentPosition();
@@ -162,9 +173,10 @@ a claw system*/
         curPos[3] = back_right.getCurrentPosition();
         return curPos;
     }
+
     public void setDriveDeltaPos(int deltaPos, double power) {
 
-        for (DcMotor m: driveMotors) {
+        for (DcMotor m : driveMotors) {
             int curPos = m.getCurrentPosition();
             int newPos = curPos + deltaPos;
             m.setTargetPosition(newPos);
@@ -173,10 +185,11 @@ a claw system*/
             m.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        for (DcMotor m: driveMotors) {
+        for (DcMotor m : driveMotors) {
             m.setPower(Math.abs(power));
         }
     }
+
     public void setDrivePowersTank(double leftPower, double rightPower) {
         front_left.setPower(leftPower);
         back_left.setPower(leftPower);
@@ -187,40 +200,40 @@ a claw system*/
     public NormalizedRGBA getRGBA() {
         if (useColorSensor) {
             return colorSensor.getNormalizedColors();
-        }
-        else {
+        } else {
             return new NormalizedRGBA();
         }
     }
 
     public double getHeading(AngleUnit angleUnit) {
         if (useIMU) {
-            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,angleUnit);
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, angleUnit);
             return angles.firstAngle;
-        }
-        else{
+        } else {
             return 0;
         }
 
     }
-    public void reportColor(){
-       // NormalizedRGBA colors = robotXDrive.getRGBA();
-       // telemetry.addLine()
-         //       .addData("Red", "%.3f", colors.red)
-           //     .addData("Green", "%.3f", colors.green)
-             //   .addData("Blue", "%.3f", colors.blue);
-       // telemetry.update();
+
+    public void reportColor() {
+        // NormalizedRGBA colors = robotXDrive.getRGBA();
+        // telemetry.addLine()
+        //       .addData("Red", "%.3f", colors.red)
+        //     .addData("Green", "%.3f", colors.green)
+        //   .addData("Blue", "%.3f", colors.blue);
+        // telemetry.update();
     }
-    public void reportEncoders(){
-       int fl = front_left.getCurrentPosition();
-       int fr = front_right.getCurrentPosition();
-       int bl = back_left.getCurrentPosition();
-       int br = back_right.getCurrentPosition();
+
+    public void reportEncoders() {
+        int fl = front_left.getCurrentPosition();
+        int fr = front_right.getCurrentPosition();
+        int bl = back_left.getCurrentPosition();
+        int br = back_right.getCurrentPosition();
         telemetry.addLine()
-                .addData("FL",fl)
-                .addData("FR",fr)
-                .addData("BL",bl)
-                .addData("BR",br);
+                .addData("FL", fl)
+                .addData("FR", fr)
+                .addData("BL", bl)
+                .addData("BR", br);
         telemetry.update();
     }
 };
