@@ -194,9 +194,7 @@ a claw system*/
 
     public double getHeading(AngleUnit angleUnit) {
         if (useIMU) {
-            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC,
-                    AxesOrder.ZYX,
-                    angleUnit);
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,angleUnit);
             return angles.firstAngle;
         }
         else{

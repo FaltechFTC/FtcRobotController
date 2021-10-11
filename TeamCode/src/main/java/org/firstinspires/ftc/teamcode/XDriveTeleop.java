@@ -32,8 +32,10 @@ public class XDriveTeleop extends OpMode {
         double strafe = -0.5 * gamepad1.left_stick_x;
         double rotate = -0.5 * gamepad1.right_stick_x;
         if(gamepad1.b){
-            driveBrain.rotateToHeadingAbsolute(90,3,1,5);
+            driveBrain.rotateToHeadingAbsolute(90,5,1,1);
+            return;
         }
+
         if(gamepad1.right_trigger==0.00){
             telemetry.addData("T-Mode", T_Mode);
         }

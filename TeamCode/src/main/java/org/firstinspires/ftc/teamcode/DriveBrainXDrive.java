@@ -21,7 +21,7 @@ public class DriveBrainXDrive {
     static final double     HEADING_THRESHOLD       = 1 ;
 
     public DriveBrainXDrive(faltechBotXDrive therobotXDrive, OpMode theopmode) {
-        therobotXDrive = therobotXDrive;
+        robotXDrive = therobotXDrive;
         opmode = theopmode;
     }
 
