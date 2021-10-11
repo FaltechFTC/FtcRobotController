@@ -14,7 +14,6 @@ public class XDriveTeleop extends OpMode {
     double fixedHeading = 0;
 
 
-
     @Override
     public void init() {
         robotXDrive.init(hardwareMap,telemetry);
@@ -33,6 +32,7 @@ public class XDriveTeleop extends OpMode {
         double rotate = -0.5 * gamepad1.right_stick_x;
         if(gamepad1.b){
             driveBrain.rotateToHeadingAbsolute(90,3,0.3,4);
+
             return;
         }
         if (gamepad1.x){
