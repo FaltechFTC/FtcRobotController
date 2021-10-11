@@ -10,7 +10,7 @@ public class XDriveTeleopVision extends OpMode {
 
     @Override
     public void init() {
-        robotXDrive.init(hardwareMap);
+        robotXDrive.init(hardwareMap,telemetry);
         driveBrain = new DriveBrainXDrive(robotXDrive, this);
         visionXDrive = new XDriveVisionBrain();
     }
