@@ -106,6 +106,9 @@ public class XDriveTeleop extends OpMode {
         }
         robotXDrive.setDrive(forward, strafe, rotate, 1);
         robotXDrive.reportEncoders();
+        robotXDrive.calculateXDriveMotors(gamepad1.left_stick_x, gamepad1.left_stick_y, rotate);
+
+                ;
         //robotXDrive.colorSensor();
 
         // if (gamepad1.a) {
