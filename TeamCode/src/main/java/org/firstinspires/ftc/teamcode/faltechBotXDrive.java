@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class faltechBotXDrive {
+    faltechBotXDrive robotXDrive = new faltechBotXDrive();
     static final boolean useColorSensor = false;
     static final boolean useIMU = true;
     private Telemetry telemetry = null;
@@ -199,14 +200,15 @@ a claw system*/
         }
 
     }
-
-    public void reportColor() {
-        // NormalizedRGBA colors = robotXDrive.getRGBA();
-        // telemetry.addLine()
-        //       .addData("Red", "%.3f", colors.red)
-        //     .addData("Green", "%.3f", colors.green)
-        //   .addData("Blue", "%.3f", colors.blue);
-        // telemetry.update();
+    public void reportColor(){
+        if (useColorSensor) {
+            NormalizedRGBA colors = robotXDrive.getRGBA();
+            telemetry.addLine()
+                    .addData("Red", "%.3f", colors.red)
+                    .addData("Green", "%.3f", colors.green)
+                    .addData("Blue", "%.3f", colors.blue);
+            telemetry.update();
+        }
     }
 
     public void reportEncoders() {
@@ -251,7 +253,25 @@ a claw system*/
         back_left.setPower(wheelpowers[2]);
         back_right.setPower(wheelpowers[3]);
     }
-};
+
+    public double[] calculateXDriveMotors (double gamepadx, double gamepady, double rotate) {
+        double heading = Math.atan2(gamepadx,gamepady);
+        double power = Math.sqrt((gamepadx*gamepadx)-(gamepady*gamepady));
+        double m0, m1, m2, m3;
+        m0 = power * -Math.sin(heading-(Math.PI/4))-rotate;
+        m1 = power * Math.cos(heading+(Math.PI/4))-rotate;
+        m2 = power * Math.sin(heading+(Math.PI/4))-rotate;
+        m3 = power * -Math.cos(heading-(Math.PI/4))-rotate;
+        double[] XDriveMotors = {m0, m1, m2, m3};
+        telemetry.addLine()
+                .addData("Motor 0",m0)
+                .addData("Motor 1", m1)
+                .addData("Motor 2", m2)
+                .addData("Motor 3", m3);
+        telemetry.update();
+        return XDriveMotors;
+    }
+}
 
 
 
