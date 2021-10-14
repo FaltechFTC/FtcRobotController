@@ -105,22 +105,7 @@ a claw system*/
                 (forward - strafe + rotate),
                 (forward + strafe - rotate),
         };
-        double max = Math.abs(wheelpowers[0]);
-        for (int i = 0; i < wheelpowers.length; i++) {
-            if (max < Math.abs(wheelpowers[i])) max = Math.abs(wheelpowers[i]);
-        }
-
-        // If and only if the maximum is outside of the range we want it to be,
-        // normalize all the other speeds based on the given speed value.
-        if (max > 1) {
-            for (int i = 0; i < wheelpowers.length; i++) wheelpowers[i] /= max;
-        }
-
-        // apply the calculated values to the motors.
-        front_left.setPower(wheelpowers[0]);
-        front_right.setPower(wheelpowers[1]);
-        back_left.setPower(wheelpowers[2]);
-        back_right.setPower(wheelpowers[3]);
+       setDrivePower(wheelpowers);
     }
 
     public void setDriveStop() {
@@ -235,6 +220,36 @@ a claw system*/
                 .addData("BL", bl)
                 .addData("BR", br);
         telemetry.update();
+    }
+    public void setTwoWheelDrive(double forward, double strafe, double rotate) {
+        //this function will combine wheel commands
+
+        double[] wheelpowers = {
+                (strafe + rotate),
+                (forward - rotate),
+                (strafe + rotate),
+                (forward - rotate),
+        };
+
+
+        // apply the calculated values to the motors.
+       setDrivePower(wheelpowers);
+    }
+    public void setDrivePower(double [] wheelpowers){
+        double max = Math.abs(wheelpowers[0]);
+        for (int i = 0; i < wheelpowers.length; i++) {
+            if (max < Math.abs(wheelpowers[i])) max = Math.abs(wheelpowers[i]);
+        }
+
+        // If and only if the maximum is outside of the range we want it to be,
+        // normalize all the other speeds based on the given speed value.
+        if (max > 1) {
+            for (int i = 0; i < wheelpowers.length; i++) wheelpowers[i] /= max;
+        }
+        front_left.setPower(wheelpowers[0]);
+        front_right.setPower(wheelpowers[1]);
+        back_left.setPower(wheelpowers[2]);
+        back_right.setPower(wheelpowers[3]);
     }
 };
 

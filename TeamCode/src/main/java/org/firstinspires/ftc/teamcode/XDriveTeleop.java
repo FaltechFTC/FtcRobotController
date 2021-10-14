@@ -64,6 +64,8 @@ public class XDriveTeleop extends OpMode {
                 // because we are going forward, we will kill the strafe
                 // forward = forward;
             }
+            robotXDrive.setTwoWheelDrive(forward, strafe, rotate);
+            return;
         }
         if (gamepad1.right_bumper) {
             forward = forward * 2;
