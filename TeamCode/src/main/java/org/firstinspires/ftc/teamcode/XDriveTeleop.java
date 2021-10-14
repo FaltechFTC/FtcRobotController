@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -24,8 +21,7 @@ public class XDriveTeleop extends OpMode {
 
     @Override
     public void loop() {
-
-
+        
         boolean T_Mode = false;
         Utility.deadStick(gamepad1.left_stick_x);
         Utility.deadStick(gamepad1.left_stick_y);
@@ -76,7 +72,7 @@ public class XDriveTeleop extends OpMode {
         telemetry.addData("Our Heading", currentHeading);
         if (gamepad1.left_trigger == 0.00) {
             fixedHeading = currentHeading;
-            if (gamepad1.a) {
+            if (gamepad1.a && gamepad1.left_trigger == 0.00) {
                 fixedHeading += 180;
             }
         }
@@ -106,17 +102,9 @@ public class XDriveTeleop extends OpMode {
             telemetry.addData("Rotation Correction", rotationCorrection);
 
         }
+        robotXDrive.arm.setPosition(gamepad2.right_stick_x);
         robotXDrive.setDrive(forward, strafe, rotate, 1);
         robotXDrive.reportEncoders();
         robotXDrive.calculateXDriveMotors(gamepad1.left_stick_x, gamepad1.left_stick_y, rotate);
-
-                ;
-        //robotXDrive.colorSensor();
-
-        // if (gamepad1.a) {
-        //   driveBrain.gyroDrive(.5, 10, 10);
-        // driveBrain.gyroTurn(.5, 10);
-        //
-        // }
     }
 }

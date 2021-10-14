@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "XDriveAutonomous", group = "7079")
+@Autonomous(name = "XDriveMenuDriven", group = "7079")
 @Disabled
-public class XDriveAutonomous extends LinearOpMode {
+public class MenuDriven extends LinearOpMode {
     faltechBotXDrive robotXDrive = new faltechBotXDrive();
     DriveBrainXDrive driveBrain;
     Utility Utility;
@@ -21,7 +21,6 @@ public class XDriveAutonomous extends LinearOpMode {
     static final double     TURN_SPEED    = 0.5;
     static final double     STRAFE_SPEED  = 0.5;
     static final double     POWER         = 1.0;
-
     public void runOpMode() {
 
         /*
@@ -45,47 +44,12 @@ public class XDriveAutonomous extends LinearOpMode {
         robotXDrive.setDrive(FORWARD_SPEED, 0, 0,POWER);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 3.0)) {
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
+            if (gamepad1.a) {
+                robotXDrive.setDrive(5, 0, 90, POWER);
+            }
+
         }
-
-        // Step 2:  Spin right for 1.3 seconds
-
-        robotXDrive.setDrive(0,0,TURN_SPEED, POWER);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.3)) {
-            telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        // Step 3:  Drive Backwards for 1 Second
-        robotXDrive.setDrive(-FORWARD_SPEED, 0,0,POWER);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-            telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        robotXDrive.setDrive(0,STRAFE_SPEED,0,POWER);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
-            telemetry.addData("Path", "Leg 4: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        robotXDrive.setDrive(0,-STRAFE_SPEED,0,POWER);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
-            telemetry.addData("Path", "Leg 5: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        // Step 4:  Stop and close the claw.
-        
         robotXDrive.setDriveStop();
-        robotXDrive.arm.setPosition(1.0);
-        robotXDrive.arm.setPosition(0.0);
-
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);
