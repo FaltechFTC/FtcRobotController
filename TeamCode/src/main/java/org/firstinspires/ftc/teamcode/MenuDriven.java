@@ -17,9 +17,9 @@ public class MenuDriven extends LinearOpMode {
     OpMode opmode;
     XDriveVisionBrain visionXDrive;
 
-    static final double     FORWARD_SPEED = 0.6;
-    static final double     TURN_SPEED    = 0.5;
-    static final double     STRAFE_SPEED  = 0.5;
+//    static final double     FORWARD = 0.6;
+//    static final double     TURN    = 0.5;
+//    static final double     STRAFE  = 0.5;
     static final double     POWER         = 1.0;
     public void runOpMode() {
 
@@ -41,11 +41,15 @@ public class MenuDriven extends LinearOpMode {
 
         // Step 1:  Drive forward for 3 seconds
 
-        robotXDrive.setDrive(FORWARD_SPEED, 0, 0,POWER);
+
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 3.0)) {
             if (gamepad1.a) {
                 robotXDrive.setDrive(5, 0, 90, POWER);
+            }
+            if (gamepad1.b) {
+                robotXDrive.setDrive(10,28, 47, POWER);
+                robotXDrive.arm.setPosition(90);
             }
 
         }

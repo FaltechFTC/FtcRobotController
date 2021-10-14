@@ -17,9 +17,9 @@ public class XDriveAutonomous extends LinearOpMode {
     OpMode opmode;
     XDriveVisionBrain visionXDrive;
 
-    static final double     FORWARD_SPEED = 0.6;
-    static final double     TURN_SPEED    = 0.5;
-    static final double     STRAFE_SPEED  = 0.5;
+//    static final double     FORWARD_SPEED = 0.6;
+//    static final double     TURN_SPEED    = 0.5;
+//    static final double     STRAFE_SPEED  = 0.5;
     static final double     POWER         = 1.0;
 
     public void runOpMode() {
@@ -42,7 +42,7 @@ public class XDriveAutonomous extends LinearOpMode {
 
         // Step 1:  Drive forward for 3 seconds
 
-        robotXDrive.setDrive(FORWARD_SPEED, 0, 0,POWER);
+        robotXDrive.setDrive(5, 0, 0,POWER);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 3.0)) {
             telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
@@ -51,7 +51,7 @@ public class XDriveAutonomous extends LinearOpMode {
 
         // Step 2:  Spin right for 1.3 seconds
 
-        robotXDrive.setDrive(0,0,TURN_SPEED, POWER);
+        robotXDrive.setDrive(0,0,90, POWER);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.3)) {
             telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
@@ -59,21 +59,21 @@ public class XDriveAutonomous extends LinearOpMode {
         }
 
         // Step 3:  Drive Backwards for 1 Second
-        robotXDrive.setDrive(-FORWARD_SPEED, 0,0,POWER);
+        robotXDrive.setDrive(-5, 0,0,POWER);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.0)) {
             telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
-        robotXDrive.setDrive(0,STRAFE_SPEED,0,POWER);
+        robotXDrive.setDrive(0,10,0,POWER);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 2.0)) {
             telemetry.addData("Path", "Leg 4: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
-        robotXDrive.setDrive(0,-STRAFE_SPEED,0,POWER);
+        robotXDrive.setDrive(0,-5,0,POWER);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 2.0)) {
             telemetry.addData("Path", "Leg 5: %2.5f S Elapsed", runtime.seconds());
