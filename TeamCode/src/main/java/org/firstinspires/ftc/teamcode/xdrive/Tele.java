@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name = "Teleop XDrive", group = "7079")
+@TeleOp(name = "Tele", group = "7079")
 public class Tele extends OpMode {
     Robot robot = new Robot();
     DriveBrain driveBrain;

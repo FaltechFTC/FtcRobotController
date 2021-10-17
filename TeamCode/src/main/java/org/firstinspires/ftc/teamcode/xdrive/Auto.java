@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Auto XDrive", group = "7079")
+@Autonomous(name = "Auto", group = "7079")
 @Disabled
 public class Auto extends LinearOpMode {
     Robot robotXDrive = new Robot();

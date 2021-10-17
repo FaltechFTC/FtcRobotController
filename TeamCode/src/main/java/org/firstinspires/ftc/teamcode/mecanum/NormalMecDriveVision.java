@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.mecanum;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
  *
  */
 @TeleOp(name="Teleop MecanumVision", group="7079")
+@Disabled
 public class NormalMecDriveVision extends OpMode {
     faltechBotMecanum robot       = new faltechBotMecanum(); // use the class created to define a Pushbot's hardware
 
