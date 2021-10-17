@@ -83,8 +83,8 @@ public class Auto extends LinearOpMode {
         // Step 4:  Stop and close the claw.
         
         robotXDrive.setDriveStop();
-        robotXDrive.arm.setPosition(1.0);
-        robotXDrive.arm.setPosition(0.0);
+//        robotXDrive.arm.setPosition(1.0);
+//        robotXDrive.arm.setPosition(0.0);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

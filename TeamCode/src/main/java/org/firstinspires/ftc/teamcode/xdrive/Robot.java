@@ -17,7 +17,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Robot {
-    Robot robotXDrive = new Robot();
     static final boolean useColorSensor = false;
     static final boolean useIMU = true;
     private Telemetry telemetry = null;
@@ -74,7 +73,7 @@ a claw system*/
         driveMotors[1] = back_left;
         driveMotors[2] = front_left;
         driveMotors[3] = back_right;
-        arm = hwMap.get(Servo.class, "arm");
+//        arm = hwMap.get(Servo.class, "arm");
         front_left.setDirection(DcMotor.Direction.FORWARD);
         front_right.setDirection(DcMotor.Direction.REVERSE);
         back_left.setDirection(DcMotor.Direction.FORWARD);
@@ -263,7 +262,7 @@ a claw system*/
 
     public void reportColor(){
         if (useColorSensor) {
-            NormalizedRGBA colors = robotXDrive.getRGBA();
+            NormalizedRGBA colors = getRGBA();
             telemetry.addLine()
                     .addData("Sensor Red", "%.3f", colors.red)
                     .addData("Green", "%.3f", colors.green)

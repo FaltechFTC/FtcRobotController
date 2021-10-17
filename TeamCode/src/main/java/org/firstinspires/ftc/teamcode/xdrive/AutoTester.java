@@ -49,7 +49,7 @@ public class AutoTester extends LinearOpMode {
             }
             if (gamepad1.b) {
                 robotXDrive.setDrive(10,28, 47, POWER);
-                robotXDrive.arm.setPosition(90);
+//                robotXDrive.arm.setPosition(90);
             }
 
         }

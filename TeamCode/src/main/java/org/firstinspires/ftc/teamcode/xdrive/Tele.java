@@ -102,7 +102,7 @@ public class Tele extends OpMode {
             telemetry.addData("Rotation Correction", rotationCorrection);
 
         }
-        robot.arm.setPosition(gamepad2.right_stick_x);
+        //robot.arm.setPosition(gamepad2.right_stick_x);
         robot.setDrive(forward, strafe, rotate, 1);
         robot.reportEncoders();
 
