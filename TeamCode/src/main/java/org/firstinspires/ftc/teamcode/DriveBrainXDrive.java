@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -37,8 +37,9 @@ public class DriveBrainXDrive {
     }
 
     public boolean opModeIsActive() {
-        return true;
-//        opmode.OpModeIsActive();
+        if (opmode instanceof LinearOpMode)
+            return ((LinearOpMode)opmode).opModeIsActive();
+        else return false;
     }
 
     public void driveDistance(double inches, double power, double timeoutSeconds) {

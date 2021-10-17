@@ -97,27 +97,10 @@ a claw system*/
 
     }
 
-    public void setDrive(double forward, double strafe, double rotate, double power) {
-        //this function will combine wheel commands
-
-        double[] wheelpowers = {
-                (forward + strafe + rotate),
-                (forward - strafe - rotate),
-                (forward - strafe + rotate),
-                (forward + strafe - rotate),
-        };
-       setDrivePower(wheelpowers);
-    }
-
-    public void setDriveStop() {
-        setDrive(0, 0, 0, 0);
-    }
-
-    public void setRunMode(DcMotor.RunMode RunMode) {
-        front_left.setMode(RunMode);
-        front_right.setMode(RunMode);
-        back_left.setMode(RunMode);
-        back_right.setMode(RunMode);
+    public void setRunMode(DcMotor.RunMode mode) {
+        for (DcMotor m : driveMotors) {
+            m.setMode(mode);
+        }
     }
 
     public void setDriveStopModeBreak() {
@@ -160,6 +143,37 @@ a claw system*/
         return curPos;
     }
 
+
+    public void setDrivePower(double [] wheelpowers){
+        double max = Math.abs(wheelpowers[0]);
+        for (int i = 0; i < wheelpowers.length; i++) {
+            if (max < Math.abs(wheelpowers[i])) max = Math.abs(wheelpowers[i]);
+        }
+
+        // If and only if the maximum is outside of the range we want it to be,
+        // normalize all the other speeds based on the given speed value.
+        if (max > 1) {
+            for (int i = 0; i < wheelpowers.length; i++) wheelpowers[i] /= max;
+        }
+
+        front_left.setPower(wheelpowers[0]);
+        front_right.setPower(wheelpowers[1]);
+        back_left.setPower(wheelpowers[2]);
+        back_right.setPower(wheelpowers[3]);
+
+        reportDrivePowers(wheelpowers);
+    }
+
+    public void setDrive(double forward, double strafe, double rotate, double power) {
+        double[] powers = calculateDrivePowersFSRSimple(forward, strafe, rotate);
+        setDrivePower(powers);
+    }
+
+    public void setDriveStop() {
+        double[] powers = {0,0,0,0};
+        setDrivePower(powers);
+    }
+
     public void setDriveDeltaPos(int deltaPos, double power) {
 
         for (DcMotor m : driveMotors) {
@@ -177,10 +191,67 @@ a claw system*/
     }
 
     public void setDrivePowersTank(double leftPower, double rightPower) {
-        front_left.setPower(leftPower);
-        back_left.setPower(leftPower);
-        front_right.setPower(rightPower);
-        back_right.setPower(rightPower);
+        double[] wheelpowers = { leftPower, rightPower, leftPower, rightPower };
+
+        setDrivePower(wheelpowers); // apply the calculated values to the motors.
+    }
+
+    public void setTwoWheelDrive(double forward, double strafe, double rotate) {
+        //this function will combine wheel commands
+        double[] wheelpowers = {
+                (strafe + rotate),
+                (forward - rotate),
+                (strafe + rotate),
+                (forward - rotate),
+        };
+
+        setDrivePower(wheelpowers); // apply the calculated values to the motors.
+    }
+
+    public double[] calculateDrivePowersFSRSimple (double forward, double strafe, double rotate) {
+       double[] powers = {
+                (forward + strafe + rotate),
+                (forward - strafe - rotate),
+                (forward - strafe + rotate),
+                (forward + strafe - rotate),
+        };
+        return powers;
+    }
+
+    public double[] calculateDrivePowers(double heading, double power, double rotate) {
+        double m0, m1, m2, m3;
+        m0 = power * -Math.sin(heading-(Math.PI/4))-rotate;
+        m1 = power * Math.cos(heading+(Math.PI/4))-rotate;
+        m2 = power * Math.sin(heading+(Math.PI/4))-rotate;
+        m3 = power * -Math.cos(heading-(Math.PI/4))-rotate;
+        double[] XDriveMotors = {m0, m1, m2, m3};
+        return XDriveMotors;
+    }
+
+    public double[] calculateDrivePowersFSR (double gamepadx, double gamepady, double rotate) {
+        double heading = Math.atan2(gamepadx,gamepady);
+        double power = Math.sqrt((gamepadx*gamepadx)-(gamepady*gamepady));
+        return calculateDrivePowers(heading,power,rotate);
+    }
+
+    public void reportDrivePowers(double [] powers) {
+        telemetry.addLine()
+                .addData("XDrive Power FL",powers[0])
+                .addData("FR", powers[0])
+                .addData("BL", powers[0])
+                .addData("BR", powers[0]);
+    }
+
+    public void reportEncoders() {
+        int fl = front_left.getCurrentPosition();
+        int fr = front_right.getCurrentPosition();
+        int bl = back_left.getCurrentPosition();
+        int br = back_right.getCurrentPosition();
+        telemetry.addLine()
+                .addData("Encoder FL", fl)
+                .addData("FR", fr)
+                .addData("BL", bl)
+                .addData("BR", br);
     }
 
     public NormalizedRGBA getRGBA() {
@@ -188,6 +259,16 @@ a claw system*/
             return colorSensor.getNormalizedColors();
         } else {
             return new NormalizedRGBA();
+        }
+    }
+
+    public void reportColor(){
+        if (useColorSensor) {
+            NormalizedRGBA colors = robotXDrive.getRGBA();
+            telemetry.addLine()
+                    .addData("Sensor Red", "%.3f", colors.red)
+                    .addData("Green", "%.3f", colors.green)
+                    .addData("Blue", "%.3f", colors.blue);
         }
     }
 
@@ -200,79 +281,5 @@ a claw system*/
         }
 
     }
-    public void reportColor(){
-        if (useColorSensor) {
-            NormalizedRGBA colors = robotXDrive.getRGBA();
-            telemetry.addLine()
-                    .addData("Red", "%.3f", colors.red)
-                    .addData("Green", "%.3f", colors.green)
-                    .addData("Blue", "%.3f", colors.blue);
-            telemetry.update();
-        }
-    }
 
-    public void reportEncoders() {
-        int fl = front_left.getCurrentPosition();
-        int fr = front_right.getCurrentPosition();
-        int bl = back_left.getCurrentPosition();
-        int br = back_right.getCurrentPosition();
-        telemetry.addLine()
-                .addData("FL", fl)
-                .addData("FR", fr)
-                .addData("BL", bl)
-                .addData("BR", br);
-        telemetry.update();
-    }
-    public void setTwoWheelDrive(double forward, double strafe, double rotate) {
-        //this function will combine wheel commands
-
-        double[] wheelpowers = {
-                (strafe + rotate),
-                (forward - rotate),
-                (strafe + rotate),
-                (forward - rotate),
-        };
-
-
-        // apply the calculated values to the motors.
-       setDrivePower(wheelpowers);
-    }
-    public void setDrivePower(double [] wheelpowers){
-        double max = Math.abs(wheelpowers[0]);
-        for (int i = 0; i < wheelpowers.length; i++) {
-            if (max < Math.abs(wheelpowers[i])) max = Math.abs(wheelpowers[i]);
-        }
-
-        // If and only if the maximum is outside of the range we want it to be,
-        // normalize all the other speeds based on the given speed value.
-        if (max > 1) {
-            for (int i = 0; i < wheelpowers.length; i++) wheelpowers[i] /= max;
-        }
-        front_left.setPower(wheelpowers[0]);
-        front_right.setPower(wheelpowers[1]);
-        back_left.setPower(wheelpowers[2]);
-        back_right.setPower(wheelpowers[3]);
-    }
-
-    public double[] calculateXDriveMotors (double gamepadx, double gamepady, double rotate) {
-        double heading = Math.atan2(gamepadx,gamepady);
-        double power = Math.sqrt((gamepadx*gamepadx)-(gamepady*gamepady));
-        double m0, m1, m2, m3;
-        m0 = power * -Math.sin(heading-(Math.PI/4))-rotate;
-        m1 = power * Math.cos(heading+(Math.PI/4))-rotate;
-        m2 = power * Math.sin(heading+(Math.PI/4))-rotate;
-        m3 = power * -Math.cos(heading-(Math.PI/4))-rotate;
-        double[] XDriveMotors = {m0, m1, m2, m3};
-        telemetry.addLine()
-                .addData("Motor 0",m0)
-                .addData("Motor 1", m1)
-                .addData("Motor 2", m2)
-                .addData("Motor 3", m3);
-        telemetry.update();
-        return XDriveMotors;
-    }
 }
-
-
-
-
