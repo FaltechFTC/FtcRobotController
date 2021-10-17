@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.coachexamples;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -50,8 +51,9 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
+
 @TeleOp(name = "Coach: Ruckus TensorFlow Webcam", group = "7079")
-//@Disabled
+@Disabled
 public class RuckusTensorFlowWebcam extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Gold Mineral";

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "XDriveMenuDriven", group = "7079")
+@Autonomous(name = "Auto XDrive MenuDriven", group = "7079")
 @Disabled
 public class MenuDriven extends LinearOpMode {
     faltechBotXDrive robotXDrive = new faltechBotXDrive();
