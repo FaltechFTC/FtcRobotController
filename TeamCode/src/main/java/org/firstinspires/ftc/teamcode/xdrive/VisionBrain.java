@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -50,7 +50,7 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  **/
-public class XDriveVisionBrain {
+public class VisionBrain {
     faltechBotMecanum robot       = new faltechBotMecanum();
     OpMode opmode;
     TFObjectDetector tfod = null;

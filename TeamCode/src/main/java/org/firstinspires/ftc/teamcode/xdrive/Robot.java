@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.xdrive;
 
-import static org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot.MID_SERVO;
+
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,8 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-public class faltechBotXDrive {
-    faltechBotXDrive robotXDrive = new faltechBotXDrive();
+public class Robot {
+    Robot robotXDrive = new Robot();
     static final boolean useColorSensor = false;
     static final boolean useIMU = true;
     private Telemetry telemetry = null;
@@ -70,9 +70,9 @@ a claw system*/
         front_right = hwMap.get(DcMotor.class, "frdrive");
         back_left = hwMap.get(DcMotor.class, "bldrive");
         back_right = hwMap.get(DcMotor.class, "brdrive");
-        driveMotors[0] = front_left;
-        driveMotors[1] = front_right;
-        driveMotors[2] = back_left;
+        driveMotors[0] = front_right;
+        driveMotors[1] = back_left;
+        driveMotors[2] = front_left;
         driveMotors[3] = back_right;
         arm = hwMap.get(Servo.class, "arm");
         front_left.setDirection(DcMotor.Direction.FORWARD);
@@ -92,7 +92,7 @@ a claw system*/
         // Define and initialize ALL installed servos.
 //        leftClaw  = hwMap.get(Servo.class, "left_hand");
 //        rightClaw = hwMap.get(Servo.class, "right_hand");
-        arm.setPosition(MID_SERVO);
+        //arm.setPosition(MID_SERVO);
 //        rightClaw.setPosition(MID_SERVO);
 
     }
@@ -123,7 +123,6 @@ a claw system*/
     }
 
     public double convertCountsToInches(double counts) {
-
         return counts / COUNTS_PER_INCH;
     }
 

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -8,14 +8,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Auto XDrive MenuDriven", group = "7079")
 @Disabled
-public class MenuDriven extends LinearOpMode {
-    faltechBotXDrive robotXDrive = new faltechBotXDrive();
-    DriveBrainXDrive driveBrain;
-    Utility Utility;
+public class AutoTester extends LinearOpMode {
+    Robot robotXDrive = new Robot();
+    DriveBrain driveBrain;
+    org.firstinspires.ftc.teamcode.Utility Utility;
     double fixedHeading = 0;
     private ElapsedTime runtime = new ElapsedTime();
     OpMode opmode;
-    XDriveVisionBrain visionXDrive;
+    VisionBrain visionXDrive;
 
 //    static final double     FORWARD = 0.6;
 //    static final double     TURN    = 0.5;

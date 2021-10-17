@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,11 +8,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Utility;
 
 
-public class DriveBrainXDrive {
+public class DriveBrain {
 
-    faltechBotXDrive robotXDrive;
+    Robot robot;
     OpMode opmode;
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -20,20 +21,20 @@ public class DriveBrainXDrive {
     static final double P_TURN_COEFF = 0.1;
     static final double HEADING_THRESHOLD = 1;
 
-    public DriveBrainXDrive(faltechBotXDrive therobotXDrive, OpMode theopmode) {
-        robotXDrive = therobotXDrive;
+    public DriveBrain(Robot therobot, OpMode theopmode) {
+        robot = therobot;
         opmode = theopmode;
     }
 
     public void driveTime(double forward, double strafe, double rotate, double power, double timeoutSeconds) {
-        robotXDrive.setDrive(forward, strafe, rotate, power);
+        robot.setDrive(forward, strafe, rotate, power);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < timeoutSeconds)) {
             opmode.telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
             opmode.telemetry.update();
 
         }
-        robotXDrive.setDriveStop();
+        robot.setDriveStop();
     }
 
     public boolean opModeIsActive() {
@@ -49,18 +50,18 @@ public class DriveBrainXDrive {
 
         if (inches < 0) forward = forward;
         if (opModeIsActive()) {
-            robotXDrive.setDriveDeltaPos(10, .5);
-            robotXDrive.setDrive(forward, 0, 0, 1.0);
+            robot.setDriveDeltaPos(10, .5);
+            robot.setDrive(forward, 0, 0, 1.0);
         }
-        while (opModeIsActive() && (runtime.seconds() < timeoutSeconds) && robotXDrive.isDriveBusy()) {
+        while (opModeIsActive() && (runtime.seconds() < timeoutSeconds) && robot.isDriveBusy()) {
 
             // Display it for the driver.
-            opmode.telemetry.addData("Path1", "Running to %7d :%7d", robotXDrive.convertCountsToInches(inches));
-            opmode.telemetry.addData("Path2", "Running at %7d :%7d", robotXDrive.getCurPos());
+            opmode.telemetry.addData("Path1", "Running to %7d :%7d", robot.convertCountsToInches(inches));
+            opmode.telemetry.addData("Path2", "Running at %7d :%7d", robot.getCurPos());
             opmode.telemetry.update();
         }
-        robotXDrive.setDriveStop();
-        robotXDrive.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setDriveStop();
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void gyroDrive(double speed, double distance, double angle) {
@@ -76,17 +77,17 @@ public class DriveBrainXDrive {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            moveCounts = (int) (distance * robotXDrive.convertCountsToInches(distance));
+            moveCounts = (int) (distance * robot.convertCountsToInches(distance));
 
-            robotXDrive.setDriveDeltaPos(moveCounts, .5);
+            robot.setDriveDeltaPos(moveCounts, .5);
 
             // start motion.
             speed = Range.clip(Math.abs(speed), 0.0, 1.0);
-            robotXDrive.setDrivePowersTank(speed, speed);
+            robot.setDrivePowersTank(speed, speed);
 
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
-                    (robotXDrive.isDriveBusy())) {
+                    (robot.isDriveBusy())) {
 
                 // adjust relative speed based on heading error.
                 error = getError(angle);
@@ -106,18 +107,18 @@ public class DriveBrainXDrive {
                     rightSpeed /= max;
                 }
 
-                robotXDrive.setDrivePowersTank(leftSpeed, rightSpeed);
+                robot.setDrivePowersTank(leftSpeed, rightSpeed);
 
                 // Display drive status for the driver.
                 opmode.telemetry.addData("Err/St", "%5.1f/%5.1f", error, steer);
                 opmode.telemetry.addData("Target", "%7d", newTarget);
-                opmode.telemetry.addData("Actual", "%7d", robotXDrive.getCurPos());
+                opmode.telemetry.addData("Actual", "%7d", robot.getCurPos());
                 opmode.telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
                 opmode.telemetry.update();
             }
 
             // Stop all motion;
-            robotXDrive.setDriveStop();
+            robot.setDriveStop();
         }
     }
 
@@ -126,7 +127,7 @@ public class DriveBrainXDrive {
         double robotError;
 
         // calculate error in -179 to +180 range  (
-        robotError = targetAngle - robotXDrive.getHeading(AngleUnit.DEGREES);
+        robotError = targetAngle - robot.getHeading(AngleUnit.DEGREES);
         while (robotError > 180) robotError -= 360;
         while (robotError <= -180) robotError += 360;
         return robotError;
@@ -156,7 +157,7 @@ public class DriveBrainXDrive {
         }
 
         // Stop all motion;
-        robotXDrive.setDriveStop();
+        robot.setDriveStop();
     }
 
     public void gyroTurn(double speed, double angle) {
@@ -189,7 +190,7 @@ public class DriveBrainXDrive {
         }
 
         // Send desired speeds to motors.
-        robotXDrive.setDrivePowersTank(leftSpeed, rightSpeed);
+        robot.setDrivePowersTank(leftSpeed, rightSpeed);
 
         // Display it for the driver.
         opmode.telemetry.addData("Target", "%5.2f", angle);
@@ -211,14 +212,14 @@ public class DriveBrainXDrive {
         double forward = power;
 
         if (opModeIsActive()) {
-            robotXDrive.setDrive(forward, 0, 0, power);
+            robot.setDrive(forward, 0, 0, power);
         }
 
-        NormalizedRGBA rgba = robotXDrive.getRGBA();
+        NormalizedRGBA rgba = robot.getRGBA();
         boolean white = checkWhite(rgba);
 
         while (opModeIsActive() && (runtime.seconds() < timeoutSeconds) && !white) {
-            rgba = robotXDrive.getRGBA();
+            rgba = robot.getRGBA();
             white = checkWhite(rgba);
 
             // Display it for the driver.
@@ -226,17 +227,17 @@ public class DriveBrainXDrive {
             opmode.telemetry.update();
         }
 
-        robotXDrive.setDriveStop();
-        robotXDrive.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setDriveStop();
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public boolean rotateToHeadingAbsolute(double targetHeading, double tolerance, double power, double timeout) {
         boolean fail = true;
         runtime.reset();
-        double currentHeading = robotXDrive.getHeading(AngleUnit.DEGREES);
+        double currentHeading = robot.getHeading(AngleUnit.DEGREES);
         double headingError = Utility.wrapDegrees360(targetHeading - currentHeading);
         while ((Math.abs(headingError) > tolerance) && (runtime.seconds() < timeout)) {
-            currentHeading = robotXDrive.getHeading(AngleUnit.DEGREES);
+            currentHeading = robot.getHeading(AngleUnit.DEGREES);
             headingError = Utility.wrapDegrees360(targetHeading-currentHeading);
             headingError = Utility.clipToRange(headingError, 45, -45);
             if (Math.abs(headingError) < Math.min(.5,tolerance)) {
@@ -249,19 +250,19 @@ public class DriveBrainXDrive {
             if (rotationCorrection < 0 && rotationCorrection > -0.1) {
                 rotationCorrection = -0.1;
             }
-            robotXDrive.setDrive(0, 0, rotationCorrection, 1);
+            robot.setDrive(0, 0, rotationCorrection, 1);
 
             opmode.telemetry.addData("Rotation Correction:", rotationCorrection);
             opmode.telemetry.addData("Heading Error:", headingError);
             opmode.telemetry.addData("Seconds Passed:", runtime.seconds());
         }
-        robotXDrive.setDriveStop();
+        robot.setDriveStop();
         return runtime.seconds() < timeout;
     }
 
 
     public boolean rotateToHeadingRelative(double targetHeading, double tolerance, double power, double timeout) {
-        targetHeading += robotXDrive.getHeading(AngleUnit.DEGREES);
+        targetHeading += robot.getHeading(AngleUnit.DEGREES);
         return rotateToHeadingAbsolute(targetHeading, tolerance, power, timeout);
 
     }

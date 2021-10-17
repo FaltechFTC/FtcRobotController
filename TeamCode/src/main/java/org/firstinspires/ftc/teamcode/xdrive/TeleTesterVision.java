@@ -1,18 +1,18 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
-public class XDriveTeleopVision extends OpMode {
-    faltechBotXDrive robotXDrive = new faltechBotXDrive();
-    DriveBrainXDrive driveBrain;
-    XDriveVisionBrain visionXDrive;
+public class TeleTesterVision extends OpMode {
+    Robot robotXDrive = new Robot();
+    DriveBrain driveBrain;
+    VisionBrain visionXDrive;
 
     @Override
     public void init() {
         robotXDrive.init(hardwareMap,telemetry);
-        driveBrain = new DriveBrainXDrive(robotXDrive, this);
-        visionXDrive = new XDriveVisionBrain();
+        driveBrain = new DriveBrain(robotXDrive, this);
+        visionXDrive = new VisionBrain();
     }
 
     @Override

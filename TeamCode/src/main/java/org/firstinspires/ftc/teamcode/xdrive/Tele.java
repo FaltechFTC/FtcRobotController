@@ -1,21 +1,21 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.xdrive;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name = "Teleop XDrive", group = "7079")
-public class XDriveTeleop extends OpMode {
-    faltechBotXDrive robotXDrive = new faltechBotXDrive();
-    DriveBrainXDrive driveBrain;
-    Utility Utility;
+public class Tele extends OpMode {
+    Robot robot = new Robot();
+    DriveBrain driveBrain;
+    org.firstinspires.ftc.teamcode.Utility Utility;
     double fixedHeading = 0;
 
 
     @Override
     public void init() {
-        robotXDrive.init(hardwareMap, telemetry);
-        driveBrain = new DriveBrainXDrive(robotXDrive, this);
+        robot.init(hardwareMap, telemetry);
+        driveBrain = new DriveBrain(robot, this);
 
     }
 
@@ -30,10 +30,10 @@ public class XDriveTeleop extends OpMode {
         double strafe = -0.5 * gamepad1.left_stick_x;
         double rotate = -0.25 * gamepad1.right_stick_x;
         if (gamepad1.dpad_up) {
-            robotXDrive.setDriveStopModeBreak();
+            robot.setDriveStopModeBreak();
         }
         if (gamepad1.dpad_down) {
-            robotXDrive.setDriveStopModeFloat();
+            robot.setDriveStopModeFloat();
         }
         if (gamepad1.b) {
             driveBrain.rotateToHeadingAbsolute(90, 3, 0.3, 4);
@@ -60,7 +60,7 @@ public class XDriveTeleop extends OpMode {
                 // because we are going forward, we will kill the strafe
                 // forward = forward;
             }
-            robotXDrive.setTwoWheelDrive(forward, strafe, rotate);
+            robot.setTwoWheelDrive(forward, strafe, rotate);
             return;
         }
         if (gamepad1.right_bumper) {
@@ -68,7 +68,7 @@ public class XDriveTeleop extends OpMode {
             strafe = strafe * 2;
             rotate = rotate * 2;
         }
-        double currentHeading = robotXDrive.getHeading(AngleUnit.DEGREES);
+        double currentHeading = robot.getHeading(AngleUnit.DEGREES);
         telemetry.addData("Our Heading", currentHeading);
         if (gamepad1.left_trigger == 0.00) {
             fixedHeading = currentHeading;
@@ -102,9 +102,9 @@ public class XDriveTeleop extends OpMode {
             telemetry.addData("Rotation Correction", rotationCorrection);
 
         }
-        robotXDrive.arm.setPosition(gamepad2.right_stick_x);
-        robotXDrive.setDrive(forward, strafe, rotate, 1);
-        robotXDrive.reportEncoders();
+        robot.arm.setPosition(gamepad2.right_stick_x);
+        robot.setDrive(forward, strafe, rotate, 1);
+        robot.reportEncoders();
 
         // robotXDrive.calculateDrivePowersFSR(gamepad1.left_stick_x, gamepad1.left_stick_y, rotate);
     }
