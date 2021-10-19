@@ -7,87 +7,170 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Auto", group = "7079")
-@Disabled
+//@Disabled
 public class Auto extends LinearOpMode {
-    Robot robotXDrive = new Robot();
+    Robot robot;
     DriveBrain driveBrain;
-    org.firstinspires.ftc.teamcode.Utility Utility;
-    double fixedHeading = 0;
-    private ElapsedTime runtime = new ElapsedTime();
-    OpMode opmode;
-    VisionBrain visionXDrive;
+    VisionBrain vision;
+    boolean useVision=false;
 
-//    static final double     FORWARD_SPEED = 0.6;
-//    static final double     TURN_SPEED    = 0.5;
-//    static final double     STRAFE_SPEED  = 0.5;
-    static final double     POWER         = 1.0;
+    String stage="Starting";
+
+    private ElapsedTime runtime = new ElapsedTime();
+    static final double POWER = 0.3;
+
+    class BailException extends Exception {
+         BailException(String msg){
+            super(msg);
+        }
+    }
 
     public void runOpMode() {
 
-        /*
-         * Initialize the drive system variables.
-         * The init() method of the hardware class does all the work here
-         */
-        robotXDrive.init(robotXDrive.hwMap, telemetry);
-
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Ready to run");    //
+        telemetry.addData("Status", "Initializing Robot");
         telemetry.update();
 
-        // Wait for the game to start (driver presses PLAY)
+        robot = new Robot();
+        robot.init(hardwareMap, telemetry);
+        robot.setDriveStopModeBreak();
+
+        telemetry.addData("Status", "Initializing Brain");
+        telemetry.update();
+
+        driveBrain = new DriveBrain(robot, this);
+
+        if (useVision) {
+            telemetry.addData("Status", "Initializing Vision");
+            telemetry.update();
+
+            vision = new VisionBrain();
+            vision.init(this, false);
+        }
+
+        telemetry.addData("Status", "Ready to run");
+        telemetry.update();
+
         waitForStart();
-        robotXDrive.setDriveStopModeBreak();
 
-        // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
-
-        // Step 1:  Drive forward for 3 seconds
-
-        robotXDrive.setDrive(5, 0, 0,POWER);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+        try {
+            runMission();
+        } catch (BailException e) {
+            telemetry.addData("Bailed!", e.getMessage());
             telemetry.update();
+        } finally {
+            robot.setDriveStop();
         }
+    }
 
-        // Step 2:  Spin right for 1.3 seconds
+    private void runMission() throws BailException{
 
-        robotXDrive.setDrive(0,0,90, POWER);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.3)) {
-            telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        // Step 3:  Drive Backwards for 1 Second
-        robotXDrive.setDrive(-5, 0,0,POWER);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-            telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        robotXDrive.setDrive(0,10,0,POWER);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
-            telemetry.addData("Path", "Leg 4: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        robotXDrive.setDrive(0,-5,0,POWER);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
-            telemetry.addData("Path", "Leg 5: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        // Step 4:  Stop and close the claw.
-        
-        robotXDrive.setDriveStop();
-//        robotXDrive.arm.setPosition(1.0);
-//        robotXDrive.arm.setPosition(0.0);
-
-        telemetry.addData("Path", "Complete");
+        boolean waitForInput=true;
+        //demoDriveTime(waitForInput);
+//    demoRotate(waitForInput);
+        demoDriveDistance(waitForInput);
+        telemetry.addData("Path", "Mission Complete");
         telemetry.update();
-        sleep(1000);
+
+    }
+
+    void demoDriveTime(boolean waitForInput) throws BailException {
+
+        double speed = .3;
+        double timeout = .5;
+
+        stage="demoDriveTime";
+        checkBail(waitForInput);
+        driveBrain.driveTime(speed, 0, 0, timeout); // forward
+        checkBail(waitForInput);
+        driveBrain.driveTime(-speed, 0, 0, timeout); // back
+        checkBail(waitForInput);
+        driveBrain.driveTime(0, speed, 0, timeout); // right
+        checkBail(waitForInput);
+        driveBrain.driveTime(0, -speed, 0, timeout); // left
+
+    }
+
+    void demoRotate(boolean waitForInput) throws BailException {
+        stage="demoRotate";
+
+        double speed=.35;
+        double timeout=3;
+        double tolerance=2.0;
+        double[] headings =  new double[] {0, 90, 180, 270, 45, 0};
+        for (double heading : headings) {
+            checkBail(waitForInput);
+            driveBrain.rotateToHeadingAbsolute(heading, tolerance, speed, timeout);
+        }
+        timeout=4.0;
+        tolerance=1.4;
+        speed=.25;
+        headings = new double[] {45, -45, 180, 0};
+        for (double heading : headings) {
+            checkBail(waitForInput);
+            driveBrain.rotateToHeadingAbsolute(heading, tolerance, speed, timeout);
+        }
+    }
+    void demoDriveDistance(boolean waitForInput) throws BailException {
+        stage="demoDriveDistance";
+        double speed=.3;
+        double timeout=3;
+        double distance=5;
+        double tolerance=2.0;
+        double heading=0;
+
+        System.out.println("HERE!");
+
+        checkBail(waitForInput);
+        driveBrain.rotateToHeadingAbsolute(0, tolerance, speed, timeout);
+        stage="demoDriveDistance - distance!";
+        checkBail(waitForInput);
+        driveBrain.driveDistance(distance, speed, timeout);
+        stage="demoDriveDistance - rotate";
+        checkBail(waitForInput);
+        driveBrain.rotateToHeadingAbsolute(90, tolerance, speed, timeout);
+        stage="demoDriveDistance - distance!";
+        checkBail(waitForInput);
+        driveBrain.driveDistance(distance, speed, timeout);
+        stage="demoDriveDistance - rotate";
+        checkBail(waitForInput);
+        driveBrain.rotateToHeadingAbsolute(-90, tolerance, speed, timeout);
+        checkBail(waitForInput);
+        driveBrain.driveDistance(distance, speed, timeout);
+    }
+
+    void demoArm(boolean waitForInput) throws BailException {
+        if (robot.useArm) {
+            stage="demoArm";
+            checkBail(waitForInput);
+            robot.armSetPosition(1.0);
+            sleep(1000);
+            checkBail(waitForInput);
+            robot.armSetPosition(1.0);
+            sleep(1000);
+        }
+
+
+    }
+
+    private void checkBail() throws BailException {
+        checkBail(false);
+    }
+
+    private void checkBail(boolean waitForInput) throws BailException {
+        if (!opModeIsActive())
+            throw new BailException("!opModeIsActive()");
+        else if (isStopRequested())
+            throw new BailException("isStopRequested()");
+        if (waitForInput) waitForInput();
+        telemetry.update();
+    }
+    void waitForInput() throws BailException {
+        while (!gamepad1.a) {
+            telemetry.addData("Status", "Press A for next Action.");
+            telemetry.addData("Stage", stage);
+            telemetry.update();
+            sleep(1);
+            checkBail(false);
+        }
     }
 }

@@ -26,13 +26,12 @@ public class DriveBrain {
         opmode = theopmode;
     }
 
-    public void driveTime(double forward, double strafe, double rotate, double power, double timeoutSeconds) {
-        robot.setDrive(forward, strafe, rotate, power);
+    public void driveTime(double forward, double strafe, double rotate, double timeoutSeconds) {
         runtime.reset();
+        robot.setDrive(forward, strafe, rotate);
         while (opModeIsActive() && (runtime.seconds() < timeoutSeconds)) {
-            opmode.telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            opmode.telemetry.addData("Driving", "%2.5f sec", runtime.seconds());
             opmode.telemetry.update();
-
         }
         robot.setDriveStop();
     }
@@ -45,23 +44,17 @@ public class DriveBrain {
 
     public void driveDistance(double inches, double power, double timeoutSeconds) {
         runtime.reset();
-
-        double forward = power;
-
-        if (inches < 0) forward = forward;
-        if (opModeIsActive()) {
-            robot.setDriveDeltaPos(10, .5);
-            robot.setDrive(forward, 0, 0, 1.0);
-        }
-        while (opModeIsActive() && (runtime.seconds() < timeoutSeconds) && robot.isDriveBusy()) {
-
-            // Display it for the driver.
-            opmode.telemetry.addData("Path1", "Running to %7d :%7d", robot.convertCountsToInches(inches));
-            opmode.telemetry.addData("Path2", "Running at %7d :%7d", robot.getCurPos());
+        power = Math.abs(power);
+        double secondsAtMark = .25;
+        ElapsedTime sinceBusy = new ElapsedTime();
+        int clicks= robot.convertInchesToCounts(inches);
+        robot.setDriveDeltaPos(clicks, power);
+        while (opModeIsActive() && (runtime.seconds() < timeoutSeconds) && sinceBusy.seconds()< secondsAtMark) {
+            if (robot.isDriveBusy()) sinceBusy.reset();
             opmode.telemetry.update();
         }
         robot.setDriveStop();
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void gyroDrive(double speed, double distance, double angle) {
@@ -234,30 +227,49 @@ public class DriveBrain {
     public boolean rotateToHeadingAbsolute(double targetHeading, double tolerance, double power, double timeout) {
         boolean fail = true;
         runtime.reset();
-        double currentHeading = robot.getHeading(AngleUnit.DEGREES);
-        double headingError = Utility.wrapDegrees360(targetHeading - currentHeading);
-        while ((Math.abs(headingError) > tolerance) && (runtime.seconds() < timeout)) {
-            currentHeading = robot.getHeading(AngleUnit.DEGREES);
-            headingError = Utility.wrapDegrees360(targetHeading-currentHeading);
-            headingError = Utility.clipToRange(headingError, 45, -45);
-            if (Math.abs(headingError) < Math.min(.5,tolerance)) {
-                headingError = 0;
-            }
-            double rotationCorrection = (headingError / 45.00) * power;
-            if (rotationCorrection > 0 && rotationCorrection < 0.1) {
-                rotationCorrection = 0.1;
-            }
-            if (rotationCorrection < 0 && rotationCorrection > -0.1) {
-                rotationCorrection = -0.1;
-            }
-            robot.setDrive(0, 0, rotationCorrection, 1);
 
+        double minRotPower=0.06;
+        double minUsableHeadingError=Math.min(.5,tolerance);
+        double maxRotPower = power;
+        double maxErrorAngle = 45.0;
+
+        ElapsedTime timeInTolerance = new ElapsedTime();
+        double targetTimeInTolerance = 0.0;
+        int loop=0;
+
+        double currentHeading = robot.getHeading(AngleUnit.DEGREES);
+        double headingError = Utility.wrapDegrees360( currentHeading- targetHeading);
+        boolean lastLoopInTolerance = Math.abs(headingError) <= tolerance;
+
+        while ((Math.abs(headingError) > tolerance || !lastLoopInTolerance || timeInTolerance.seconds()<targetTimeInTolerance) && (runtime.seconds() < timeout)) {
+            currentHeading = robot.getHeading(AngleUnit.DEGREES);
+            opmode.telemetry.addData("Heading:", currentHeading);
+            headingError = Utility.wrapDegrees360(currentHeading-targetHeading);
+            opmode.telemetry.addData("Heading Error1:", headingError);
+            headingError = Utility.clipToRange(headingError, maxErrorAngle, -maxErrorAngle);
+//          if (Math.abs(headingError) < minUsableHeadingError) headingError = 0.0;
+
+            lastLoopInTolerance = Math.abs(headingError) <= tolerance;
+            if (!lastLoopInTolerance) timeInTolerance.reset();
+
+            double rotationCorrection = headingError / maxErrorAngle * maxRotPower;
+            if (rotationCorrection > 0 && rotationCorrection < minRotPower)
+                rotationCorrection = minRotPower;
+            else if (rotationCorrection < 0 && rotationCorrection > -minRotPower)
+                rotationCorrection = -minRotPower;
+
+            robot.setDrive(0, 0, rotationCorrection);
+
+            loop++;
+            opmode.telemetry.addData("Loop#", loop);
             opmode.telemetry.addData("Rotation Correction:", rotationCorrection);
             opmode.telemetry.addData("Heading Error:", headingError);
             opmode.telemetry.addData("Seconds Passed:", runtime.seconds());
+            opmode.telemetry.update();
+            targetTimeInTolerance=.25;
         }
         robot.setDriveStop();
-        return runtime.seconds() < timeout;
+        return runtime.seconds() < timeout && Math.abs(headingError) < tolerance && timeInTolerance.seconds()<targetTimeInTolerance;
     }
 
 

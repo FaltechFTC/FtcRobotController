@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -17,15 +18,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Robot {
-    static final boolean useColorSensor = false;
-    static final boolean useIMU = true;
+    public static final boolean useColorSensor = false;
+    public static final boolean useIMU = true;
+    public static final boolean useArm = false;
     private Telemetry telemetry = null;
     private DcMotor front_left = null;
     private DcMotor front_right = null;
     private DcMotor back_left = null;
     private DcMotor back_right = null;
     public DcMotor[] driveMotors = new DcMotor[4];
-    public Servo arm    = null;
+    public DcMotor[] driveMotors2WheelForward = new DcMotor[2];
+    public DcMotor[] driveMotors2WheelStrafe = new DcMotor[2];
+    public DcMotorSimple arm = null;
     public int[] curPos = new int[4];
     public BNO055IMU imu = null;
 /* we might need to leave this code for the arm here so that we can use it later is we are using
@@ -38,10 +42,11 @@ a claw system*/
 //    public static final double ARM_UP_POWER    =  0.45 ;
 //    public static final double ARM_DOWN_POWER  = -0.45 ;
     static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
-    static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
+    static final double DRIVE_GEAR_REDUCTION = 19.2;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 6.0;     // For figuring circumference
-    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double COUNTS_PER_OUTPUT_REVOLUTION = 537.7; // for 19.2 geared gobilda
+    static final double COUNTS_PER_INCH = COUNTS_PER_OUTPUT_REVOLUTION /
+            (WHEEL_DIAMETER_INCHES * Math.PI);
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -73,25 +78,27 @@ a claw system*/
         driveMotors[1] = back_left;
         driveMotors[2] = front_left;
         driveMotors[3] = back_right;
-//        arm = hwMap.get(Servo.class, "arm");
-        front_left.setDirection(DcMotor.Direction.FORWARD);
-        front_right.setDirection(DcMotor.Direction.REVERSE);
-        back_left.setDirection(DcMotor.Direction.FORWARD);
-        back_right.setDirection(DcMotor.Direction.REVERSE);
+        driveMotors2WheelForward[0] = front_left;
+        driveMotors2WheelForward[1] = back_right;
+        driveMotors2WheelStrafe[0] = back_left;
+        driveMotors2WheelStrafe[1] = front_right;
 
-        // Set all motors to zero power
-        setDriveStop();
-//        leftArm.setPower(0);
 
-        // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
-        setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        front_left.setDirection(DcMotor.Direction.REVERSE);
+        front_right.setDirection(DcMotor.Direction.FORWARD);
+        back_left.setDirection(DcMotor.Direction.REVERSE);
+        back_right.setDirection(DcMotor.Direction.FORWARD);
 
-        // Define and initialize ALL installed servos.
+        setDriveStop();  // Set all motors to zero power
+        setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // initial mode
+
+        if (useArm) {
+            arm = hwMap.get(DcMotorSimple.class, "arm");
+            arm.setPower(0);
+        }
+
 //        leftClaw  = hwMap.get(Servo.class, "left_hand");
 //        rightClaw = hwMap.get(Servo.class, "right_hand");
-        //arm.setPosition(MID_SERVO);
 //        rightClaw.setPosition(MID_SERVO);
 
     }
@@ -117,11 +124,11 @@ a claw system*/
         }
     }
 
-    public double convertInchesToCounts(double inches) {
-        return COUNTS_PER_INCH * inches;
+    public static int convertInchesToCounts(double inches) {
+        return (int) (COUNTS_PER_INCH * inches);
     }
 
-    public double convertCountsToInches(double counts) {
+    public static double convertCountsToInches(double counts) {
         return counts / COUNTS_PER_INCH;
     }
 
@@ -163,6 +170,10 @@ a claw system*/
     }
 
     public void setDrive(double forward, double strafe, double rotate, double power) {
+         // POWER IS IGNORED, Deprecate this usage
+        setDrive(forward,strafe,rotate);
+    }
+    public void setDrive(double forward, double strafe, double rotate) {
         double[] powers = calculateDrivePowersFSRSimple(forward, strafe, rotate);
         setDrivePower(powers);
     }
@@ -172,20 +183,38 @@ a claw system*/
         setDrivePower(powers);
     }
 
-    public void setDriveDeltaPos(int deltaPos, double power) {
+    public void setDriveDeltaPos(int deltaClicks, double power) {
+        DcMotor[] motors= driveMotors2WheelForward;
 
-        for (DcMotor m : driveMotors) {
+        for (DcMotor m : motors) {
             int curPos = m.getCurrentPosition();
-            int newPos = curPos + deltaPos;
+            int newPos = curPos + deltaClicks;
             m.setTargetPosition(newPos);
-
-            // Turn On RUN_TO_POSITION
             m.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        for (DcMotor m : driveMotors) {
             m.setPower(Math.abs(power));
         }
+    }
+    public void setDriveRunMode() {
+        for (DcMotor m : driveMotors) {
+            m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            m.setPower(0.0);
+        }
+    }
+
+    public void setDriveEncodedForward2Wheel(int deltaPos, double power) {
+        setMotorEncoderDrive(front_left,deltaPos,power);
+        setMotorEncoderDrive(back_right,deltaPos,power);
+    }
+
+    public void setMotorEncoderDrive(DcMotor m, int deltaPos, double power) {
+        int curPos = m.getCurrentPosition();
+        int newPos = curPos + deltaPos;
+        m.setTargetPosition(newPos);
+
+        // Turn On RUN_TO_POSITION
+        m.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        m.setPower(Math.abs(power));
+
     }
 
     public void setDrivePowersTank(double leftPower, double rightPower) {
@@ -199,8 +228,8 @@ a claw system*/
         double[] wheelpowers = {
                 (strafe + rotate),
                 (forward - rotate),
-                (strafe + rotate),
-                (forward - rotate),
+                (forward + rotate),
+                (strafe - rotate),
         };
 
         setDrivePower(wheelpowers); // apply the calculated values to the motors.
@@ -250,6 +279,12 @@ a claw system*/
                 .addData("FR", fr)
                 .addData("BL", bl)
                 .addData("BR", br);
+    }
+
+    public void armSetPosition(double pos) {
+        if (useArm) {
+
+        }
     }
 
     public NormalizedRGBA getRGBA() {

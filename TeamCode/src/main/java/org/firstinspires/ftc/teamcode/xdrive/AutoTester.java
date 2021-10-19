@@ -1,61 +1,92 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Auto Test", group = "7079")
-@Disabled
+@Autonomous(name = "Auto Tester", group = "7079")
+//@Disabled
 public class AutoTester extends LinearOpMode {
-    Robot robotXDrive = new Robot();
+    Robot robot;
     DriveBrain driveBrain;
-    org.firstinspires.ftc.teamcode.Utility Utility;
-    double fixedHeading = 0;
-    private ElapsedTime runtime = new ElapsedTime();
-    OpMode opmode;
-    VisionBrain visionXDrive;
+    VisionBrain vision;
+    boolean useVision=false;
 
-//    static final double     FORWARD = 0.6;
-//    static final double     TURN    = 0.5;
-//    static final double     STRAFE  = 0.5;
-    static final double     POWER         = 1.0;
+    String stage="Starting";
+
+    private ElapsedTime runtime = new ElapsedTime();
+    static final double POWER = 0.3;
+
+    class BailException extends Exception {
+        BailException(String msg){
+            super(msg);
+        }
+    }
+
     public void runOpMode() {
 
-        /*
-         * Initialize the drive system variables.
-         * The init() method of the hardware class does all the work here
-         */
-        robotXDrive.init(robotXDrive.hwMap, telemetry);
-
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Ready to run");    //
+        telemetry.addData("Status", "Initializing Robot");
         telemetry.update();
 
-        // Wait for the game to start (driver presses PLAY)
+        robot = new Robot();
+        robot.init(hardwareMap, telemetry);
+        robot.setDriveStopModeBreak();
+
+        telemetry.addData("Status", "Initializing Brain");
+        telemetry.update();
+
+        driveBrain = new DriveBrain(robot, this);
+
+        if (useVision) {
+            telemetry.addData("Status", "Initializing Vision");
+            telemetry.update();
+
+            vision = new VisionBrain();
+            vision.init(this, false);
+        }
+
+        telemetry.addData("Status", "Ready to run");
+        telemetry.update();
+
         waitForStart();
-        robotXDrive.setDriveStopModeBreak();
 
-        // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
+        try {
+            runMission();
+        } catch (Auto.BailException e) {
+            telemetry.addData("Bailed!", e.getMessage());
+            telemetry.update();
+        } finally {
+            robot.setDriveStop();
+        }
+    }
 
-        // Step 1:  Drive forward for 3 seconds
+    private void runMission() throws Auto.BailException {
+        stage="runMission";
 
+        while (opModeIsActive()) {
+            double speed=.3;
+            double timeout=5.5;
+            double distance=20;
+            double tolerance=2.0;
+            double heading=0;
 
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
-            if (gamepad1.a) {
-                robotXDrive.setDrive(5, 0, 90, POWER);
-            }
-            if (gamepad1.b) {
-                robotXDrive.setDrive(10,28, 47, POWER);
-//                robotXDrive.arm.setPosition(90);
-            }
+            if (Math.abs(gamepad1.left_stick_x)>.05) robot.setDrive(0,gamepad1.left_stick_x,0);
+            else if (Math.abs(gamepad1.left_stick_y)>.05) robot.setDrive(-gamepad1.left_stick_y,0,0);
+            else if (gamepad1.right_stick_y>.1) driveBrain.rotateToHeadingAbsolute(0, 3, speed, timeout);
+            else if (gamepad1.right_stick_y<-.1) driveBrain.rotateToHeadingAbsolute(180, 3, speed, timeout);
+            else if (gamepad1.right_stick_x>.1) driveBrain.rotateToHeadingRelative(-90, 3, speed, timeout);
+            else if (gamepad1.right_stick_x<-.1) driveBrain.rotateToHeadingRelative(90, 3, speed, timeout);
+            else if (gamepad1.y) driveBrain.rotateToHeadingAbsolute(180, tolerance, speed, timeout);
+            else if (gamepad1.b) driveBrain.driveDistance(distance, speed, timeout);
+            else if (gamepad1.a) driveBrain.driveDistance(-distance, speed, timeout);
+            else robot.setDriveStop();
 
         }
-        robotXDrive.setDriveStop();
+
+        robot.setDriveStop();
+
         telemetry.addData("Path", "Complete");
         telemetry.update();
-        sleep(1000);
     }
 }

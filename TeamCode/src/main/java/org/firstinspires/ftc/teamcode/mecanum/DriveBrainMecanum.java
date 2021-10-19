@@ -24,6 +24,7 @@ public class DriveBrainMecanum {
     }
 
     public void driveTime(double forward, double strafe, double rotate, double power, double timeoutSeconds) {
+        opmode.telemetry.addData("Status", "DriveTime");
         robot.setDrive(forward, strafe, rotate, power);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < timeoutSeconds)) {
@@ -32,12 +33,14 @@ public class DriveBrainMecanum {
 
         }
         robot.setDriveStop();
+        opmode.telemetry.addData("Status", "DriveTime Complete");
     }
     public boolean opModeIsActive() {
+//        return opmode.OpModeIsActive();
         return true;
-//        opmode.OpModeIsActive();
     }
     public void driveDistance(double inches, double power, double timeoutSeconds) {
+        opmode.telemetry.addData("Status", "DriveDistance");
         runtime.reset();
 
         double forward = power;
@@ -56,6 +59,7 @@ public class DriveBrainMecanum {
         }
         robot.setDriveStop();
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        opmode.telemetry.addData("Status", "DriveDistance Complete");
     }
     public void gyroDrive(double speed, double distance, double angle) {
         int     moveCounts;

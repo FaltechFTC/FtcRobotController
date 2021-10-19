@@ -4,15 +4,22 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 public class TeleTesterVision extends OpMode {
-    Robot robotXDrive = new Robot();
+    Robot robot = new Robot();
     DriveBrain driveBrain;
-    VisionBrain visionXDrive;
+    VisionBrain visionBrain;
 
     @Override
     public void init() {
-        robotXDrive.init(hardwareMap,telemetry);
-        driveBrain = new DriveBrain(robotXDrive, this);
-        visionXDrive = new VisionBrain();
+        robot.init(hardwareMap,telemetry);
+
+        driveBrain = new DriveBrain(robot, this);
+
+        visionBrain = new VisionBrain();
+        visionBrain.useWebcam=true;
+        visionBrain.zoom=1.0;
+        visionBrain.init(this, true);
+
+        telemetry.update();
     }
 
     @Override
@@ -21,18 +28,11 @@ public class TeleTesterVision extends OpMode {
         double forward  = gamepad1.left_stick_y;
         double strafe = -gamepad1.left_stick_x;
         double rotate  = -gamepad1.right_stick_x;
+        robot.setDrive(forward,strafe,rotate,1);
 
-        robotXDrive.setDrive(forward,strafe,rotate,1);
-        NormalizedRGBA colors = robotXDrive.getRGBA();
-        telemetry.addLine()
-                .addData("Red", "%.3f", colors.red)
-                .addData("Green", "%.3f", colors.green)
-                .addData("Blue", "%.3f", colors.blue);
-        telemetry.update();
-//       if (gamepad1.a) {
-//           driveBrain.gyroDrive(.5, 10, 10);
-//           driveBrain.gyroTurn(.5, 10);
-//       }
+        robot.reportColor();
+
+        visionBrain.process();
     }
 }
 
