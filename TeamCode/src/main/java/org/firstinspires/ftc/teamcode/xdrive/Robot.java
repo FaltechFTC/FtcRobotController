@@ -4,10 +4,10 @@ package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -19,13 +19,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class Robot {
     static final boolean useColorSensor = false;
     static final boolean useIMU = true;
+    static final boolean useArm = true;
     private Telemetry telemetry = null;
     private DcMotor front_left = null;
     private DcMotor front_right = null;
     private DcMotor back_left = null;
     private DcMotor back_right = null;
     public DcMotor[] driveMotors = new DcMotor[4];
-    public Servo arm    = null;
+    public DcMotorSimple arm    = null;
     public int[] curPos = new int[4];
     public BNO055IMU imu = null;
 /* we might need to leave this code for the arm here so that we can use it later is we are using
@@ -64,6 +65,10 @@ a claw system*/
             //change to default set of parameters go here
             imu.initialize(params);
         }
+        if (useArm) {
+            arm = hwMap.get(DcMotorSimple.class, "arm");
+        }
+
         // Define and Initialize Motors
         front_left = hwMap.get(DcMotor.class, "fldrive");
         front_right = hwMap.get(DcMotor.class, "frdrive");
@@ -73,7 +78,6 @@ a claw system*/
         driveMotors[1] = back_left;
         driveMotors[2] = front_left;
         driveMotors[3] = back_right;
-//        arm = hwMap.get(Servo.class, "arm");
         front_left.setDirection(DcMotor.Direction.FORWARD);
         front_right.setDirection(DcMotor.Direction.REVERSE);
         back_left.setDirection(DcMotor.Direction.FORWARD);

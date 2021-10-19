@@ -1,20 +1,17 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Auto", group = "7079")
-@Disabled
 public class Auto extends LinearOpMode {
     Robot robotXDrive = new Robot();
     DriveBrain driveBrain;
     org.firstinspires.ftc.teamcode.Utility Utility;
     double fixedHeading = 0;
     private ElapsedTime runtime = new ElapsedTime();
-    OpMode opmode;
+
     VisionBrain visionXDrive;
 
 //    static final double     FORWARD_SPEED = 0.6;
@@ -28,7 +25,7 @@ public class Auto extends LinearOpMode {
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
-        robotXDrive.init(robotXDrive.hwMap, telemetry);
+        robotXDrive.init(hardwareMap, telemetry);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
@@ -79,6 +76,8 @@ public class Auto extends LinearOpMode {
             telemetry.addData("Path", "Leg 5: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
+        driveBrain.driveDistance(10, POWER, 5);
+        runtime.reset();
 
         // Step 4:  Stop and close the claw.
         

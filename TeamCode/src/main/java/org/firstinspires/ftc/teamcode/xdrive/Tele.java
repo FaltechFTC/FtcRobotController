@@ -10,6 +10,8 @@ public class Tele extends OpMode {
     DriveBrain driveBrain;
     org.firstinspires.ftc.teamcode.Utility Utility;
     double fixedHeading = 0;
+    double armOffset = 0.0;
+    final double ARM_SPEED = 0.05;
 
 
     @Override
@@ -21,7 +23,6 @@ public class Tele extends OpMode {
 
     @Override
     public void loop() {
-        
         boolean T_Mode = false;
         Utility.deadStick(gamepad1.left_stick_x);
         Utility.deadStick(gamepad1.left_stick_y);
@@ -102,7 +103,23 @@ public class Tele extends OpMode {
             telemetry.addData("Rotation Correction", rotationCorrection);
 
         }
-        //robot.arm.setPosition(gamepad2.right_stick_x);
+        if (robot.useArm) {
+            if (gamepad2.dpad_up) robot.arm.setPower(.1);
+            else if (gamepad2.dpad_down) robot.arm.setPower(-.1);
+            else robot.arm.setPower(0);
+//            if (gamepad2.dpad_right) {
+//                armOffset += ARM_SPEED;
+//                if (armOffset > 1) {armOffset =1;}
+////                robot.arm.setPosition(armOffset);
+//            }
+//            if (gamepad2.dpad_left) {
+//                armOffset -= ARM_SPEED;
+//                if (armOffset < 0.0) {armOffset =0.0;}
+//                robot.arm.setPower(.2);
+////                robot.arm.setPosition(armOffset);
+//            }
+            telemetry.addData("Arm angle:", armOffset);
+        }
         robot.setDrive(forward, strafe, rotate, 1);
         robot.reportEncoders();
 
