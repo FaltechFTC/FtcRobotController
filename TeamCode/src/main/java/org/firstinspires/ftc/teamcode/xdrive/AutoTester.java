@@ -54,7 +54,7 @@ public class AutoTester extends LinearOpMode {
 
         }
         robotXDrive.setDriveStop();
-        telemetry.addData("Path", "Complete");
+        telemetry.addData("Path", "Complete! :)");
         telemetry.update();
         sleep(1000);
     }
