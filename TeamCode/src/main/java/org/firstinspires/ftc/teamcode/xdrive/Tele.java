@@ -97,6 +97,7 @@ public class Tele extends OpMode {
             if (rotationCorrection < 0 && rotationCorrection > -0.05) {
                 rotationCorrection = -0.05;
             }
+            // i am trash at coding
             rotate = rotationCorrection + rotate;
             telemetry.addData("Fixed Heading", fixedHeading);
             telemetry.addData("Heading Error", headingError);
@@ -119,6 +120,11 @@ public class Tele extends OpMode {
 ////                robot.arm.setPosition(armOffset);
 //            }
             telemetry.addData("Arm angle:", armOffset);
+        }
+        if (robot.useCarousel) {
+            if (gamepad2.dpad_left) robot.carousel.setPower(.5);
+            else if (gamepad2.dpad_right) robot.carousel.setPower(-.5);
+            else robot.carousel.setPower(0);
         }
         robot.setDrive(forward, strafe, rotate, 1);
         robot.reportEncoders();

@@ -20,6 +20,7 @@ public class Robot {
     static final boolean useColorSensor = false;
     static final boolean useIMU = true;
     static final boolean useArm = true;
+    static final boolean useCarousel = true;
     private Telemetry telemetry = null;
     private DcMotor front_left = null;
     private DcMotor front_right = null;
@@ -27,6 +28,7 @@ public class Robot {
     private DcMotor back_right = null;
     public DcMotor[] driveMotors = new DcMotor[4];
     public DcMotorSimple arm    = null;
+    public DcMotorSimple carousel = null;
     public int[] curPos = new int[4];
     public BNO055IMU imu = null;
 /* we might need to leave this code for the arm here so that we can use it later is we are using
@@ -68,6 +70,7 @@ a claw system*/
         if (useArm) {
             arm = hwMap.get(DcMotorSimple.class, "arm");
         }
+        if (useCarousel) {carousel = hwMap.get(DcMotorSimple.class, "carousel");}
 
         // Define and Initialize Motors
         front_left = hwMap.get(DcMotor.class, "fldrive");
