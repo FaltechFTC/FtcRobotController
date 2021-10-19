@@ -70,7 +70,7 @@ a claw system*/
         if (useArm) {
             arm = hwMap.get(DcMotorSimple.class, "arm");
         }
-        if (useCarousel) {carousel = hwMap.get(DcMotorSimple.class, "carousel");}
+        if (useCarousel) carousel = hwMap.get(DcMotorSimple.class, "carousel");
 
         // Define and Initialize Motors
         front_left = hwMap.get(DcMotor.class, "fldrive");
