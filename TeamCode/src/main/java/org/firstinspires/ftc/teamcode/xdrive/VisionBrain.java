@@ -29,7 +29,10 @@
 
 package org.firstinspires.ftc.teamcode.xdrive;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -53,52 +56,48 @@ import java.util.List;
 public class VisionBrain {
     Robot robot       = new Robot();
     OpMode opmode;
+    boolean useWebCam = false;
+    boolean showCamera = false;
+    boolean showCameraOD = false;
+    float zoom = 1.0f;
 
-    TFObjectDetector tfod = null;
+    /**
+     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+     * localization engine.
+     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
+     * Detection engine.
+     */
     VuforiaLocalizer vuforia;
+    TFObjectDetector tfod = null;
+
     final String VUFORIA_KEY = "AY7lK0j/////AAABmffl0hEQlUFfjdc9h8Aw+t5/CrgiSiIgNkZKZcw3qdOlnNEv3HarcW4e1pfYY5Nq+4XVrrnhKKNBeR/S08U41ogd0NpmWwOPgttli7io4p8WtbgWj+c/WL9uDzZK9u03K3Kfx+XFxdk/vy0tnFKCPg5w9M5iy7QQP2SDHFDJuhcAOtsayV8n8hQvB528RDRDykBtXei/V6xhN/qLc+S1Gp7eS0ZzpDFnT+uED0CwYK+oaWKNsPPv+3u9tCwofQ5PaRHlN05kH4V97Nn0N7WquSmDpcCZpAVqI1QnMEi7Fm9rvJgET+4OIlx4ZueF3ZTuXtJJSaEJ8Y6CEy9F7FS0RnlVtt4QlqpQVSmWmJQWYBNu";
-    //final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
-    //private static final String[] LABELS = {
-     //       "Ball",
-       //     "Cube",
-         //   "Duck",
-           // "Marker"
-    //};
+
+    final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
+    private static final String[] LABELS = {
+            "Ball",
+            "Cube",
+            "Duck",
+            "Marker"
+    };
+/*
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Gold Mineral";
     private static final String LABEL_SECOND_ELEMENT = "Silver Mineral";
+*/
+
     public void init(OpMode theopmode) {
         opmode = theopmode;
 
-        /*
-         * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
-         * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
-         * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
-         * web site at https://developer.vuforia.com/license-manager.
-         *
-         * Vuforia license keys are always 380 characters long, and look as if they contain mostly
-         * random data. As an example, here is a example of a fragment of a valid key:
-         *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
-         * Once you've obtained a license key, copy the string from the Vuforia web site
-         * and paste it in to your code on the next line, between the double quotes.
-         */
-        /**
-         * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-         * localization engine.
-         * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
-         * Detection engine.
-         */
-//        TFObjectDetector tfod = null;
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
         initTfod();
-
+    }
+    public void activate() {
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
          **/
-        //TODO OPTIONAL JUST MIGHT BE COOL: make it so that when the distance is greater than 50cm then it zooms in.
         if (tfod != null) {
             tfod.activate();
 
@@ -108,38 +107,53 @@ public class VisionBrain {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(0, 16.0/9.0);
+            tfod.setZoom(zoom, 16.0/9.0);
         }
 
-        /** Wait for the game to begin */
-        opmode.telemetry.addData(">", "Press Play to start op mode");
+        opmode.telemetry.addData("Status", "Vision Activated");
+        opmode.telemetry.update();
+
+    }
+    public void deactivate() {
+        if (tfod != null) tfod.deactivate();
+        opmode.telemetry.addData("Status", "Vision De-Activated");
         opmode.telemetry.update();
     }
-    public void process() {
+
+    public void shutdown() {
+        if (tfod != null) tfod.shutdown();
+        opmode.telemetry.addData("Status", "Vision Shutdown");
+        opmode.telemetry.update();
+    }
+
+    public void process(double timeout) {
         opmode.telemetry.addData("Status","Processing!");
 
         if (tfod != null) {
-            opmode.telemetry.addData("Status","Processing!!!!!!!!");
+            ElapsedTime timer = new ElapsedTime();
+
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-            if (updatedRecognitions != null) {
+            List<Recognition> updatedRecognitions = updatedRecognitions = tfod.getUpdatedRecognitions();;
+            while (updatedRecognitions==null && timer.seconds()<timeout) {
+                try {sleep(100);} catch (InterruptedException e) {}
+                updatedRecognitions = tfod.getUpdatedRecognitions();
+            }
 
+            if (updatedRecognitions != null) {
                 opmode.telemetry.addData("# Object Detected", updatedRecognitions.size());
                 // step through the list of recognitions and display boundary info.
                 int i = 0;
                 for (Recognition recognition : updatedRecognitions) {
-                    opmode.telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                    opmode.telemetry.addData(String.format("  confidence (%d)", i), "%.02f", recognition.getConfidence());
-                    opmode.telemetry.addData(String.format("  left,top (%d)", i), "%.01f , %.01f", recognition.getLeft(), recognition.getTop());
-                    opmode.telemetry.addData(String.format("  right,bottom (%d)", i), "%.01f , %.01f", recognition.getRight(), recognition.getBottom());
+                    i++;
+                    opmode.telemetry.addLine()
+                            .addData(String.format("label (%d)", i), recognition.getLabel())
+                            .addData("Conf", "%.02f", recognition.getConfidence())
+                            .addData("Loc","(%.01f,%.01f,%.01f,%.01f)", recognition.getLeft(), recognition.getTop(), recognition.getRight(), recognition.getBottom());
                 }
+            } else opmode.telemetry.addData("Status","Recognitions is NULL");
+        } else opmode.telemetry.addData("Status","TFOD is NULL");
 
-            }
-            else{
-                opmode.telemetry.addData("Status","Null Found");
-            }
-        }
         opmode.telemetry.update();
     }
 
@@ -150,13 +164,17 @@ public class VisionBrain {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
-        int cameraMonitorViewId = opmode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", opmode.hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-//        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
+        VuforiaLocalizer.Parameters parameters=new VuforiaLocalizer.Parameters();
+        if (showCamera) {
+            int cameraMonitorViewId = opmode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", opmode.hardwareMap.appContext.getPackageName());
+            parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        }
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = opmode.hardwareMap.get(WebcamName.class, "Webcam 1");
-
+        if (useWebCam)
+            parameters.cameraName = opmode.hardwareMap.get(WebcamName.class, "Webcam 1");
+        else // else assume phone back camera
+            parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
@@ -168,17 +186,17 @@ public class VisionBrain {
      * Initialize the TensorFlow Object Detection engine.
      */
     private void initTfod() {
-        int tfodMonitorViewId = opmode.hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", opmode.hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.1f;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        //tfod.loadModelFromAsset(TFOD_MODEL_ASSET,LABELS);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
-    }
-    public void shutdown(){
-        if (tfod != null) {
-            tfod.shutdown();
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters();
+        if (showCameraOD) {
+            int tfodMonitorViewId = opmode.hardwareMap.appContext.getResources().getIdentifier(
+                    "tfodMonitorViewId", "id", opmode.hardwareMap.appContext.getPackageName());
+            tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         }
+        tfodParameters.minResultConfidence = 0.6f;
+        tfodParameters.isModelTensorFlow2 = true;
+        tfodParameters.inputSize = 320;
+
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET,LABELS);
     }
 }

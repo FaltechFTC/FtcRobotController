@@ -2,36 +2,46 @@ package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+
 @TeleOp(name = "TeleVision", group = "7079")
 public class TeleTesterVision extends OpMode {
-    Robot robotXDrive = new Robot();
+    Robot robot;
     DriveBrain driveBrain;
-    VisionBrain visionXDrive;
+    VisionBrain visionBrain;
+    boolean useDrive = false;
+
     @Override
     public void init() {
-        robotXDrive.init(hardwareMap,telemetry);
-        driveBrain = new DriveBrain(robotXDrive, this);
-        visionXDrive = new VisionBrain();
-        visionXDrive.init(this);
+        if (useDrive) {
+            robot =new Robot();
+            robot.init(hardwareMap, telemetry);
+            driveBrain = new DriveBrain(robot, this);
+        }
+
+        visionBrain = new VisionBrain();
+        visionBrain.showCamera=false; // useful for sighting on phone only
+        visionBrain.showCameraOD=false; // useful for seeing object detection on phone only
+        visionBrain.zoom=1.2f;  // 1.0 is no zoom, greater number is greater zoom
+        visionBrain.init(this);
+        visionBrain.activate();
     }
 
     @Override
     public void loop() {
 
+//        if(gamepad1.a)
+            visionBrain.process(2000);
+  //      else
+            teleDrive();
+    }
+
+    private void teleDrive() {
+        if (robot == null ) return;
+
         double forward  = gamepad1.left_stick_y;
         double strafe = -gamepad1.left_stick_x;
         double rotate  = -gamepad1.right_stick_x;
-        if(gamepad1.a){
-            visionXDrive.process();
-        }
-        robotXDrive.setDrive(forward,strafe,rotate,1);
-
-
-//       if (gamepad1.a) {
-//           driveBrain.gyroDrive(.5, 10, 10);
-//           driveBrain.gyroTurn(.5, 10);
-//       }
+        robot.setDrive(forward,strafe,rotate,1);
     }
 }
 
