@@ -131,9 +131,7 @@ public class VisionBrain {
                 opmode.telemetry.update();
             }
         }
-        if (tfod != null) {
-            tfod.shutdown();
-        }
+
     }
 
     /**
@@ -167,5 +165,10 @@ public class VisionBrain {
         tfodParameters.minResultConfidence = 0.4f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET,LABELS);
+    }
+    public void shutdown(){
+        if (tfod != null) {
+            tfod.shutdown();
+        }
     }
 }
