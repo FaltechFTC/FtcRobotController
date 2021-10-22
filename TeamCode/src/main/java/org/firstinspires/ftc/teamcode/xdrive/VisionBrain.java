@@ -57,14 +57,16 @@ public class VisionBrain {
     TFObjectDetector tfod = null;
     VuforiaLocalizer vuforia;
     final String VUFORIA_KEY = "AY7lK0j/////AAABmffl0hEQlUFfjdc9h8Aw+t5/CrgiSiIgNkZKZcw3qdOlnNEv3HarcW4e1pfYY5Nq+4XVrrnhKKNBeR/S08U41ogd0NpmWwOPgttli7io4p8WtbgWj+c/WL9uDzZK9u03K3Kfx+XFxdk/vy0tnFKCPg5w9M5iy7QQP2SDHFDJuhcAOtsayV8n8hQvB528RDRDykBtXei/V6xhN/qLc+S1Gp7eS0ZzpDFnT+uED0CwYK+oaWKNsPPv+3u9tCwofQ5PaRHlN05kH4V97Nn0N7WquSmDpcCZpAVqI1QnMEi7Fm9rvJgET+4OIlx4ZueF3ZTuXtJJSaEJ8Y6CEy9F7FS0RnlVtt4QlqpQVSmWmJQWYBNu";
-    final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
-    private static final String[] LABELS = {
-            "Ball",
-            "Cube",
-            "Duck",
-            "Marker"
-    };
-
+    //final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
+    //private static final String[] LABELS = {
+     //       "Ball",
+       //     "Cube",
+         //   "Duck",
+           // "Marker"
+    //};
+    private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Gold Mineral";
+    private static final String LABEL_SECOND_ELEMENT = "Silver Mineral";
     public void init(OpMode theopmode) {
         opmode = theopmode;
 
@@ -106,7 +108,7 @@ public class VisionBrain {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(2.5, 16.0/9.0);
+            tfod.setZoom(0, 16.0/9.0);
         }
 
         /** Wait for the game to begin */
@@ -171,7 +173,8 @@ public class VisionBrain {
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.1f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET,LABELS);
+        //tfod.loadModelFromAsset(TFOD_MODEL_ASSET,LABELS);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
     public void shutdown(){
         if (tfod != null) {
