@@ -8,12 +8,12 @@ public class TeleTesterVision extends OpMode {
     Robot robotXDrive = new Robot();
     DriveBrain driveBrain;
     VisionBrain visionXDrive;
-
     @Override
     public void init() {
         robotXDrive.init(hardwareMap,telemetry);
         driveBrain = new DriveBrain(robotXDrive, this);
         visionXDrive = new VisionBrain();
+        visionXDrive.init(this);
     }
 
     @Override
@@ -22,7 +22,9 @@ public class TeleTesterVision extends OpMode {
         double forward  = gamepad1.left_stick_y;
         double strafe = -gamepad1.left_stick_x;
         double rotate  = -gamepad1.right_stick_x;
-
+        if(gamepad1.a){
+            visionXDrive.process();
+        }
         robotXDrive.setDrive(forward,strafe,rotate,1);
         NormalizedRGBA colors = robotXDrive.getRGBA();
         telemetry.addLine()
