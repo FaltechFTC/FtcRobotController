@@ -53,7 +53,7 @@ import java.util.List;
  */
 
 @TeleOp(name = "Coach: Ruckus TensorFlow Webcam", group = "7079")
-@Disabled
+
 public class RuckusTensorFlowWebcam extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Gold Mineral";
@@ -168,7 +168,7 @@ public class RuckusTensorFlowWebcam extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
             "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-       tfodParameters.minResultConfidence = 0.4f;
+       tfodParameters.minResultConfidence = 0.1f;
        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }

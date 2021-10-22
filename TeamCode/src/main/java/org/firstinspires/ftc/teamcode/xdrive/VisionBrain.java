@@ -114,11 +114,15 @@ public class VisionBrain {
         opmode.telemetry.update();
     }
     public void process() {
+        opmode.telemetry.addData("Status","Processing!");
+
         if (tfod != null) {
+            opmode.telemetry.addData("Status","Processing!!!!!!!!");
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
+
                 opmode.telemetry.addData("# Object Detected", updatedRecognitions.size());
                 // step through the list of recognitions and display boundary info.
                 int i = 0;
@@ -128,10 +132,13 @@ public class VisionBrain {
                     opmode.telemetry.addData(String.format("  left,top (%d)", i), "%.01f , %.01f", recognition.getLeft(), recognition.getTop());
                     opmode.telemetry.addData(String.format("  right,bottom (%d)", i), "%.01f , %.01f", recognition.getRight(), recognition.getBottom());
                 }
-                opmode.telemetry.update();
+
+            }
+            else{
+                opmode.telemetry.addData("Status","Null Found");
             }
         }
-
+        opmode.telemetry.update();
     }
 
     /**
@@ -162,7 +169,7 @@ public class VisionBrain {
         int tfodMonitorViewId = opmode.hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", opmode.hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.4f;
+        tfodParameters.minResultConfidence = 0.1f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET,LABELS);
     }
