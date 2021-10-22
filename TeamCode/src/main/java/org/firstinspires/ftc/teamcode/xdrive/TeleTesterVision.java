@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-
+@TeleOp(name = "TeleVision", group = "7079")
 public class TeleTesterVision extends OpMode {
     Robot robotXDrive = new Robot();
     DriveBrain driveBrain;
@@ -29,6 +30,7 @@ public class TeleTesterVision extends OpMode {
                 .addData("Green", "%.3f", colors.green)
                 .addData("Blue", "%.3f", colors.blue);
         telemetry.update();
+
 //       if (gamepad1.a) {
 //           driveBrain.gyroDrive(.5, 10, 10);
 //           driveBrain.gyroTurn(.5, 10);
