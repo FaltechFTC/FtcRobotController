@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.xdrive;
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -15,6 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import java.util.List;
 
 public class Robot {
     static final boolean useColorSensor = false;
@@ -57,6 +60,9 @@ a claw system*/
     public void init(HardwareMap ahwMap, Telemetry t) {
         hwMap = ahwMap;
         telemetry = t;
+
+        setBulkReadMode(LynxModule.BulkCachingMode.AUTO);
+
         if (useColorSensor) {
             colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
             colorSensor.setGain(colorSensorGain);
@@ -101,6 +107,13 @@ a claw system*/
         //arm.setPosition(MID_SERVO);
 //        rightClaw.setPosition(MID_SERVO);
 
+    }
+
+    public void setBulkReadMode(LynxModule.BulkCachingMode mode) {
+        List<LynxModule> allHubs = hwMap.getAll(LynxModule.class);
+        for (LynxModule module : allHubs) {
+            module.setBulkCachingMode(mode);
+        }
     }
 
     public void setRunMode(DcMotor.RunMode mode) {
