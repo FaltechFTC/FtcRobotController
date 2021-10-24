@@ -43,20 +43,20 @@ public class AutoTester extends LinearOpMode {
         runtime.reset();
         while (opModeIsActive()) {
             double drivepower1 = 0.5;
-            if(gamepad1.dpad_down){
+            if(gamepad1.a){
                 driveBrain.rotateToHeadingAbsolute(40,3,1,20);
             }
-            else if (gamepad1.dpad_up){
+            else if (gamepad1.b){
                 driveBrain.rotateToHeadingRelative(20,5,1,25);
             }
            else if(gamepad1.y){
                 driveBrain.driveDistance(5,drivepower1,10);
             }
-           else if (gamepad1.a) {
-                driveBrain.driveDistance(5, drivepower1, 30);
+           else if (gamepad1.dpad_up) {
+                driveBrain.driveDistance(10, drivepower1, 10);
             }
-           else if (gamepad1.b) {
-                driveBrain.driveDistance(10,drivepower1, 10);
+           else if (gamepad1.dpad_down) {
+                driveBrain.driveDistance(-10,drivepower1, 10);
                 //robotXDrive.arm.setPosition(90);
             }
             else{

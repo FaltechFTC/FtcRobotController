@@ -44,6 +44,7 @@ public class DriveBrain {
     }
 
     public void driveDistance(double inches, double power, double timeoutSeconds) {
+        ElapsedTime runtimeBusy = new ElapsedTime();
         runtime.reset();
         int clicks = 0;
         clicks = robot.convertInchesToCounts(inches);
@@ -53,13 +54,17 @@ public class DriveBrain {
         if (opModeIsActive()) {
             robot.setDriveDeltaPos(clicks, forward);
         }
-        while (opModeIsActive() && (runtime.seconds() < timeoutSeconds) && robot.isDriveBusy()) {
+        while (opModeIsActive() && (runtime.seconds() < timeoutSeconds) && (robot.isDriveBusy()||runtimeBusy.seconds()<0.25)) {
+            if(robot.isDriveBusy()){
+               runtimeBusy.reset();
+            }
 
             // Display it for the driver.
            // opmode.telemetry.addData("Path1", "Running to %7d :%7d", robot.convertCountsToInches(inches));
-            opmode.telemetry.addData("Path2", "Running at %7d :%7d", robot.getCurPos());
-            opmode.telemetry.update();
+         //   opmode.telemetry.addData("Path2", "Running at %7f :%7f", robot.getCurPos());
+           // opmode.telemetry.update();
         }
+
         robot.setDriveStop();
         robot.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }

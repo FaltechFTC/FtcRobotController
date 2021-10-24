@@ -187,18 +187,16 @@ a claw system*/
 
     public void setDriveDeltaPos(int deltaPos, double power) {
 
-        for (DcMotor m : driveMotors) {
+        for (DcMotor m : driveMotors2WheelY) {
             int curPos = m.getCurrentPosition();
             int newPos = curPos + deltaPos;
             m.setTargetPosition(newPos);
 
-            // Turn On RUN_TO_POSITION
+            // Turn On RUN_TO_POSITIOn
             m.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        for (DcMotor m : driveMotors) {
             m.setPower(Math.abs(power));
         }
+
     }
 
     public void setDrivePowersTank(double leftPower, double rightPower) {
