@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.xdrive;
+import static android.os.SystemClock.sleep;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -24,6 +26,7 @@ public class Tele extends OpMode {
     @Override
     public void loop() {
         boolean T_Mode = false;
+        double cPower = Utility.deadStick(gamepad2.right_stick_x);
         Utility.deadStick(gamepad1.left_stick_x);
         Utility.deadStick(gamepad1.left_stick_y);
         Utility.deadStick(gamepad1.right_stick_x);
@@ -122,12 +125,22 @@ public class Tele extends OpMode {
             telemetry.addData("Arm angle:", armOffset);
         }
         if (robot.useCarousel) {
-            if (gamepad2.dpad_left) robot.carousel.setPower(.5);
-            else if (gamepad2.dpad_right) robot.carousel.setPower(-.5);
-            else robot.carousel.setPower(0);
+            if (gamepad2.a) {
+                robot.carousel.setPower(.3);
+                sleep(350);
+                robot.carousel.setPower(.4);
+                sleep(350);
+                robot.carousel.setPower(1);
+                sleep(800);
+                robot.carousel.setPower(0);
+            }
+            robot.carousel.setPower(cPower);
+            telemetry.addData("Carousel Power:", cPower);
         }
+
         robot.setDrive(forward, strafe, rotate, 1);
         robot.reportEncoders();
+        robot.reportColor();
 
         // robotXDrive.calculateDrivePowersFSR(gamepad1.left_stick_x, gamepad1.left_stick_y, rotate);
     }

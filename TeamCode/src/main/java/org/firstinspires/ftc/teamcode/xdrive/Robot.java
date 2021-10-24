@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Robot {
-    static final boolean useColorSensor = false;
+    static final boolean useColorSensor = true;
     static final boolean useIMU = true;
     static final boolean useArm = true;
     static final boolean useCarousel = true;
@@ -273,7 +273,8 @@ a claw system*/
             telemetry.addLine()
                     .addData("Sensor Red", "%.3f", colors.red)
                     .addData("Green", "%.3f", colors.green)
-                    .addData("Blue", "%.3f", colors.blue);
+                    .addData("Blue", "%.3f", colors.blue)
+                    .addData("L", "%.3f", colors.alpha);
         }
     }
 
