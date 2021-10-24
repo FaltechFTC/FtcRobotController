@@ -45,23 +45,23 @@ public class DriveBrain {
 
     public void driveDistance(double inches, double power, double timeoutSeconds) {
         runtime.reset();
-
-        double forward = power;
+        int clicks = 0;
+        clicks = robot.convertInchesToCounts(inches);
+        double forward = Math.abs(power);
 
         if (inches < 0) forward = forward;
         if (opModeIsActive()) {
-            robot.setDriveDeltaPos(10, .5);
-            robot.setDrive(forward, 0, 0, 1.0);
+            robot.setDriveDeltaPos(clicks, forward);
         }
         while (opModeIsActive() && (runtime.seconds() < timeoutSeconds) && robot.isDriveBusy()) {
 
             // Display it for the driver.
-            opmode.telemetry.addData("Path1", "Running to %7d :%7d", robot.convertCountsToInches(inches));
+           // opmode.telemetry.addData("Path1", "Running to %7d :%7d", robot.convertCountsToInches(inches));
             opmode.telemetry.addData("Path2", "Running at %7d :%7d", robot.getCurPos());
             opmode.telemetry.update();
         }
         robot.setDriveStop();
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void gyroDrive(double speed, double distance, double angle) {
@@ -77,7 +77,7 @@ public class DriveBrain {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            moveCounts = (int) (distance * robot.convertCountsToInches(distance));
+            moveCounts = (int) (robot.convertInchesToCounts(distance));
 
             robot.setDriveDeltaPos(moveCounts, .5);
 
