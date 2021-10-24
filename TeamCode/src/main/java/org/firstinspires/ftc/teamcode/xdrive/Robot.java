@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import java.util.List;
 
 public class Robot {
-    static final boolean useColorSensor = false;
+    static final boolean useColorSensor = true;
     static final boolean useIMU = true;
     static final boolean useArm = true;
     static final boolean useCarousel = true;
@@ -30,6 +30,8 @@ public class Robot {
     private DcMotor back_left = null;
     private DcMotor back_right = null;
     public DcMotor[] driveMotors = new DcMotor[4];
+    public DcMotor[] driveMotors2WheelX = new DcMotor[2];
+    public DcMotor[] driveMotors2WheelY = new DcMotor[2];
     public DcMotorSimple arm    = null;
     public DcMotorSimple carousel = null;
     public int[] curPos = new int[4];
@@ -44,10 +46,10 @@ a claw system*/
 //    public static final double ARM_UP_POWER    =  0.45 ;
 //    public static final double ARM_DOWN_POWER  = -0.45 ;
     static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
-    static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
+    static final double DRIVE_GEAR_REDUCTION = 19.2;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 6.0;     // For figuring circumference
-    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double COUNTS_PER_OUTPUT_REVOL = 537.7;
+    static final double COUNTS_PER_INCH = (COUNTS_PER_OUTPUT_REVOL) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -87,6 +89,10 @@ a claw system*/
         driveMotors[1] = back_left;
         driveMotors[2] = front_left;
         driveMotors[3] = back_right;
+        driveMotors2WheelY[0] = front_left;
+        driveMotors2WheelY[1] = back_right;
+        driveMotors2WheelX[0] = front_right;
+        driveMotors2WheelX[1] = back_left;
         front_left.setDirection(DcMotor.Direction.FORWARD);
         front_right.setDirection(DcMotor.Direction.REVERSE);
         back_left.setDirection(DcMotor.Direction.FORWARD);
@@ -137,11 +143,11 @@ a claw system*/
         }
     }
 
-    public double convertInchesToCounts(double inches) {
-        return COUNTS_PER_INCH * inches;
+    public int convertInchesToCounts(double inches) {
+        return (int) (COUNTS_PER_INCH * inches);
     }
 
-    public double convertCountsToInches(double counts) {
+    public double convertCountsToInches(int counts) {
         return counts / COUNTS_PER_INCH;
     }
 
@@ -194,18 +200,16 @@ a claw system*/
 
     public void setDriveDeltaPos(int deltaPos, double power) {
 
-        for (DcMotor m : driveMotors) {
+        for (DcMotor m : driveMotors2WheelY) {
             int curPos = m.getCurrentPosition();
             int newPos = curPos + deltaPos;
             m.setTargetPosition(newPos);
 
-            // Turn On RUN_TO_POSITION
+            // Turn On RUN_TO_POSITIOn
             m.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        for (DcMotor m : driveMotors) {
             m.setPower(Math.abs(power));
         }
+
     }
 
     public void setDrivePowersTank(double leftPower, double rightPower) {
@@ -286,7 +290,8 @@ a claw system*/
             telemetry.addLine()
                     .addData("Sensor Red", "%.3f", colors.red)
                     .addData("Green", "%.3f", colors.green)
-                    .addData("Blue", "%.3f", colors.blue);
+                    .addData("Blue", "%.3f", colors.blue)
+                    .addData("L", "%.3f", colors.alpha);
         }
     }
 
