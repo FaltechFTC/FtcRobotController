@@ -19,7 +19,7 @@ public class TeleTesterVision extends OpMode {
         }
 
         visionBrain = new VisionBrain();
-        visionBrain.showCamera=false; // useful for sighting on phone only
+        visionBrain.showCamera=true; // useful for sighting on phone only
         visionBrain.showCameraOD=false; // useful for seeing object detection on phone only
         visionBrain.zoom=1.2f;  // 1.0 is no zoom, greater number is greater zoom
         visionBrain.init(this);
