@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode.xdrive;
-import static android.os.SystemClock.sleep;
-
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
-import java.util.List;
 
 @TeleOp(name = "Tele", group = "7079")
 public class Tele extends OpMode {
@@ -158,13 +154,7 @@ public class Tele extends OpMode {
             }
             if (robot.useCarousel) {
                 if (gamepad2.a) {
-                    robot.carousel.setPower(.3);
-                    sleep(350);
-                    robot.carousel.setPower(.4);
-                    sleep(350);
-                    robot.carousel.setPower(1);
-                    sleep(800);
-                    robot.carousel.setPower(0);
+                    driveBrain.carouselMoves();
                 }
                 robot.carousel.setPower(cPower);
                 telemetry.addData("Carousel Power:", cPower);

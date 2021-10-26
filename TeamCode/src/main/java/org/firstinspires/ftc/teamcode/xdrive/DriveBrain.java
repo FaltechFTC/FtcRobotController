@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import static android.os.SystemClock.sleep;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -270,5 +272,14 @@ public class DriveBrain {
         targetHeading += robot.getHeading(AngleUnit.DEGREES);
         return rotateToHeadingAbsolute(targetHeading, tolerance, power, timeout);
 
+    }
+    public void carouselMoves() {
+        robot.carousel.setPower(.3);
+        sleep(350);
+        robot.carousel.setPower(.4);
+        sleep(350);
+        robot.carousel.setPower(1);
+        sleep(800);
+        robot.carousel.setPower(0);
     }
 }

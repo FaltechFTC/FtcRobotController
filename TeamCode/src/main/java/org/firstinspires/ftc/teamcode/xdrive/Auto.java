@@ -25,6 +25,7 @@ public class Auto extends LinearOpMode {
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap, telemetry);
+        robot.setDriveStopModeBreak();
         driveBrain = new DriveBrain(robot, this);
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
@@ -32,60 +33,47 @@ public class Auto extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        robot.setDriveStopModeBreak();
-
-        // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
-
-        // Step 1:  Drive forward for 3 seconds
-
-        robot.setDrive(5, 0, 0,POWER);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        // Step 2:  Spin right for 1.3 seconds
-
-        robot.setDrive(0,0,90, POWER);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.3)) {
-            telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        // Step 3:  Drive Backwards for 1 Second
-        robot.setDrive(-5, 0,0,POWER);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-            telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        robot.setDrive(0,10,0,POWER);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
-            telemetry.addData("Path", "Leg 4: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        robot.setDrive(0,-5,0,POWER);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
-            telemetry.addData("Path", "Leg 5: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-        driveBrain.driveDistance(10, POWER, 5);
-        runtime.reset();
-
-        // Step 4:  Stop and close the claw.
+        autoPos1(false);
         
         robot.setDriveStop();
-//        robotXDrive.arm.setPosition(1.0);
-//        robotXDrive.arm.setPosition(0.0);
+    }
+    //Side = true is blue
+    //Side = false is red
+    public void autoPos1(boolean side) {
+        int barcode = 0; //TODO get barcode number from vision
+        int angleModifier = 1;
+        if (side) angleModifier=-1;
 
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        sleep(1000);
+        //deliver preloaded box
+        driveBrain.driveDistance(1,.3, 1);//move forward 1in
+        robot.setDrive(0,0,-30*angleModifier,POWER);//rotates 30degrees to go to the shipping hub
+        driveBrain.driveDistance(34,.5,2);//drives to shipping hub
+        //TODO move the arm so that we can place the game piece
+
+        //gets duck off of carousel
+        driveBrain.driveDistance(1,.5,1);//drives 1 inch in order to get enough room to spin
+        robot.setDrive(0,0, 140*angleModifier,POWER);//rotates so that it is facing carousel
+        driveBrain.driveDistance(68, .75, 3);//drives to carousel
+        driveBrain.carouselMoves();//moves the carousel wheel
+
+        //Gets a block from the warehouse and delivers it
+        driveBrain.driveDistance(-1, .3, 1);//goes back so that it has room to turn
+        robot.setDrive(0,0,160*angleModifier, .3);//turns so that it is facing the warehouse
+        driveBrain.driveDistance(96,.5, 6);//drives to warehouse
+        //TODO make it so that the arm and claw work together to get a block.
+        driveBrain.driveDistance(-72,.5,5);
+        robot.setDrive(0,0,90*angleModifier,.5);//rotates so that it is facing the outside of the warehouse
+        driveBrain.driveDistance(33, .6,5);//drives to shipping hub
+        //TODO places block down
+
+        //Parks in the warehouse
+        driveBrain.driveDistance(-33, .2, 1);//goes back so that it has enough room to turn
+        robot.setDrive(0,0,-90*angleModifier,.5);
+        driveBrain.driveDistance(72, .5, 3);//drives to go inside the warehouse
+        //end
+
+    }
+    public void redAutoWarehouse() {
+
     }
 }
