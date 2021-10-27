@@ -43,7 +43,11 @@ public class AutoTester extends LinearOpMode {
         runtime.reset();
         while (opModeIsActive()) {
             double drivepower1 = 0.5;
-            if(gamepad1.a){
+            if(gamepad1.left_bumper){
+                if(gamepad1.a) driveSquare(10,.5,90);
+                else if(gamepad1.b) figureEight(10,.5);
+            }
+           else if(gamepad1.a){
                 driveBrain.rotateToHeadingAbsolute(40,3,1,20);
             }
             else if (gamepad1.b){
@@ -59,6 +63,7 @@ public class AutoTester extends LinearOpMode {
                 driveBrain.driveDistance(-10,drivepower1, 10);
                 //robotXDrive.arm.setPosition(90);
             }
+
             else{
                 robot.setDriveStop();
             }
@@ -68,5 +73,15 @@ public class AutoTester extends LinearOpMode {
         telemetry.addData("Path", "Complete! :)");
         telemetry.update();
         sleep(1000);
+    }
+    public void driveSquare(double distance, double power, double angle){
+        for(int i = 0;i<4;i++){
+            driveBrain.driveDistance(distance,power,10);
+            driveBrain.rotateToHeadingRelative(angle,3,power,10);
+        }
+    }
+    public void figureEight(double distance, double power){
+        driveSquare(distance,power,90);
+        driveSquare(distance,power,-90);
     }
 }

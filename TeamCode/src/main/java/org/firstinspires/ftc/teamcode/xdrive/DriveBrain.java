@@ -240,10 +240,14 @@ public class DriveBrain {
 
     public boolean rotateToHeadingAbsolute(double targetHeading, double tolerance, double power, double timeout) {
         boolean fail = true;
+        ElapsedTime runtimeInTolerance = new ElapsedTime();
         runtime.reset();
         double currentHeading = robot.getHeading(AngleUnit.DEGREES);
         double headingError = Utility.wrapDegrees360(targetHeading - currentHeading);
-        while ((Math.abs(headingError) > tolerance) && (runtime.seconds() < timeout)) {
+        while ( (runtime.seconds() < timeout)&& ((Math.abs(headingError) > tolerance)||runtimeInTolerance.seconds()<0.25)) {
+            if(Math.abs(headingError) > tolerance){
+                runtimeInTolerance.reset();
+            }
             currentHeading = robot.getHeading(AngleUnit.DEGREES);
             headingError = Utility.wrapDegrees360(targetHeading-currentHeading);
             headingError = Utility.clipToRange(headingError, 45, -45);
