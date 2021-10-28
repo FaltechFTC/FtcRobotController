@@ -22,8 +22,8 @@ import java.util.List;
 public class Robot {
     static final boolean useColorSensor = true;
     static final boolean useIMU = true;
-    static boolean useArm = false;
-    static boolean useCarousel = false;
+    static boolean useArm = true;
+    static boolean useCarousel = true;
     private Telemetry telemetry = null;
     private DcMotor front_left = null;
     private DcMotor front_right = null;
@@ -33,7 +33,7 @@ public class Robot {
     public DcMotor[] driveMotors2WheelX = new DcMotor[2];
     public DcMotor[] driveMotors2WheelY = new DcMotor[2];
     public DcMotor arm    = null;
-    public DcMotor[] armarray = new DcMotor[1];
+    public DcMotor[] armArray = new DcMotor[1];
     public DcMotorSimple carousel = null;
     public int[] curPos = new int[4];
     public BNO055IMU imu = null;
@@ -128,7 +128,7 @@ a claw system*/
         for (DcMotor m : driveMotors) {
             m.setMode(mode);
         }
-        for (DcMotor f : armarray){
+        for (DcMotor f : armArray){
             f.setMode(mode);
         }
     }
