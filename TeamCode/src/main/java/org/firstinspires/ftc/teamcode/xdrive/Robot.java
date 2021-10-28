@@ -22,8 +22,8 @@ import java.util.List;
 public class Robot {
     static final boolean useColorSensor = true;
     static final boolean useIMU = true;
-    static final boolean useArm = true;
-    static final boolean useCarousel = true;
+    static boolean useArm = false;
+    static boolean useCarousel = false;
     private Telemetry telemetry = null;
     private DcMotor front_left = null;
     private DcMotor front_right = null;

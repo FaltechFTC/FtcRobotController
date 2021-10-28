@@ -278,12 +278,14 @@ public class DriveBrain {
 
     }
     public void carouselMoves() {
-        robot.carousel.setPower(.3);
-        sleep(350);
-        robot.carousel.setPower(.4);
-        sleep(350);
-        robot.carousel.setPower(1);
-        sleep(800);
-        robot.carousel.setPower(0);
+        if (robot.useCarousel) {
+            robot.carousel.setPower(.3);
+            sleep(350);
+            robot.carousel.setPower(.4);
+            sleep(350);
+            robot.carousel.setPower(1);
+            sleep(800);
+            robot.carousel.setPower(0);
+        }
     }
 }
