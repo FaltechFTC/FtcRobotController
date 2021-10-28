@@ -46,30 +46,46 @@ public class Auto extends LinearOpMode {
 
         //deliver preloaded box
         driveBrain.driveDistance(1,.3, 1);//move forward 1in
+        robot.setDriveStop();
         robot.setDrive(0,0,-30*angleModifier,POWER);//rotates 30degrees to go to the shipping hub
+        robot.setDriveStop();
         driveBrain.driveDistance(34,.5,2);//drives to shipping hub
+        robot.setDriveStop();
         //TODO move the arm so that we can place the game piece
 
         //gets duck off of carousel
         driveBrain.driveDistance(1,.5,1);//drives 1 inch in order to get enough room to spin
+        robot.setDriveStop();
         robot.setDrive(0,0, 140*angleModifier,POWER);//rotates so that it is facing carousel
+        robot.setDriveStop();
         driveBrain.driveDistance(68, .75, 3);//drives to carousel
+        robot.setDriveStop();
         driveBrain.carouselMoves();//moves the carousel wheel
+        robot.setDriveStop();
 
         //Gets a block from the warehouse and delivers it
         driveBrain.driveDistance(-1, .3, 1);//goes back so that it has room to turn
+        robot.setDriveStop();
         robot.setDrive(0,0,160*angleModifier, .3);//turns so that it is facing the warehouse
+        robot.setDriveStop();
         driveBrain.driveDistance(96,.5, 6);//drives to warehouse
+        robot.setDriveStop();
         //TODO make it so that the arm and claw work together to get a block.
         driveBrain.driveDistance(-72,.5,5);
+        robot.setDriveStop();
         robot.setDrive(0,0,90*angleModifier,.5);//rotates so that it is facing the outside of the warehouse
+        robot.setDriveStop();
         driveBrain.driveDistance(33, .6,5);//drives to shipping hub
+        robot.setDriveStop();
         //TODO places block down
 
         //Parks in the warehouse
         driveBrain.driveDistance(-33, .2, 1);//goes back so that it has enough room to turn
+        robot.setDriveStop();
         robot.setDrive(0,0,-90*angleModifier,.5);
+        robot.setDriveStop();
         driveBrain.driveDistance(72, .5, 3);//drives to go inside the warehouse
+        robot.setDriveStop();
         //end
 
     }
