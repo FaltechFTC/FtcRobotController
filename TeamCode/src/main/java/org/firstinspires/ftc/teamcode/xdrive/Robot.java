@@ -29,10 +29,11 @@ public class Robot {
     private DcMotor front_right = null;
     private DcMotor back_left = null;
     private DcMotor back_right = null;
-    public DcMotor[] driveMotors = new DcMotor[4];
+    public DcMotor[] driveMotors = new DcMotor[3];
     public DcMotor[] driveMotors2WheelX = new DcMotor[2];
     public DcMotor[] driveMotors2WheelY = new DcMotor[2];
-    public DcMotorSimple arm    = null;
+    public DcMotor arm    = null;
+    public DcMotor[] armarray = new DcMotor[1];
     public DcMotorSimple carousel = null;
     public int[] curPos = new int[4];
     public BNO055IMU imu = null;
@@ -76,7 +77,7 @@ a claw system*/
             imu.initialize(params);
         }
         if (useArm) {
-            arm = hwMap.get(DcMotorSimple.class, "arm");
+            arm = hwMap.get(DcMotor.class, "arm");
         }
         if (useCarousel) carousel = hwMap.get(DcMotorSimple.class, "carousel");
 
@@ -105,6 +106,7 @@ a claw system*/
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 //        leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
@@ -125,6 +127,9 @@ a claw system*/
     public void setRunMode(DcMotor.RunMode mode) {
         for (DcMotor m : driveMotors) {
             m.setMode(mode);
+        }
+        for (DcMotor f : armarray){
+            f.setMode(mode);
         }
     }
 
@@ -163,7 +168,6 @@ a claw system*/
         curPos[0] = front_left.getCurrentPosition();
         curPos[1] = front_right.getCurrentPosition();
         curPos[2] = back_left.getCurrentPosition();
-        curPos[3] = back_right.getCurrentPosition();
         return curPos;
     }
 
