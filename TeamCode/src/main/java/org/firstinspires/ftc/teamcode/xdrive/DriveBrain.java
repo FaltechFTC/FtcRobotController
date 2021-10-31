@@ -18,7 +18,12 @@ public class DriveBrain {
     Robot robot;
     OpMode opmode;
     private final ElapsedTime runtime = new ElapsedTime();
-
+    double slowPower=.2;
+    double mediumPower=.3;
+    double highPower = 0.7;
+    double shortTimeout=1.5;
+    double mediumTimeout=4;
+    double highTimeout = 7;
     static final double P_DRIVE_COEFF = 0.15;
     static final double P_TURN_COEFF = 0.1;
     static final double HEADING_THRESHOLD = 1;
@@ -292,5 +297,8 @@ public class DriveBrain {
     }
     public void setZeroHeading() {
         zeroHeadingOffset = robot.getHeading(AngleUnit.DEGREES);
+    }
+    public double getBarcode(){
+        return 0.5;
     }
 }
