@@ -16,7 +16,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
 import java.util.List;
 
 public class Robot {
@@ -29,11 +28,12 @@ public class Robot {
     private DcMotor front_right = null;
     private DcMotor back_left = null;
     private DcMotor back_right = null;
-    public DcMotor[] driveMotors = new DcMotor[3];
+    public DcMotor[] driveMotors = new DcMotor[4];
     public DcMotor[] driveMotors2WheelX = new DcMotor[2];
     public DcMotor[] driveMotors2WheelY = new DcMotor[2];
-    public DcMotor arm    = null;
-    public DcMotor[] armArray = new DcMotor[1];
+    public DcMotor[] driveMotorsMode = new DcMotor[3];
+    public DcMotorSimple arm    = null;
+//    public DcMotorSimple[] armArray = new DcMotorSimple[1];
     public DcMotorSimple carousel = null;
     public int[] curPos = new int[4];
     public BNO055IMU imu = null;
@@ -77,7 +77,7 @@ a claw system*/
             imu.initialize(params);
         }
         if (useArm) {
-            arm = hwMap.get(DcMotor.class, "arm");
+            arm = hwMap.get(DcMotorSimple.class, "arm");
         }
         if (useCarousel) carousel = hwMap.get(DcMotorSimple.class, "carousel");
 
@@ -90,6 +90,9 @@ a claw system*/
         driveMotors[1] = back_left;
         driveMotors[2] = front_left;
         driveMotors[3] = back_right;
+        driveMotorsMode[0] = front_right;
+        driveMotorsMode[1] = back_left;
+        driveMotorsMode[2] = front_left;
         driveMotors2WheelY[0] = front_left;
         driveMotors2WheelY[1] = back_right;
         driveMotors2WheelX[0] = front_right;
@@ -125,12 +128,12 @@ a claw system*/
     }
 
     public void setRunMode(DcMotor.RunMode mode) {
-        for (DcMotor m : driveMotors) {
+        for (DcMotor m : driveMotorsMode) {
             m.setMode(mode);
         }
-        for (DcMotor f : armArray){
-            f.setMode(mode);
-        }
+//        for (DcMotorSimple f : armArray){
+//            f.setMode(mode);
+//        }
     }
 
     public void setDriveStopModeBreak() {

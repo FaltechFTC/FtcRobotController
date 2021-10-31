@@ -22,6 +22,7 @@ public class DriveBrain {
     static final double P_DRIVE_COEFF = 0.15;
     static final double P_TURN_COEFF = 0.1;
     static final double HEADING_THRESHOLD = 1;
+    double zeroHeadingOffset = 0;
 
     public DriveBrain(Robot therobot, OpMode theopmode) {
         robot = therobot;
@@ -240,6 +241,7 @@ public class DriveBrain {
 
     public boolean rotateToHeadingAbsolute(double targetHeading, double tolerance, double power, double timeout) {
         boolean fail = true;
+        targetHeading += zeroHeadingOffset;
         ElapsedTime runtimeInTolerance = new ElapsedTime();
         runtime.reset();
         double currentHeading = robot.getHeading(AngleUnit.DEGREES);
@@ -287,5 +289,8 @@ public class DriveBrain {
             sleep(800);
             robot.carousel.setPower(0);
         }
+    }
+    public void setZeroHeading() {
+        zeroHeadingOffset = robot.getHeading(AngleUnit.DEGREES);
     }
 }
