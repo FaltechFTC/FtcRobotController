@@ -150,21 +150,8 @@ public class Tele extends OpMode {
 
             }
             if (robot.useArm) {
-                if (gamepad2.dpad_up) robot.arm.setPower(.1);
-                else if (gamepad2.dpad_down) robot.arm.setPower(-.1);
-                else robot.arm.setPower(0);
-                //            if (gamepad2.dpad_right) {
-                //                armOffset += ARM_SPEED;
-                //                if (armOffset > 1) {armOffset =1;}
-                ////                robot.arm.setPosition(armOffset);
-                //            }
-                //            if (gamepad2.dpad_left) {
-                //                armOffset -= ARM_SPEED;
-                //                if (armOffset < 0.0) {armOffset =0.0;}
-                //                robot.arm.setPower(.2);
-                ////                robot.arm.setPosition(armOffset);
-                //            }
-                telemetry.addData("Arm angle:", armOffset);
+                 robot.arm.setPower(Utility.deadStick(gamepad2.left_stick_y));
+                 telemetry.addData("Arm angle:", armOffset);
             }
             if (robot.useCarousel) {
                 if (gamepad2.a) {
