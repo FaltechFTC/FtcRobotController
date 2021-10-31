@@ -43,8 +43,8 @@ public class Auto extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         driveBrain.setZeroHeading();
-        autoPos1(false);
-        
+       // autoPos1(false);
+        autoPosTest();
         robot.setDriveStop();
     }
     //Side = true is blue
@@ -92,5 +92,16 @@ public class Auto extends LinearOpMode {
         int barcode = 0; //TODO get barcode number from vision
         int angleModifier = 1;
         if (side) angleModifier=-1;
+    }
+    public void autoPosTest(){
+        driveBrain.driveDistance(1,highPower, 1);
+        driveBrain.rotateToHeadingAbsolute(-30,2,highPower,3);
+        driveBrain.driveDistance(34,mediumPower,2);//drives to shipping hub
+        driveBrain.rotateToHeadingAbsolute(140,3,verySlowPower,3);//rotates so that it is facing carousel
+        driveBrain.carouselMoves();//moves the carousel wheel
+        driveBrain.driveDistance(33, slowPower,5);//drives to shipping hub
+        driveBrain.rotateToHeadingAbsolute(-90,2,halfPower,2);
+        driveBrain.driveDistance(68, mediumPower, 3);//drives to carousel
+        driveBrain.rotateToHeadingAbsolute(160,2,slowPower,5);
     }
 }
