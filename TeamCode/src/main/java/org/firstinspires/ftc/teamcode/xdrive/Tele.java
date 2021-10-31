@@ -82,9 +82,10 @@ public class Tele extends OpMode {
                 robot.setDriveStopModeFloat();
             }
             if (gamepad1.b) {
-                driveBrain.rotateToHeadingAbsolute(90, 3, 0.3, 4);
-
-                return;
+                robot.pusherOpen();
+            }
+            if (gamepad1.a) {
+                robot.pusherClose();
             }
             if (gamepad1.x) {
                 driveBrain.rotateToHeadingRelative(90, 3, 0.3, 3);
@@ -99,7 +100,7 @@ public class Tele extends OpMode {
                 telemetry.addData("T-Mode", T_Mode);
                 if (Math.abs(strafe) > Math.abs(forward)) {
                     forward = 0;
-                    // because he are strafing we can kill the forward
+                    // because we are strafing we can kill the forward
                     //  strafe = strafe;
                 } else {
                     strafe = 0;

@@ -117,7 +117,7 @@ a claw system*/
         intakePusher  = hwMap.get(Servo.class, "pusher");
         intakeWrist = hwMap.get(Servo.class, "wrist");
         //intakeWrist.setPosition(0);
-        //intakePusher.setPosition(0);
+        pusherOpen();
 
     }
 
@@ -312,5 +312,10 @@ a claw system*/
         }
 
     }
-
+    public void pusherOpen() {
+        intakePusher.setPosition(0.0);
+    }
+    public void pusherClose() {
+        intakePusher.setPosition(0.63);
+    }
 }
