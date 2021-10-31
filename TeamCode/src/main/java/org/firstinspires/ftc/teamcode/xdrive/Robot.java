@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -41,8 +42,8 @@ public class Robot {
 a claw system*/
 
     //    public DcMotor  leftArm     = null;
-//    public Servo    leftClaw    = null;
-//    public Servo    rightClaw   = null;
+    public Servo    intakePusher    = null;
+    public Servo    intakeWrist   = null;
 //    public static final double MID_SERVO       =  0.5 ;
 //    public static final double ARM_UP_POWER    =  0.45 ;
 //    public static final double ARM_DOWN_POWER  = -0.45 ;
@@ -110,10 +111,10 @@ a claw system*/
 //        leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
-//        leftClaw  = hwMap.get(Servo.class, "left_hand");
-//        rightClaw = hwMap.get(Servo.class, "right_hand");
-        //arm.setPosition(MID_SERVO);
-//        rightClaw.setPosition(MID_SERVO);
+        intakePusher  = hwMap.get(Servo.class, "pusher");
+        intakeWrist = hwMap.get(Servo.class, "wrist");
+        //intakeWrist.setPosition(0);
+        //intakePusher.setPosition(0);
 
     }
 

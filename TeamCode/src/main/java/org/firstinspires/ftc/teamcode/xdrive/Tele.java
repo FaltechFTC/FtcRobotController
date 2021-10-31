@@ -64,6 +64,15 @@ public class Tele extends OpMode {
                 timer.reset();
                 cycles = 0;
             }
+            if (gamepad1.left_trigger > 0.0) {
+                robot.intakePusher.setPosition(gamepad1.left_trigger);
+                telemetry.addData("Pusher", gamepad1.left_trigger);
+            }
+            if (gamepad1.right_trigger > 0.0) {
+                robot.intakeWrist.setPosition(gamepad1.right_trigger);
+                telemetry.addData("Wrist", gamepad1.right_trigger);
+            }
+
         }
         else {
             if (gamepad1.dpad_up) {
