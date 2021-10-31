@@ -95,7 +95,7 @@ public class Auto extends LinearOpMode {
     }
     public void autoPosTest(){
         driveBrain.driveDistance(1,highPower, 1);
-        driveBrain.rotateToHeadingAbsolute(-30,2,highPower,3);
+        driveBrain.rotateToHeadingAbsolute(-30,2,mediumPower,3);
         driveBrain.driveDistance(10,mediumPower,2);//drives to shipping hub
         driveBrain.rotateToHeadingAbsolute(140,3,verySlowPower,3);//rotates so that it is facing carousel
         driveBrain.carouselMoves();//moves the carousel wheel

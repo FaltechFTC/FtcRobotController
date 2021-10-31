@@ -245,7 +245,7 @@ public class DriveBrain {
         ElapsedTime runtimeInTolerance = new ElapsedTime();
         runtime.reset();
         double currentHeading = robot.getHeading(AngleUnit.DEGREES);
-        double headingError = Utility.wrapDegrees360(targetHeading - currentHeading);
+        double headingError = Utility.wrapDegrees360(currentHeading - targetHeading);
         while ( (runtime.seconds() < timeout)&& ((Math.abs(headingError) > tolerance)||runtimeInTolerance.seconds()<0.25)) {
             if(Math.abs(headingError) > tolerance){
                 runtimeInTolerance.reset();
