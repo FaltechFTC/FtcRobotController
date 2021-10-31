@@ -9,6 +9,15 @@ public class Auto extends LinearOpMode {
     Robot robot = new Robot();
     DriveBrain driveBrain;
     double fixedHeading = 0;
+    double verySlowPower = 0.1;
+    double slowPower=0.2;
+    double mediumPower=0.3;
+    double halfPower = 0.5;
+    double highPower = 0.7;
+    double veryHighPower = 1;
+    double shortTimeout=1.5;
+    double mediumTimeout=4;
+    double highTimeout = 7;
     private ElapsedTime runtime = new ElapsedTime();
 
     VisionBrain visionDrive;
