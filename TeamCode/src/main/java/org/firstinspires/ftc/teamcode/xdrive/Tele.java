@@ -36,9 +36,9 @@ public class Tele extends OpMode {
         Utility.deadStick(gamepad1.left_stick_x);
         Utility.deadStick(gamepad1.left_stick_y);
         Utility.deadStick(gamepad1.right_stick_x);
-        double forward = 0.5 * gamepad1.left_stick_y;
-        double strafe = -0.5 * gamepad1.left_stick_x;
-        double rotate = -0.25 * gamepad1.right_stick_x;
+        double forward = -0.5 * gamepad1.left_stick_y;
+        double strafe = 0.5 * gamepad1.left_stick_x;
+        double rotate = 0.25 * gamepad1.right_stick_x;
         if(gamepad1.right_bumper&&gamepad1.left_bumper){
             if(gamepad1.a)Robot.useCarousel = true;
             if(gamepad1.b)Robot.useCarousel = false;

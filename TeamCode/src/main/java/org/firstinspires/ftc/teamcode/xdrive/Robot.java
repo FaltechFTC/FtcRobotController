@@ -29,8 +29,8 @@ public class Robot {
     private DcMotor back_left = null;
     private DcMotor back_right = null;
     public DcMotor[] driveMotors = new DcMotor[4];
-    public DcMotor[] driveMotors2WheelX = new DcMotor[2];
     public DcMotor[] driveMotors2WheelY = new DcMotor[2];
+    public DcMotor[] driveMotors2WheelX = new DcMotor[2];
     public DcMotor[] driveMotorsMode = new DcMotor[3];
     public DcMotorSimple arm    = null;
 //    public DcMotorSimple[] armArray = new DcMotorSimple[1];
@@ -97,10 +97,10 @@ a claw system*/
         driveMotors2WheelY[1] = back_right;
         driveMotors2WheelX[0] = front_right;
         driveMotors2WheelX[1] = back_left;
-        front_left.setDirection(DcMotor.Direction.FORWARD);
-        front_right.setDirection(DcMotor.Direction.REVERSE);
-        back_left.setDirection(DcMotor.Direction.FORWARD);
-        back_right.setDirection(DcMotor.Direction.REVERSE);
+        front_left.setDirection(DcMotor.Direction.REVERSE);
+        front_right.setDirection(DcMotor.Direction.FORWARD);
+        back_left.setDirection(DcMotor.Direction.REVERSE);
+        back_right.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to zero power
         setDriveStop();
