@@ -264,7 +264,7 @@ public class DriveBrain {
                 rotationCorrection = -0.1;
             }
             robot.setDrive(0, 0, rotationCorrection, 1);
-
+            opmode.telemetry.addData("Target Heading", targetHeading);
             opmode.telemetry.addData("Rotation Correction:", rotationCorrection);
             opmode.telemetry.addData("Heading Error:", headingError);
             opmode.telemetry.addData("Seconds Passed:", runtime.seconds());
