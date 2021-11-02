@@ -91,6 +91,15 @@ public class Tele extends OpMode {
                 driveBrain.rotateToHeadingRelative(90, 3, 0.3, 3);
                 return;
             }
+            if (gamepad2.a){
+                robot.setArmPosition(0);
+            }
+            if (gamepad2.b){
+                robot.setArmPosition(200);
+            }
+            if (gamepad2.x){
+                robot.setArmPosition(400);
+            }
             if (gamepad1.right_trigger == 0.00) {
                 telemetry.addData("T-Mode", T_Mode);
             }

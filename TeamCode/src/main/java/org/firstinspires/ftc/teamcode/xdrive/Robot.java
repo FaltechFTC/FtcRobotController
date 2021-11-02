@@ -17,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Utility;
+
 import java.util.List;
 
 public class Robot {
@@ -271,7 +273,27 @@ a claw system*/
                 .addData("BL", powers[0])
                 .addData("BR", powers[0]);
     }
+    public void setArmPosition(int armPosition) {
+        boolean done = false;
+        armPosition = -armPosition;
+        double maxPower = 0.25;
+        do {
+            telemetry.addLine();
+            int curentPosition = back_right.getCurrentPosition();
+            int error = curentPosition - armPosition;
+            done = Math.abs (error) < 5;
+            double p = 0;
+            if (done){
+                p = 0;
+            }else {
+                p = .01 * error;
+                p = Utility.clipToRange(p, maxPower, -maxPower);
+            }
+            arm.setPower(p);
 
+        }
+        while (!done);
+    }
     public void reportEncoders() {
         int fl = front_left.getCurrentPosition();
         int fr = front_right.getCurrentPosition();
