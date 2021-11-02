@@ -9,6 +9,15 @@ public class Auto extends LinearOpMode {
     Robot robot = new Robot();
     DriveBrain driveBrain;
     double fixedHeading = 0;
+    double verySlowPower = 0.1;
+    double slowPower=0.2;
+    double mediumPower=0.3;
+    double halfPower = 0.5;
+    double highPower = 0.7;
+    double veryHighPower = 1;
+    double shortTimeout=1.5;
+    double mediumTimeout=4;
+    double highTimeout = 7;
     private ElapsedTime runtime = new ElapsedTime();
 
     VisionBrain visionDrive;
@@ -33,9 +42,9 @@ public class Auto extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        driveBrain.setZeroHeading();
-        autoPos1(false);
-        
+//        driveBrain.setZeroHeading();
+       // autoPos1(false);
+        autoPosTest();
         robot.setDriveStop();
     }
     //Side = true is blue
@@ -44,49 +53,63 @@ public class Auto extends LinearOpMode {
         int barcode = 0; //TODO get barcode number from vision
         int angleModifier = 1;
         if (side) angleModifier=-1;
-
+        telemetry.addData("Starting!",0);
         //deliver preloaded box
-        driveBrain.driveDistance(1,.3, 1);//move forward 1in
-        robot.setDriveStop();
-        robot.setDrive(0,0,-30*angleModifier,POWER);//rotates 30degrees to go to the shipping hub
-        robot.setDriveStop();
-        driveBrain.driveDistance(34,.5,2);//drives to shipping hub
+        driveBrain.driveDistance(1,mediumPower, shortTimeout);//move forward 1in
+        driveBrain.rotateToHeadingAbsolute(-30*angleModifier,2,0.5,mediumTimeout);
+        driveBrain.driveDistance(34,halfPower,mediumTimeout);//drives to shipping hub
+        telemetry.addData("Moved to shipping hub!",1);
         //TODO move the arm so that we can place the game piece
-
+        telemetry.addData("Placed Block!",2);
         //gets duck off of carousel
-        driveBrain.driveDistance(1,.5,1);//drives 1 inch in order to get enough room to spin
-        robot.setDriveStop();
-        robot.setDrive(0,0, 140*angleModifier,POWER);//rotates so that it is facing carousel
-        robot.setDriveStop();
-        driveBrain.driveDistance(68, .75, 3);//drives to carousel
+        driveBrain.driveDistance(1,halfPower,shortTimeout);//drives 1 inch in order to get enough room to spin
+        driveBrain.rotateToHeadingAbsolute(110*angleModifier,3,halfPower,mediumTimeout);//rotates so that it is facing carousel
+        driveBrain.driveDistance(68, highPower, mediumTimeout);//drives to carousel
         driveBrain.carouselMoves();//moves the carousel wheel
-
+        telemetry.addData("Moved the Carousel",3);
         //Gets a block from the warehouse and delivers it
-        driveBrain.driveDistance(-1, .3, 1);//goes back so that it has room to turn
-        robot.setDriveStop();
-        robot.setDrive(0,0,160*angleModifier, .3);//turns so that it is facing the warehouse
-        robot.setDriveStop();
-        driveBrain.driveDistance(96,.5, 6);//drives to warehouse
+        driveBrain.driveDistance(-1, mediumTimeout, shortTimeout);//goes back so that it has room to turn
+        driveBrain.rotateToHeadingAbsolute(270*angleModifier,2,mediumPower,highTimeout);
+        driveBrain.driveDistance(96,halfPower, highTimeout);//drives to warehouse
+        telemetry.addData("Drove to Warehouse!",4);
         //TODO make it so that the arm and claw work together to get a block.
-        driveBrain.driveDistance(-72,.5,5);
-        robot.setDriveStop();
-        robot.setDrive(0,0,90*angleModifier,.5);//rotates so that it is facing the outside of the warehouse
-        robot.setDriveStop();
-        driveBrain.driveDistance(33, .6,5);//drives to shipping hub
+        driveBrain.driveDistance(-72,halfPower,highTimeout);
+
+        driveBrain.rotateToHeadingAbsolute(360*angleModifier,2,halfPower,highTimeout);
+        driveBrain.driveDistance(33, highPower,highTimeout);//drives to shipping hub
+        telemetry.addData("Drove to Shipping Hub!",5);
         //TODO places block down
-
+        telemetry.addData("Placed Block!",6);
         //Parks in the warehouse
-        driveBrain.driveDistance(-33, .2, 1);//goes back so that it has enough room to turn
-        robot.setDriveStop();
-        robot.setDrive(0,0,-90*angleModifier,.5);
-        robot.setDriveStop();
-        driveBrain.driveDistance(72, .5, 3);//drives to go inside the warehouse
+        driveBrain.driveDistance(-33, slowPower, shortTimeout);//goes back so that it has enough room to turn
+        driveBrain.rotateToHeadingAbsolute(270*angleModifier,2,halfPower,mediumTimeout);
+        driveBrain.driveDistance(72, halfPower, mediumTimeout);//drives to go inside the warehouse
+        telemetry.addData("Drove to Warehouse!",7);
         //end
-
+        telemetry.addData("Autonomous For Resource Depot Complete!",8);
     }
-    public void redAutoWarehouse(boolean side) {
+    public void autoPos2(boolean side) {
         int barcode = 0; //TODO get barcode number from vision
         int angleModifier = 1;
         if (side) angleModifier=-1;
+    }
+    public void autoPosTest(){
+//        driveBrain.driveDistance(20,mediumPower, 1);
+        sleep(5000);
+        driveBrain.rotateToHeadingAbsolute(90,3,mediumPower,3);
+        sleep(5000);
+//        driveBrain.driveDistance(20,mediumPower,3);//drives to shipping hub
+        sleep(5000);
+        driveBrain.rotateToHeadingAbsolute(180,3,mediumPower,3);//rotates so that it is facing carousel
+        sleep(5000);
+        driveBrain.carouselMoves();//moves the carousel wheel
+        sleep(5000);
+//        driveBrain.driveDistance(20, mediumPower,3);//drives to shipping hub
+        sleep(5000);
+        driveBrain.rotateToHeadingAbsolute(270,3,mediumPower,2);
+        sleep(5000);
+//        driveBrain.driveDistance(20, mediumPower, 3);//drives to carousel
+        sleep(5000);
+        driveBrain.rotateToHeadingAbsolute(360,3,mediumPower,5);
     }
 }

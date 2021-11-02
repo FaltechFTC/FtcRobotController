@@ -32,8 +32,8 @@ public class Robot {
     private DcMotor back_left = null;
     private DcMotor back_right = null;
     public DcMotor[] driveMotors = new DcMotor[4];
-    public DcMotor[] driveMotors2WheelX = new DcMotor[2];
     public DcMotor[] driveMotors2WheelY = new DcMotor[2];
+    public DcMotor[] driveMotors2WheelX = new DcMotor[2];
     public DcMotor[] driveMotorsMode = new DcMotor[3];
     public DcMotorSimple arm    = null;
 //    public DcMotorSimple[] armArray = new DcMotorSimple[1];
@@ -100,10 +100,10 @@ a claw system*/
         driveMotors2WheelY[1] = back_right;
         driveMotors2WheelX[0] = front_right;
         driveMotors2WheelX[1] = back_left;
-        front_left.setDirection(DcMotor.Direction.FORWARD);
-        front_right.setDirection(DcMotor.Direction.REVERSE);
-        back_left.setDirection(DcMotor.Direction.FORWARD);
-        back_right.setDirection(DcMotor.Direction.REVERSE);
+        front_left.setDirection(DcMotor.Direction.REVERSE);
+        front_right.setDirection(DcMotor.Direction.FORWARD);
+        back_left.setDirection(DcMotor.Direction.REVERSE);
+        back_right.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to zero power
         setDriveStop();
@@ -200,6 +200,10 @@ a claw system*/
 
     public void setDrive(double forward, double strafe, double rotate, double power) {
         double[] powers = calculateDrivePowersFSRSimple(forward, strafe, rotate);
+        telemetry.addData("Forward",forward);
+        telemetry.addData("Strafe",strafe);
+        telemetry.addData("Rotate",rotate);
+        telemetry.addData("Powers", powers);
         setDrivePower(powers);
     }
 
@@ -231,10 +235,10 @@ a claw system*/
     public void setTwoWheelDrive(double forward, double strafe, double rotate) {
         //this function will combine wheel commands
         double[] wheelpowers = {
-                (strafe + rotate),
-                (forward - rotate),
-                (strafe + rotate),
-                (forward - rotate),
+                (strafe - rotate),
+                (forward + rotate),
+                (strafe - rotate),
+                (forward + rotate),
         };
 
         setDrivePower(wheelpowers); // apply the calculated values to the motors.
@@ -242,20 +246,20 @@ a claw system*/
 
     public double[] calculateDrivePowersFSRSimple (double forward, double strafe, double rotate) {
        double[] powers = {
-                (forward + strafe + rotate),
-                (forward - strafe - rotate),
-                (forward - strafe + rotate),
                 (forward + strafe - rotate),
+                (forward - strafe + rotate),
+                (forward - strafe - rotate),
+                (forward + strafe + rotate),
         };
         return powers;
     }
 
     public double[] calculateDrivePowers(double heading, double power, double rotate) {
         double m0, m1, m2, m3;
-        m0 = power * -Math.sin(heading-(Math.PI/4))-rotate;
-        m1 = power * Math.cos(heading+(Math.PI/4))-rotate;
-        m2 = power * Math.sin(heading+(Math.PI/4))-rotate;
-        m3 = power * -Math.cos(heading-(Math.PI/4))-rotate;
+        m0 = power * -Math.sin(heading-(Math.PI/4))+rotate;
+        m1 = power * Math.cos(heading+(Math.PI/4))+rotate;
+        m2 = power * Math.sin(heading+(Math.PI/4))+rotate;
+        m3 = power * -Math.cos(heading-(Math.PI/4))+rotate;
         double[] XDriveMotors = {m0, m1, m2, m3};
         return XDriveMotors;
     }
