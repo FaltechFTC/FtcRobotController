@@ -3,12 +3,26 @@ package org.firstinspires.ftc.teamcode.xdrive;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "TeleVision", group = "7079")
+@TeleOp(name = "TeleVisionTester Hub", group = "7079")
 public class TeleTesterVision extends OpMode {
     Robot robot;
     DriveBrain driveBrain;
     VisionBrain visionBrain;
     boolean useDrive = false;
+    boolean usingPhone=false;
+    float zoom=1.2f;
+
+    // Creating additional subclasses is a cheap way to create additional opmodes with slightly different configurations
+    // that otherwise using the same core logic.
+    @TeleOp(name = "TeleVisionTester Phone", group = "7079")
+    public class TeleTesterVisionPhone extends TeleTesterVision {
+        public TeleTesterVisionPhone() {
+            super();
+            usingPhone=true;  // overrides the parent class defaults
+            zoom=1.0f;
+        }
+    }
+
 
     @Override
     public void init() {
@@ -19,8 +33,9 @@ public class TeleTesterVision extends OpMode {
         }
 
         visionBrain = new VisionBrain();
-        visionBrain.showCamera=true; // useful for sighting on phone only
-        visionBrain.showCameraOD=false; // useful for seeing object detection on phone only
+        visionBrain.useWebCam=!usingPhone; // if false, then assumes back of phone.
+        visionBrain.showCamera=false; // useful for sighting on phone only
+        visionBrain.showCameraOD=usingPhone; // useful for seeing object detection on phone only
         visionBrain.zoom=1.2f;  // 1.0 is no zoom, greater number is greater zoom
         visionBrain.init(this);
         visionBrain.activate();
