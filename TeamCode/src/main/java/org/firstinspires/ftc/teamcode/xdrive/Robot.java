@@ -131,7 +131,7 @@ a claw system*/
     }
 
     public void setRunMode(DcMotor.RunMode mode) {
-        for (DcMotor m : driveMotorsMode) {
+        for (DcMotor m : driveMotors2WheelY) {
             m.setMode(mode);
         }
 //        for (DcMotorSimple f : armArray){

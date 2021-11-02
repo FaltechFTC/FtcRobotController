@@ -94,21 +94,21 @@ public class Auto extends LinearOpMode {
         if (side) angleModifier=-1;
     }
     public void autoPosTest(){
-//        driveBrain.driveDistance(20,mediumPower, 1);
+        driveBrain.driveDistance(20,mediumPower, 1);
         sleep(5000);
         driveBrain.rotateToHeadingAbsolute(90,3,mediumPower,3);
         sleep(5000);
-//        driveBrain.driveDistance(20,mediumPower,3);//drives to shipping hub
+        driveBrain.driveDistance(20,mediumPower,3);//drives to shipping hub
         sleep(5000);
         driveBrain.rotateToHeadingAbsolute(180,3,mediumPower,3);//rotates so that it is facing carousel
         sleep(5000);
         driveBrain.carouselMoves();//moves the carousel wheel
         sleep(5000);
-//        driveBrain.driveDistance(20, mediumPower,3);//drives to shipping hub
+        driveBrain.driveDistance(20, mediumPower,3);//drives to shipping hub
         sleep(5000);
         driveBrain.rotateToHeadingAbsolute(270,3,mediumPower,2);
         sleep(5000);
-//        driveBrain.driveDistance(20, mediumPower, 3);//drives to carousel
+        driveBrain.driveDistance(20, mediumPower, 3);//drives to carousel
         sleep(5000);
         driveBrain.rotateToHeadingAbsolute(360,3,mediumPower,5);
     }
