@@ -88,7 +88,7 @@ public class Auto extends LinearOpMode {
         //end
         telemetry.addData("Autonomous For Resource Depot Complete!",8);
     }
-    public void redAutoWarehouse(boolean side) {
+    public void autoPos2(boolean side) {
         int barcode = 0; //TODO get barcode number from vision
         int angleModifier = 1;
         if (side) angleModifier=-1;
