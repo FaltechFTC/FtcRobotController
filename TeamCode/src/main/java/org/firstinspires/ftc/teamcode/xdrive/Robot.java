@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -16,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Utility;
+
 import java.util.List;
 
 public class Robot {
@@ -41,8 +44,8 @@ public class Robot {
 a claw system*/
 
     //    public DcMotor  leftArm     = null;
-//    public Servo    leftClaw    = null;
-//    public Servo    rightClaw   = null;
+    public Servo    intakePusher    = null;
+    public Servo    intakeWrist   = null;
 //    public static final double MID_SERVO       =  0.5 ;
 //    public static final double ARM_UP_POWER    =  0.45 ;
 //    public static final double ARM_DOWN_POWER  = -0.45 ;
@@ -113,10 +116,10 @@ a claw system*/
 //        leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
-//        leftClaw  = hwMap.get(Servo.class, "left_hand");
-//        rightClaw = hwMap.get(Servo.class, "right_hand");
-        //arm.setPosition(MID_SERVO);
-//        rightClaw.setPosition(MID_SERVO);
+        intakePusher  = hwMap.get(Servo.class, "pusher");
+        intakeWrist = hwMap.get(Servo.class, "wrist");
+        //intakeWrist.setPosition(0);
+        pusherOpen();
 
     }
 
@@ -274,7 +277,54 @@ a claw system*/
                 .addData("BL", powers[0])
                 .addData("BR", powers[0]);
     }
+    public void setArmPosition(int armPosition) {
+        boolean done = false;
+        armPosition = -armPosition;
+        double maxPower = 0.25;
+        do {
+            int curentPosition = back_right.getCurrentPosition();
+            int error = armPosition - curentPosition;
+            done = Math.abs (error) < 5;
+            double p = 0;
+            if (done){
+                p = 0;
+            }else {
+                p = .01 * error;
+                p = Utility.clipToRange(p, maxPower, -maxPower);
+            }
+            arm.setPower(p);
+            telemetry.addLine()
+                    .addData("armPosition", curentPosition)
+                    .addData("error", curentPosition)
+                    .addData("p", curentPosition)
+                    .addData("tgt", curentPosition);
 
+        }
+        while (!done);
+    }
+    public void setArmMotorPosition(double pos) {
+        int armPosition = (int) pos;
+        boolean done = false;
+        armPosition = -armPosition;
+        double maxPower = 0.25;
+            int curentPosition = back_right.getCurrentPosition();
+            int error = armPosition - curentPosition;
+            done = Math.abs (error) < 5;
+            double p = 0;
+            if (done){
+                p = 0;
+            }else {
+                p = .01 * error;
+                p = Utility.clipToRange(p, maxPower, -maxPower);
+            }
+            arm.setPower(p);
+            telemetry.addLine()
+                    .addData("armPosition", curentPosition)
+                    .addData("error", curentPosition)
+                    .addData("p", curentPosition)
+                    .addData("tgt", curentPosition);
+
+    }
     public void reportEncoders() {
         int fl = front_left.getCurrentPosition();
         int fr = front_right.getCurrentPosition();
@@ -315,5 +365,10 @@ a claw system*/
         }
 
     }
-
+    public void pusherOpen() {
+        intakePusher.setPosition(0.0);
+    }
+    public void pusherClose() {
+        intakePusher.setPosition(0.63);
+    }
 }
