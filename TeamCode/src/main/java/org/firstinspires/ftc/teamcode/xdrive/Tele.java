@@ -38,7 +38,7 @@ public class Tele extends OpMode {
         Utility.deadStick(gamepad1.right_stick_x);
         double forward = -0.5 * gamepad1.left_stick_y;
         double strafe = 0.5 * gamepad1.left_stick_x;
-        double rotate = 0.25 * gamepad1.right_stick_x;
+        double rotate = 0.25 * -gamepad1.right_stick_x;
         if(gamepad1.right_bumper&&gamepad1.left_bumper){
             if(gamepad1.a)Robot.useCarousel = true;
             if(gamepad1.b)Robot.useCarousel = false;
@@ -115,7 +115,7 @@ public class Tele extends OpMode {
             }
             if (gamepad1.left_trigger > 0.00) {
 
-                double headingError = Utility.wrapDegrees360(fixedHeading - currentHeading);
+                double headingError = Utility.wrapDegrees360(currentHeading - fixedHeading);
                 if (headingError > 45) {
                     headingError = 45;
                 }
@@ -133,7 +133,7 @@ public class Tele extends OpMode {
                 if (rotationCorrection < 0 && rotationCorrection > -0.05) {
                     rotationCorrection = -0.05;
                 }
-                // i am trash at coding
+                // i am trash at coding - mao zendong
                 rotate = rotationCorrection + rotate;
                 telemetry.addData("Fixed Heading", fixedHeading);
                 telemetry.addData("Heading Error", headingError);

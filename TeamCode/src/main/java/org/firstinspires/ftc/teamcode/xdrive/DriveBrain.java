@@ -245,7 +245,7 @@ public class DriveBrain {
         ElapsedTime runtimeInTolerance = new ElapsedTime();
         runtime.reset();
         double currentHeading = robot.getHeading(AngleUnit.DEGREES);
-        double headingError = Utility.wrapDegrees360(currentHeading - targetHeading);
+        double headingError = Utility.wrapDegrees360(targetHeading - currentHeading);
         while ( (runtime.seconds() < timeout)&& ((Math.abs(headingError) > tolerance)||runtimeInTolerance.seconds()<0.25)) {
             if(Math.abs(headingError) > tolerance){
                 runtimeInTolerance.reset();
@@ -275,9 +275,8 @@ public class DriveBrain {
 
 
     public boolean rotateToHeadingRelative(double targetHeading, double tolerance, double power, double timeout) {
-        targetHeading += robot.getHeading(AngleUnit.DEGREES);
+        targetHeading += robot.getHeading(AngleUnit.DEGREES)-zeroHeadingOffset;
         return rotateToHeadingAbsolute(targetHeading, tolerance, power, timeout);
-
     }
     public void carouselMoves() {
         if (robot.useCarousel) {
