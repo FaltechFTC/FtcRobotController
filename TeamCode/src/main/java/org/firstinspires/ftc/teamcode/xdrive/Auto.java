@@ -42,7 +42,7 @@ public class Auto extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        driveBrain.setZeroHeading();
+//        driveBrain.setZeroHeading();
        // autoPos1(false);
         autoPosTest();
         robot.setDriveStop();
@@ -94,14 +94,22 @@ public class Auto extends LinearOpMode {
         if (side) angleModifier=-1;
     }
     public void autoPosTest(){
-        driveBrain.driveDistance(1,mediumPower, 1);
-        driveBrain.rotateToHeadingAbsolute(-30,2,mediumPower,3);
-        driveBrain.driveDistance(10,mediumPower,2);//drives to shipping hub
-        driveBrain.rotateToHeadingAbsolute(140,3,mediumPower,3);//rotates so that it is facing carousel
+//        driveBrain.driveDistance(20,mediumPower, 1);
+        sleep(5000);
+        driveBrain.rotateToHeadingAbsolute(90,3,mediumPower,3);
+        sleep(5000);
+//        driveBrain.driveDistance(20,mediumPower,3);//drives to shipping hub
+        sleep(5000);
+        driveBrain.rotateToHeadingAbsolute(180,3,mediumPower,3);//rotates so that it is facing carousel
+        sleep(5000);
         driveBrain.carouselMoves();//moves the carousel wheel
-        driveBrain.driveDistance(15, mediumPower,5);//drives to shipping hub
-        driveBrain.rotateToHeadingAbsolute(-90,2,halfPower,2);
-        driveBrain.driveDistance(10, mediumPower, 3);//drives to carousel
-        driveBrain.rotateToHeadingAbsolute(160,2,mediumPower,5);
+        sleep(5000);
+//        driveBrain.driveDistance(20, mediumPower,3);//drives to shipping hub
+        sleep(5000);
+        driveBrain.rotateToHeadingAbsolute(270,3,mediumPower,2);
+        sleep(5000);
+//        driveBrain.driveDistance(20, mediumPower, 3);//drives to carousel
+        sleep(5000);
+        driveBrain.rotateToHeadingAbsolute(360,3,mediumPower,5);
     }
 }

@@ -282,9 +282,8 @@ a claw system*/
         armPosition = -armPosition;
         double maxPower = 0.25;
         do {
-            telemetry.addLine();
             int curentPosition = back_right.getCurrentPosition();
-            int error = curentPosition - armPosition;
+            int error = armPosition - curentPosition;
             done = Math.abs (error) < 5;
             double p = 0;
             if (done){
@@ -294,9 +293,37 @@ a claw system*/
                 p = Utility.clipToRange(p, maxPower, -maxPower);
             }
             arm.setPower(p);
+            telemetry.addLine()
+                    .addData("armPosition", curentPosition)
+                    .addData("error", curentPosition)
+                    .addData("p", curentPosition)
+                    .addData("tgt", curentPosition);
 
         }
         while (!done);
+    }
+    public void setArmMotorPosition(double pos) {
+        int armPosition = (int) pos;
+        boolean done = false;
+        armPosition = -armPosition;
+        double maxPower = 0.25;
+            int curentPosition = back_right.getCurrentPosition();
+            int error = armPosition - curentPosition;
+            done = Math.abs (error) < 5;
+            double p = 0;
+            if (done){
+                p = 0;
+            }else {
+                p = .01 * error;
+                p = Utility.clipToRange(p, maxPower, -maxPower);
+            }
+            arm.setPower(p);
+            telemetry.addLine()
+                    .addData("armPosition", curentPosition)
+                    .addData("error", curentPosition)
+                    .addData("p", curentPosition)
+                    .addData("tgt", curentPosition);
+
     }
     public void reportEncoders() {
         int fl = front_left.getCurrentPosition();

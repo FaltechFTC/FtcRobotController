@@ -5,15 +5,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Utility;
 
 @TeleOp(name = "Tele", group = "7079")
 public class Tele extends OpMode {
     Robot robot = new Robot();
     DriveBrain driveBrain;
-    org.firstinspires.ftc.teamcode.Utility Utility;
-    double fixedHeading = 0;
+   double fixedHeading = 0;
     double armOffset = 0.0;
     final double ARM_SPEED = 0.05;
+    double armPos = 0;
 
     LynxModule.BulkCachingMode readMode;
     ElapsedTime timer;
@@ -91,14 +92,19 @@ public class Tele extends OpMode {
                 driveBrain.rotateToHeadingRelative(90, 3, 0.3, 3);
                 return;
             }
-            if (gamepad2.a){
-                robot.setArmPosition(0);
-            }
-            if (gamepad2.b){
-                robot.setArmPosition(200);
-            }
-            if (gamepad2.x){
-                robot.setArmPosition(400);
+            if (Robot.useArm) {
+                if (gamepad2.a) {
+                    robot.setArmPosition(0);
+                }
+                if (gamepad2.b) {
+                    robot.setArmPosition(200);
+                }
+                if (gamepad2.x) {
+                    robot.setArmPosition(400);
+                }
+                armPos += gamepad2.right_stick_y * 2;
+                armPos = Utility.clipToRange(armPos, 1000, 0);
+                robot.setArmMotorPosition(armPos);
             }
             if (gamepad1.right_trigger == 0.00) {
                 telemetry.addData("T-Mode", T_Mode);
