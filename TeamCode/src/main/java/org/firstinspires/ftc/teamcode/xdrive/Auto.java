@@ -102,6 +102,17 @@ public class Auto extends LinearOpMode {
         sleep(5000);
         driveBrain.rotateToHeadingAbsolute(180,3,mediumPower,3);//rotates so that it is facing carousel
         sleep(5000);
+        // given: stupid = failure, mau = stupid
+        // prove: mau = failure
+        // statement: mau = failure, reason: Transitive Property of Equality
+        driveBrain.driveDistance(20,mediumPower, 1);
+        sleep(5000);
+        driveBrain.rotateToHeadingAbsolute(90,2,mediumPower,3);
+        sleep(5000);
+        driveBrain.driveDistance(20,mediumPower,2);//drives to shipping hub
+        sleep(5000);
+        driveBrain.rotateToHeadingAbsolute(180,3,mediumPower,3);//rotates so that it is facing carousel
+        sleep(5000);
         driveBrain.carouselMoves();//moves the carousel wheel
         sleep(5000);
 //        driveBrain.driveDistance(20, mediumPower,3);//drives to shipping hub
