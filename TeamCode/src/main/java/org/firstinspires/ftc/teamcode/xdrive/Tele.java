@@ -43,8 +43,8 @@ public class Tele extends OpMode {
         if(gamepad1.right_bumper&&gamepad1.left_bumper){
             if(gamepad1.a)Robot.useCarousel = true;
             if(gamepad1.b)Robot.useCarousel = false;
-            if(gamepad2.a)Robot.useArm = true;
-            if(gamepad2.b)Robot.useArm = false;
+//            if(gamepad2.a)Robot.useArm = true;
+//            if(gamepad2.b)Robot.useArm = false;
         }
         if (gamepad1.left_bumper) {
             if (gamepad1.a) {
@@ -65,14 +65,14 @@ public class Tele extends OpMode {
                 timer.reset();
                 cycles = 0;
             }
-            if (gamepad1.left_trigger > 0.0) {
-                robot.intakePusher.setPosition(gamepad1.left_trigger);
-                telemetry.addData("Pusher", gamepad1.left_trigger);
+            if (gamepad2.left_trigger > 0.0) {
+                robot.intakePusher.setPosition(gamepad2.left_trigger);
+                telemetry.addData("Pusher", gamepad2.left_trigger);
             }
-            if (gamepad1.right_trigger > 0.0) {
-                robot.intakeWrist.setPosition(gamepad1.right_trigger);
-                telemetry.addData("Wrist", gamepad1.right_trigger);
-            }
+//            if (gamepad2.right_trigger > 0.0) {
+//                robot.intakeWrist.setPosition(gamepad2.right_trigger);
+//                telemetry.addData("Wrist", gamepad2.right_trigger);
+//            }
 
         }
         else {
@@ -82,10 +82,10 @@ public class Tele extends OpMode {
             if (gamepad1.dpad_down) {
                 robot.setDriveStopModeFloat();
             }
-            if (gamepad1.b) {
+            if (gamepad2.dpad_up) {
                 robot.pusherOpen();
             }
-            if (gamepad1.a) {
+            if (gamepad2.dpad_down) {
                 robot.pusherClose();
             }
             if (gamepad1.x) {
@@ -94,14 +94,15 @@ public class Tele extends OpMode {
             }
             if (Robot.useArm) {
                 if (gamepad2.a) {
-                    armPos = 0;
+                    armPos = 128;
                 }
                 else if (gamepad2.b) {
-                    armPos = 200;
+                    armPos = 224;
                 }
                 else if (gamepad2.x) {
-                    armPos = 400;
+                    armPos = 353;
                 }
+                //lvl 3 is 513
                 else
                     armPos += gamepad2.left_stick_y * 2;
                 armPos = Utility.clipToRange(armPos, 1000, 0);
@@ -176,11 +177,12 @@ public class Tele extends OpMode {
 
             robot.setDrive(forward, strafe, rotate, 1);
             robot.reportEncoders();
-            robot.reportColor();
+            //robot.reportColor();
 
             // robotXDrive.calculateDrivePowersFSR(gamepad1.left_stick_x, gamepad1.left_stick_y, rotate);
             cycles++;
-            telemetry.addData("cycle time (ms): ", timer.milliseconds() / cycles);
+            //telemetry.addData("cycle time (ms): ", timer.milliseconds() / cycles);
+            telemetry.update();
         }
     }
 }

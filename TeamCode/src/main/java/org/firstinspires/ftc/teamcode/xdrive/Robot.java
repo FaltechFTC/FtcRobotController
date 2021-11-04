@@ -24,7 +24,7 @@ import java.util.List;
 public class Robot {
     static final boolean useColorSensor = true;
     static final boolean useIMU = true;
-    static boolean useArm = false;
+    static boolean useArm = true;
     static boolean useCarousel = true;
     private Telemetry telemetry = null;
     private DcMotor front_left = null;
@@ -307,7 +307,6 @@ a claw system*/
     }
     public void setArmMotorPosition(double pos) {
         int armPosition = (int) pos;
-        setArmPosition(armPosition);
         boolean done = false;
         double maxPower = 0.25;
             int curentPosition = front_right.getCurrentPosition();
@@ -320,11 +319,11 @@ a claw system*/
                 p = .01 * error;
                 p = Utility.clipToRange(p, maxPower, -maxPower);
             }
-            arm.setPower(p);
+            arm.setPower(-p);
             telemetry.addLine()
                     .addData("armPosition", curentPosition)
                     .addData("error", error)
-                    .addData("p", maxPower)
+                    .addData("p", p)
                     .addData("tgt", armPosition);
 
     }
@@ -372,6 +371,6 @@ a claw system*/
         intakePusher.setPosition(0.0);
     }
     public void pusherClose() {
-        intakePusher.setPosition(0.63);
+        intakePusher.setPosition(0.7);
     }
 }
