@@ -94,15 +94,16 @@ public class Tele extends OpMode {
             }
             if (Robot.useArm) {
                 if (gamepad2.a) {
-                    robot.setArmPosition(0);
+                    armPos = 0;
                 }
-                if (gamepad2.b) {
-                    robot.setArmPosition(200);
+                else if (gamepad2.b) {
+                    armPos = 200;
                 }
-                if (gamepad2.x) {
-                    robot.setArmPosition(400);
+                else if (gamepad2.x) {
+                    armPos = 400;
                 }
-                armPos += gamepad2.right_stick_y * 2;
+                else
+                    armPos += gamepad2.left_stick_y * 2;
                 armPos = Utility.clipToRange(armPos, 1000, 0);
                 robot.setArmMotorPosition(armPos);
             }
@@ -165,12 +166,8 @@ public class Tele extends OpMode {
                 telemetry.addData("Rotation Correction", rotationCorrection);
 
             }
-            if (robot.useArm) {
-                 robot.arm.setPower(Utility.deadStick(gamepad2.left_stick_y));
-                 telemetry.addData("Arm angle:", armOffset);
-            }
-            if (robot.useCarousel) {
-                if (gamepad2.a) {
+            if (Robot.useCarousel) {
+                if (gamepad2.y) {
                     driveBrain.carouselMoves();
                 }
                 robot.carousel.setPower(cPower);

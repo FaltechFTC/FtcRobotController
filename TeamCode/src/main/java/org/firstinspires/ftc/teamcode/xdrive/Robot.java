@@ -79,9 +79,7 @@ a claw system*/
             //change to default set of parameters go here
             imu.initialize(params);
         }
-        if (useArm) {
-            arm = hwMap.get(DcMotorSimple.class, "arm");
-        }
+        if (useArm) arm = hwMap.get(DcMotorSimple.class, "arm");
         if (useCarousel) carousel = hwMap.get(DcMotorSimple.class, "carousel");
 
         // Define and Initialize Motors
@@ -305,9 +303,8 @@ a claw system*/
     public void setArmMotorPosition(double pos) {
         int armPosition = (int) pos;
         boolean done = false;
-        armPosition = -armPosition;
         double maxPower = 0.25;
-            int curentPosition = back_right.getCurrentPosition();
+            int curentPosition = front_right.getCurrentPosition();
             int error = armPosition - curentPosition;
             done = Math.abs (error) < 5;
             double p = 0;
@@ -320,9 +317,9 @@ a claw system*/
             arm.setPower(p);
             telemetry.addLine()
                     .addData("armPosition", curentPosition)
-                    .addData("error", curentPosition)
-                    .addData("p", curentPosition)
-                    .addData("tgt", curentPosition);
+                    .addData("error", error)
+                    .addData("p", maxPower)
+                    .addData("tgt", armPosition);
 
     }
     public void reportEncoders() {
