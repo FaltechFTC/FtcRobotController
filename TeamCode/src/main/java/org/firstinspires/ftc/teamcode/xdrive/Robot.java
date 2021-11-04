@@ -275,13 +275,18 @@ a claw system*/
                 .addData("BL", powers[0])
                 .addData("BR", powers[0]);
     }
+
+    public int getArmPosition(){
+        return front_right.getCurrentPosition();
+    }
+
     public void setArmPosition(int armPosition) {
         boolean done = false;
         armPosition = -armPosition;
         double maxPower = 0.25;
         do {
-            int curentPosition = back_right.getCurrentPosition();
-            int error = armPosition - curentPosition;
+            int currentPosition = getArmPosition();
+            int error = armPosition - currentPosition;
             done = Math.abs (error) < 5;
             double p = 0;
             if (done){
@@ -292,16 +297,17 @@ a claw system*/
             }
             arm.setPower(p);
             telemetry.addLine()
-                    .addData("armPosition", curentPosition)
-                    .addData("error", curentPosition)
-                    .addData("p", curentPosition)
-                    .addData("tgt", curentPosition);
+                    .addData("armPosition", currentPosition)
+                    .addData("error", error)
+                    .addData("p", p)
+                    .addData("tgt", armPosition);
 
         }
         while (!done);
     }
     public void setArmMotorPosition(double pos) {
         int armPosition = (int) pos;
+        setArmPosition(armPosition);
         boolean done = false;
         double maxPower = 0.25;
             int curentPosition = front_right.getCurrentPosition();
