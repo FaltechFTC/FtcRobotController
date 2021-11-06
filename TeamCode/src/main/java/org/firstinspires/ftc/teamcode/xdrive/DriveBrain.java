@@ -264,7 +264,7 @@ public class DriveBrain {
                 rotationCorrection = -0.1;
             }
             robot.setDrive(0, 0, rotationCorrection, 1);
-
+            opmode.telemetry.addData("Target Heading", targetHeading);
             opmode.telemetry.addData("Rotation Correction:", rotationCorrection);
             opmode.telemetry.addData("Heading Error:", headingError);
             opmode.telemetry.addData("Seconds Passed:", runtime.seconds());
@@ -275,9 +275,8 @@ public class DriveBrain {
 
 
     public boolean rotateToHeadingRelative(double targetHeading, double tolerance, double power, double timeout) {
-        targetHeading += robot.getHeading(AngleUnit.DEGREES);
+        targetHeading += robot.getHeading(AngleUnit.DEGREES)-zeroHeadingOffset;
         return rotateToHeadingAbsolute(targetHeading, tolerance, power, timeout);
-
     }
     public void carouselMoves() {
         if (robot.useCarousel) {
@@ -292,5 +291,8 @@ public class DriveBrain {
     }
     public void setZeroHeading() {
         zeroHeadingOffset = robot.getHeading(AngleUnit.DEGREES);
+    }
+    public double getBarcode(){
+        return 0.5;
     }
 }

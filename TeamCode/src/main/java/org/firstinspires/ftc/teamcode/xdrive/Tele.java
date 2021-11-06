@@ -5,15 +5,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Utility;
 
 @TeleOp(name = "Tele", group = "7079")
 public class Tele extends OpMode {
     Robot robot = new Robot();
     DriveBrain driveBrain;
-    org.firstinspires.ftc.teamcode.Utility Utility;
-    double fixedHeading = 0;
+   double fixedHeading = 0;
     double armOffset = 0.0;
     final double ARM_SPEED = 0.05;
+    double armPos = 0;
 
     LynxModule.BulkCachingMode readMode;
     ElapsedTime timer;
@@ -36,14 +37,14 @@ public class Tele extends OpMode {
         Utility.deadStick(gamepad1.left_stick_x);
         Utility.deadStick(gamepad1.left_stick_y);
         Utility.deadStick(gamepad1.right_stick_x);
-        double forward = 0.5 * gamepad1.left_stick_y;
-        double strafe = -0.5 * gamepad1.left_stick_x;
-        double rotate = -0.25 * gamepad1.right_stick_x;
+        double forward = -0.5 * gamepad1.left_stick_y;
+        double strafe = 0.5 * gamepad1.left_stick_x;
+        double rotate = 0.25 * -gamepad1.right_stick_x;
         if(gamepad1.right_bumper&&gamepad1.left_bumper){
             if(gamepad1.a)Robot.useCarousel = true;
             if(gamepad1.b)Robot.useCarousel = false;
-            if(gamepad2.a)Robot.useArm = true;
-            if(gamepad2.b)Robot.useArm = false;
+//            if(gamepad2.a)Robot.useArm = true;
+//            if(gamepad2.b)Robot.useArm = false;
         }
         if (gamepad1.left_bumper) {
             if (gamepad1.a) {
@@ -64,6 +65,15 @@ public class Tele extends OpMode {
                 timer.reset();
                 cycles = 0;
             }
+            if (gamepad2.left_trigger > 0.0) {
+                robot.intakePusher.setPosition(gamepad2.left_trigger);
+                telemetry.addData("Pusher", gamepad2.left_trigger);
+            }
+//            if (gamepad2.right_trigger > 0.0) {
+//                robot.intakeWrist.setPosition(gamepad2.right_trigger);
+//                telemetry.addData("Wrist", gamepad2.right_trigger);
+//            }
+
         }
         else {
             if (gamepad1.dpad_up) {
@@ -72,14 +82,31 @@ public class Tele extends OpMode {
             if (gamepad1.dpad_down) {
                 robot.setDriveStopModeFloat();
             }
-            if (gamepad1.b) {
-                driveBrain.rotateToHeadingAbsolute(90, 3, 0.3, 4);
-
-                return;
+            if (gamepad2.dpad_up) {
+                robot.pusherOpen();
+            }
+            if (gamepad2.dpad_down) {
+                robot.pusherClose();
             }
             if (gamepad1.x) {
                 driveBrain.rotateToHeadingRelative(90, 3, 0.3, 3);
                 return;
+            }
+            if (Robot.useArm) {
+                if (gamepad2.a) {
+                    armPos = 128;
+                }
+                else if (gamepad2.b) {
+                    armPos = 224;
+                }
+                else if (gamepad2.x) {
+                    armPos = 353;
+                }
+                //lvl 3 is 513
+                else
+                    armPos += gamepad2.left_stick_y * 2;
+                armPos = Utility.clipToRange(armPos, 1000, 0);
+                robot.setArmMotorPosition(armPos);
             }
             if (gamepad1.right_trigger == 0.00) {
                 telemetry.addData("T-Mode", T_Mode);
@@ -90,7 +117,7 @@ public class Tele extends OpMode {
                 telemetry.addData("T-Mode", T_Mode);
                 if (Math.abs(strafe) > Math.abs(forward)) {
                     forward = 0;
-                    // because he are strafing we can kill the forward
+                    // because we are strafing we can kill the forward
                     //  strafe = strafe;
                 } else {
                     strafe = 0;
@@ -115,7 +142,7 @@ public class Tele extends OpMode {
             }
             if (gamepad1.left_trigger > 0.00) {
 
-                double headingError = Utility.wrapDegrees360(fixedHeading - currentHeading);
+                double headingError = Utility.wrapDegrees360(currentHeading - fixedHeading);
                 if (headingError > 45) {
                     headingError = 45;
                 }
@@ -133,19 +160,15 @@ public class Tele extends OpMode {
                 if (rotationCorrection < 0 && rotationCorrection > -0.05) {
                     rotationCorrection = -0.05;
                 }
-                // i am trash at coding
+                // i am trash at coding - mao zendong
                 rotate = rotationCorrection + rotate;
                 telemetry.addData("Fixed Heading", fixedHeading);
                 telemetry.addData("Heading Error", headingError);
                 telemetry.addData("Rotation Correction", rotationCorrection);
 
             }
-            if (robot.useArm) {
-                 robot.arm.setPower(Utility.deadStick(gamepad2.left_stick_y));
-                 telemetry.addData("Arm angle:", armOffset);
-            }
-            if (robot.useCarousel) {
-                if (gamepad2.a) {
+            if (Robot.useCarousel) {
+                if (gamepad2.y) {
                     driveBrain.carouselMoves();
                 }
                 robot.carousel.setPower(cPower);
@@ -154,11 +177,12 @@ public class Tele extends OpMode {
 
             robot.setDrive(forward, strafe, rotate, 1);
             robot.reportEncoders();
-            robot.reportColor();
+            //robot.reportColor();
 
             // robotXDrive.calculateDrivePowersFSR(gamepad1.left_stick_x, gamepad1.left_stick_y, rotate);
             cycles++;
-            telemetry.addData("cycle time (ms): ", timer.milliseconds() / cycles);
+            //telemetry.addData("cycle time (ms): ", timer.milliseconds() / cycles);
+            telemetry.update();
         }
     }
 }

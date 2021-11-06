@@ -93,9 +93,9 @@ public class Auto extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        driveBrain.setZeroHeading();
-        autoPos1(false);
-
+//        driveBrain.setZeroHeading();
+       // autoPos1(false);
+        autoPosTest();
         robot.setDriveStop();
     }
     //Side = true is blue
@@ -144,6 +144,25 @@ public class Auto extends LinearOpMode {
         int angleModifier = 1;
         if (side) angleModifier=-1;
     }
+    public void autoPosTest(){
+        driveBrain.driveDistance(20,mediumPower, 1);
+        sleep(5000);
+        driveBrain.rotateToHeadingAbsolute(90,3,mediumPower,3);
+        sleep(5000);
+        driveBrain.driveDistance(20,mediumPower,3);//drives to shipping hub
+        sleep(5000);
+        driveBrain.rotateToHeadingAbsolute(180,3,mediumPower,3);//rotates so that it is facing carousel
+        sleep(5000);
+        driveBrain.carouselMoves();//moves the carousel wheel
+        sleep(5000);
+        driveBrain.driveDistance(20, mediumPower,3);//drives to shipping hub
+        sleep(5000);
+        driveBrain.rotateToHeadingAbsolute(270,3,mediumPower,2);
+        sleep(5000);
+        driveBrain.driveDistance(20, mediumPower, 3);//drives to carousel
+        sleep(5000);
+        driveBrain.rotateToHeadingAbsolute(360,3,mediumPower,5);
+    }
     private void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -170,7 +189,7 @@ public class Auto extends LinearOpMode {
     }
     private double getBarcodeValue(){
         double barcode = 0;
-        
+
         return barcode;
     }
 }
