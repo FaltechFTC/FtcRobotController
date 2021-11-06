@@ -104,7 +104,7 @@ public class Tele extends OpMode {
                 }
                 //lvl 3 is 513
                 else
-                    armPos += gamepad2.left_stick_y * 2;
+                    armPos += -gamepad2.left_stick_y * 2;
                 armPos = Utility.clipToRange(armPos, 1000, 0);
                 robot.setArmMotorPosition(armPos);
             }

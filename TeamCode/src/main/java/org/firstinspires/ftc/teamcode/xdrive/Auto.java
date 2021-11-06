@@ -6,10 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-
-import java.util.List;
 
 @Autonomous(name = "Auto", group = "7079")
 public class Auto extends LinearOpMode {
@@ -25,6 +22,7 @@ public class Auto extends LinearOpMode {
     double shortTimeout=1.5;
     double mediumTimeout=4;
     double highTimeout = 7;
+    int armMarkerPos = 0;
     private ElapsedTime runtime = new ElapsedTime();
 
     VisionBrain vision;
@@ -49,40 +47,10 @@ public class Auto extends LinearOpMode {
 
     private TFObjectDetector tfod;
     public void runOpMode() {
-        initVuforia();
-        initTfod();
-        if (tfod != null) {
-            tfod.activate();
-
-
-            tfod.setZoom(2.5, 16.0/9.0);
-        }
-        telemetry.update();
+       
         waitForStart();
 
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-                if (tfod != null) {
 
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Object Detected", updatedRecognitions.size());
-
-
-                        int i = 0;
-                        for (Recognition recognition : updatedRecognitions) {
-                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                    recognition.getLeft(), recognition.getTop());
-                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                    recognition.getRight(), recognition.getBottom());
-                            i++;
-                        }
-                        telemetry.update();
-                    }
-                }
-            }
-        }
 
         robot.init(hardwareMap, telemetry);
         robot.setDriveStopModeBreak();
@@ -94,55 +62,76 @@ public class Auto extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 //        driveBrain.setZeroHeading();
-       // autoPos1(false);
-        autoPosTest();
+//        autoPosTest();
+        autoPos1(false, true);
         robot.setDriveStop();
     }
     //Side = true is blue
     //Side = false is red
-    public void autoPos1(boolean side) {
+    //carousel = false then we don't do carousel
+    //carousel = true then we do carousel
+    public void autoPos1(boolean sideBlue, boolean doCarousel) {
         int barcode = 0; //TODO get barcode number from vision
         int angleModifier = 1;
-        if (side) angleModifier=-1;
+        if (sideBlue) angleModifier=-1;
         telemetry.addData("Starting!",0);
         //deliver preloaded box
+        driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);//moves arm straight up
+        driveBrain.maintTime(1.5);
         driveBrain.driveDistance(1,mediumPower, shortTimeout);//move forward 1in
         driveBrain.rotateToHeadingAbsolute(-30*angleModifier,2,0.5,mediumTimeout);
-        driveBrain.driveDistance(34,halfPower,mediumTimeout);//drives to shipping hub
+        driveBrain.driveDistance(30,halfPower,mediumTimeout);//drives to shipping hub
         telemetry.addData("Moved to shipping hub!",1);
-        //TODO move the arm so that we can place the game piece
+        if (barcode==1) armMarkerPos = Robot.ARM_LAYER1_POS;
+        if (barcode==2) armMarkerPos = Robot.ARM_LAYER2_POS;
+        if (barcode==3) armMarkerPos = Robot.ARM_LAYER3_POS;
+        robot.setArmMotorPosition(armMarkerPos);//TODO make it so that when the barcode is read then it goes to that level
         telemetry.addData("Placed Block!",2);
-        //gets duck off of carousel
-        driveBrain.driveDistance(1,halfPower,shortTimeout);//drives 1 inch in order to get enough room to spin
-        driveBrain.rotateToHeadingAbsolute(110*angleModifier,3,halfPower,mediumTimeout);//rotates so that it is facing carousel
-        driveBrain.driveDistance(68, highPower, mediumTimeout);//drives to carousel
-        driveBrain.carouselMoves();//moves the carousel wheel
-        telemetry.addData("Moved the Carousel",3);
-        //Gets a block from the warehouse and delivers it
-        driveBrain.driveDistance(-1, mediumTimeout, shortTimeout);//goes back so that it has room to turn
-        driveBrain.rotateToHeadingAbsolute(270*angleModifier,2,mediumPower,highTimeout);
-        driveBrain.driveDistance(96,halfPower, highTimeout);//drives to warehouse
+        //drives to warehouse
+        if (doCarousel) {
+            //gets duck off of carousel
+            driveBrain.driveDistance(1,halfPower,shortTimeout);//drives 1 inch in order to get enough room to spin
+            driveBrain.rotateToHeadingAbsolute(110*angleModifier,3,halfPower,mediumTimeout);//rotates so that it is facing carousel
+            driveBrain.driveDistance(68, highPower, mediumTimeout);//drives to carousel
+            driveBrain.carouselMoves();//moves the carousel wheel
+            telemetry.addData("Moved the Carousel",3);
+//          Gets a block from the warehouse and delivers it
+            driveBrain.driveDistance(-1, mediumTimeout, shortTimeout);//goes back so that it has room to turn
+            driveBrain.rotateToHeadingAbsolute(270*angleModifier,2,mediumPower,highTimeout);
+            driveBrain.driveDistance(96,halfPower, highTimeout);//drives to warehouse
+        }
+        else {
+            driveBrain.driveDistance(-1, mediumTimeout, shortTimeout);//goes back so that it has room to turn
+            driveBrain.rotateToHeadingAbsolute(60*angleModifier,2,mediumPower,highTimeout);
+            driveBrain.driveDistance(48,halfPower, highTimeout);//drives to warehouse
+        }
         telemetry.addData("Drove to Warehouse!",4);
-        //TODO make it so that the arm and claw work together to get a block.
-        driveBrain.driveDistance(-72,halfPower,highTimeout);
-
-        driveBrain.rotateToHeadingAbsolute(360*angleModifier,2,halfPower,highTimeout);
-        driveBrain.driveDistance(33, highPower,highTimeout);//drives to shipping hub
-        telemetry.addData("Drove to Shipping Hub!",5);
-        //TODO places block down
-        telemetry.addData("Placed Block!",6);
-        //Parks in the warehouse
-        driveBrain.driveDistance(-33, slowPower, shortTimeout);//goes back so that it has enough room to turn
-        driveBrain.rotateToHeadingAbsolute(270*angleModifier,2,halfPower,mediumTimeout);
-        driveBrain.driveDistance(72, halfPower, mediumTimeout);//drives to go inside the warehouse
-        telemetry.addData("Drove to Warehouse!",7);
-        //end
-        telemetry.addData("Autonomous For Resource Depot Complete!",8);
+//        robot.pusherOpen();
+//        driveBrain.setArmMotorPosition(128);
+//        driveBrain.rotateToHeadingRelative(30, 1, mediumPower, shortTimeout);
+//        driveBrain.setArmMotorPosition(353);
+//        //TODO make it so that the arm and claw work together to get a block.
+//        driveBrain.driveDistance(-72,halfPower,highTimeout);
+//
+//        driveBrain.rotateToHeadingAbsolute(360*angleModifier,2,halfPower,highTimeout);
+//        driveBrain.driveDistance(33, highPower,highTimeout);//drives to shipping hub
+//        telemetry.addData("Drove to Shipping Hub!",5);
+//        robot.pusherClose();
+//        telemetry.addData("Placed Block!",6);
+//        //Parks in the warehouse
+//        driveBrain.driveDistance(-33, slowPower, shortTimeout);//goes back so that it has enough room to turn
+//        driveBrain.rotateToHeadingAbsolute(270*angleModifier,2,halfPower,mediumTimeout);
+//        driveBrain.driveDistance(72, halfPower, mediumTimeout);//drives to go inside the warehouse
+//        telemetry.addData("Drove to Warehouse!",7);
+//        //end
+//        telemetry.addData("Autonomous For Resource Depot Complete!",8);
     }
     public void autoPos2(boolean side) {
         int barcode = 0; //TODO get barcode number from vision
         int angleModifier = 1;
         if (side) angleModifier=-1;
+        robot.setArmMotorPosition(750);
+//        driveBrain.driveDistance();
     }
     public void autoPosTest(){
         driveBrain.driveDistance(20,mediumPower, 1);
@@ -188,7 +177,7 @@ public class Auto extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
     }
     private double getBarcodeValue(){
-        double barcode = 0;
+        double barcode = 1;
 
         return barcode;
     }
