@@ -23,6 +23,10 @@ public class DriveBrain {
     static final double P_TURN_COEFF = 0.1;
     static final double HEADING_THRESHOLD = 1;
     double zeroHeadingOffset = 0;
+    int targetArmPos = 0;
+    boolean maintArm = false;
+    double maxTimeout = 0;
+    boolean maintTimeout = false;
 
     public DriveBrain(Robot therobot, OpMode theopmode) {
         robot = therobot;
@@ -61,7 +65,7 @@ public class DriveBrain {
             if(robot.isDriveBusy()){
                runtimeBusy.reset();
             }
-
+            maint();
             // Display it for the driver.
            // opmode.telemetry.addData("Path1", "Running to %7d :%7d", robot.convertCountsToInches(inches));
          //   opmode.telemetry.addData("Path2", "Running at %7f :%7f", robot.getCurPos());
@@ -268,6 +272,7 @@ public class DriveBrain {
             opmode.telemetry.addData("Rotation Correction:", rotationCorrection);
             opmode.telemetry.addData("Heading Error:", headingError);
             opmode.telemetry.addData("Seconds Passed:", runtime.seconds());
+            maint();
         }
         robot.setDriveStop();
         return runtime.seconds() < timeout;
@@ -292,7 +297,25 @@ public class DriveBrain {
     public void setZeroHeading() {
         zeroHeadingOffset = robot.getHeading(AngleUnit.DEGREES);
     }
-    public double getBarcode(){
-        return 0.5;
+    public int getBarcode(){
+        return 1;
     }
+    public void maint() {
+        if (maintArm) {
+            robot.setArmMotorPosition(targetArmPos);
+        }
+
+    }
+    public void setArmMotorPosition(int pos) {
+        targetArmPos = pos;
+        maintArm = true;
+    }
+    public void maintTime(double timeout) {
+        ElapsedTime timer = new ElapsedTime();
+        while (timer.seconds()<timeout) {
+            maint();
+            sleep(1);
+        }
+    }
+
 }
