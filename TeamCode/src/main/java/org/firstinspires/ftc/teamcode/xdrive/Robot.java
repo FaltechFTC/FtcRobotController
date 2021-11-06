@@ -55,6 +55,12 @@ a claw system*/
     static final double COUNTS_PER_OUTPUT_REVOL = 537.7;
     static final double COUNTS_PER_INCH = (COUNTS_PER_OUTPUT_REVOL) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
+    static final int ARM_INTAKE_POS = 128;
+    static final int ARM_LAYER1_POS = 224;
+    static final int ARM_LAYER2_POS = 353;
+    static final int ARM_LAYER3_POS = 513;
+    static final int ARM_PARK_POS = 513; //to-do: set to park position
+
     /* local OpMode members. */
     HardwareMap hwMap = null;
     private ElapsedTime period = new ElapsedTime();
