@@ -66,9 +66,10 @@ public class Tele extends OpMode {
             double direction = Math.atan2(drive_forward, drive_strafe);
             //offset by 45 degrees
             direction += Math.toRadians(45);
+            double power = Math.sqrt(drive_forward*drive_forward+drive_strafe*drive_strafe);
             //calculate back to strafe and forward
-            drive_forward = Math.sin(direction);
-            drive_strafe = Math.cos(direction);
+            drive_forward = Math.sin(direction)*power;
+            drive_strafe = Math.cos(direction)*power;
         }
 
         double currentHeading = robot.getHeading(AngleUnit.DEGREES);
