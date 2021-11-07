@@ -124,7 +124,6 @@ public class DriveBrain {
                 // Display drive status for the driver.
                 opmode.telemetry.addData("Err/St", "%5.1f/%5.1f", error, steer);
                 opmode.telemetry.addData("Target", "%7d", newTarget);
-                opmode.telemetry.addData("Actual", "%7d", robot.getCurPos());
                 opmode.telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
                 opmode.telemetry.update();
             }

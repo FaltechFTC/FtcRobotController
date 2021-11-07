@@ -63,6 +63,8 @@ a claw system*/
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
+    LynxModule.BulkCachingMode bulkReadMode = LynxModule.BulkCachingMode.AUTO;
+
     private ElapsedTime period = new ElapsedTime();
 
     /* setting up color sensor*/
@@ -73,7 +75,7 @@ a claw system*/
         hwMap = ahwMap;
         telemetry = t;
 
-        setBulkReadMode(LynxModule.BulkCachingMode.AUTO);
+        setBulkReadMode(bulkReadMode);
 
         if (useColorSensor) {
             colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
@@ -111,13 +113,9 @@ a claw system*/
 
         // Set all motors to zero power
         setDriveStop();
-//        leftArm.setPower(0);
 
         // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
         setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-//        leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
         intakePusher  = hwMap.get(Servo.class, "pusher");
@@ -138,9 +136,6 @@ a claw system*/
         for (DcMotor m : driveMotors2WheelY) {
             m.setMode(mode);
         }
-//        for (DcMotorSimple f : armArray){
-//            f.setMode(mode);
-//        }
     }
 
     public void setDriveStopModeBreak() {
@@ -148,7 +143,6 @@ a claw system*/
         for (DcMotor m : driveMotors) {
             m.setZeroPowerBehavior(mode);
         }
-
     }
 
     public void setDriveStopModeFloat() {
@@ -173,14 +167,6 @@ a claw system*/
         }
         return motor;
     }
-
-    public int[] getCurPos() {
-        curPos[0] = front_left.getCurrentPosition();
-        curPos[1] = front_right.getCurrentPosition();
-        curPos[2] = back_left.getCurrentPosition();
-        return curPos;
-    }
-
 
     public void setDrivePower(double [] wheelpowers){
         double max = Math.abs(wheelpowers[0]);
