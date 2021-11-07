@@ -15,6 +15,7 @@ public class Tele extends OpMode {
     double armOffset = 0.0;
     final double ARM_SPEED = 0.05;
     double armPos = 0;
+    boolean lastTMode = false;
 
     ElapsedTime timer;
     int cycles;
@@ -73,16 +74,19 @@ public class Tele extends OpMode {
         }
 
         double currentHeading = robot.getHeading(AngleUnit.DEGREES);
-        telemetry.addData("Our Heading", currentHeading);
-        if (!drive_heading_lock) {
+        telemetry.addData("Heading", currentHeading);
+        if (!drive_heading_lock || drive_tmode!=lastTMode) {
             fixedHeading = calculateLockHeading(currentHeading, 90, drive_tmode);
-        } else {
+        }
+        if (drive_heading_lock) {
             drive_rotate += calculateRotationCorrection(fixedHeading, currentHeading, .25, 45.0);
         }
         if (drive_rotate_90) {
             driveBrain.rotateToHeadingRelative(90, 3, 0.3, 3);
         }
         robot.setDrive(drive_forward, drive_strafe, drive_rotate, 1);
+
+        lastTMode=drive_tmode; // remember
     }
 
     public void doIntake() {
