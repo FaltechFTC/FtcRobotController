@@ -53,7 +53,7 @@ public class Tele extends OpMode {
         boolean drive_heading_lock = gamepad1.left_trigger > 0.05;
         boolean drive_tmode = gamepad1.right_trigger > 0.05;
         boolean drive_overdrive = gamepad1.right_bumper || gamepad2.right_bumper;
-        boolean drive_rotate_90 = gamepad1.dpad_left || gamepad2.dpad_left;
+        boolean drive_rotate_90 = false; //gamepad1.dpad_left || gamepad2.dpad_left;
 
         // DRIVING *******************************************
         if (drive_overdrive) {
@@ -91,12 +91,17 @@ public class Tele extends OpMode {
 
     public void doIntake() {
         double pusher_pos = gamepad2.left_trigger;
-        double arm_power = -2.0 * Utility.deadStick(gamepad2.left_stick_y);
+        double arm_power = -4.0 * Utility.deadStick(gamepad2.left_stick_y);
         if (arm_power > 0) arm_power *= 2;
         boolean pusher_cycle = gamepad1.left_bumper || gamepad1.a || gamepad2.left_bumper;
         boolean arm_park = gamepad1.y || gamepad2.y;
         boolean arm_layer1 = gamepad1.x || gamepad2.x;
         boolean arm_intake = gamepad1.b || gamepad2.b;
+
+        if (gamepad2.dpad_up) robot.setWristOffset(robot.getWristOffset()+.01);
+        if (gamepad2.dpad_down) robot.setWristOffset(robot.getWristOffset()-.01);
+        if (gamepad2.dpad_right) robot.setWristOffset(robot.calculateWristFromArm());
+        robot.wristMove();
 
         // PUSHER **************************
         if (pusher_cycle) {

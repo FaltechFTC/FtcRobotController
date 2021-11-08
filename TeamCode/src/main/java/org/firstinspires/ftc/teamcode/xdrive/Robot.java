@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
 
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -35,8 +34,8 @@ public class Robot {
     public DcMotor[] driveMotors2WheelY = new DcMotor[2];
     public DcMotor[] driveMotors2WheelX = new DcMotor[2];
     public DcMotor[] driveMotorsMode = new DcMotor[3];
-    public DcMotorSimple arm    = null;
-//    public DcMotorSimple[] armArray = new DcMotorSimple[1];
+    public DcMotorSimple arm = null;
+    //    public DcMotorSimple[] armArray = new DcMotorSimple[1];
     public DcMotorSimple carousel = null;
     public int[] curPos = new int[4];
     public BNO055IMU imu = null;
@@ -44,18 +43,19 @@ public class Robot {
 a claw system*/
 
     //    public DcMotor  leftArm     = null;
-    public Servo    intakePusher    = null;
-    public Servo    intakeWrist   = null;
-//    public static final double MID_SERVO       =  0.5 ;
-//    public static final double ARM_UP_POWER    =  0.45 ;
-//    public static final double ARM_DOWN_POWER  = -0.45 ;
+    public Servo intakePusher = null;
+    public Servo intakeWrist = null;
+    double wristOffset = 0.20;
+    int armPosition = 0;
+
+
     static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 19.2;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 6.0;     // For figuring circumference
     static final double COUNTS_PER_OUTPUT_REVOL = 537.7;
     static final double COUNTS_PER_INCH = (COUNTS_PER_OUTPUT_REVOL) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
-    static final int ARM_INTAKE_POS = 128;
+    static final int ARM_INTAKE_POS = 170;
     static final int ARM_LAYER1_POS = 224;
     static final int ARM_LAYER2_POS = 353;
     static final int ARM_LAYER3_POS = 513;
@@ -118,11 +118,11 @@ a claw system*/
         setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
-        intakePusher  = hwMap.get(Servo.class, "pusher");
+        intakePusher = hwMap.get(Servo.class, "pusher");
         intakeWrist = hwMap.get(Servo.class, "wrist");
-        //intakeWrist.setPosition(0);
-        pusherOpen();
 
+        pusherOpen();
+        wristMove();
     }
 
     public void setBulkReadMode(LynxModule.BulkCachingMode mode) {
@@ -168,7 +168,7 @@ a claw system*/
         return motor;
     }
 
-    public void setDrivePower(double [] wheelpowers){
+    public void setDrivePower(double[] wheelpowers) {
         double max = Math.abs(wheelpowers[0]);
         for (int i = 0; i < wheelpowers.length; i++) {
             if (max < Math.abs(wheelpowers[i])) max = Math.abs(wheelpowers[i]);
@@ -190,15 +190,15 @@ a claw system*/
 
     public void setDrive(double forward, double strafe, double rotate, double power) {
         double[] powers = calculateDrivePowersFSRSimple(forward, strafe, rotate);
-        telemetry.addData("Forward",forward);
-        telemetry.addData("Strafe",strafe);
-        telemetry.addData("Rotate",rotate);
+        telemetry.addData("Forward", forward);
+        telemetry.addData("Strafe", strafe);
+        telemetry.addData("Rotate", rotate);
         telemetry.addData("Powers", powers);
         setDrivePower(powers);
     }
 
     public void setDriveStop() {
-        double[] powers = {0,0,0,0};
+        double[] powers = {0, 0, 0, 0};
         setDrivePower(powers);
     }
 
@@ -217,7 +217,7 @@ a claw system*/
     }
 
     public void setDrivePowersTank(double leftPower, double rightPower) {
-        double[] wheelpowers = { leftPower, rightPower, leftPower, rightPower };
+        double[] wheelpowers = {leftPower, rightPower, leftPower, rightPower};
 
         setDrivePower(wheelpowers); // apply the calculated values to the motors.
     }
@@ -234,8 +234,8 @@ a claw system*/
         setDrivePower(wheelpowers); // apply the calculated values to the motors.
     }
 
-    public double[] calculateDrivePowersFSRSimple (double forward, double strafe, double rotate) {
-       double[] powers = {
+    public double[] calculateDrivePowersFSRSimple(double forward, double strafe, double rotate) {
+        double[] powers = {
                 (forward + strafe - rotate),
                 (forward - strafe + rotate),
                 (forward - strafe - rotate),
@@ -246,79 +246,90 @@ a claw system*/
 
     public double[] calculateDrivePowers(double heading, double power, double rotate) {
         double m0, m1, m2, m3;
-        m0 = power * -Math.sin(heading-(Math.PI/4))+rotate;
-        m1 = power * Math.cos(heading+(Math.PI/4))+rotate;
-        m2 = power * Math.sin(heading+(Math.PI/4))+rotate;
-        m3 = power * -Math.cos(heading-(Math.PI/4))+rotate;
+        m0 = power * -Math.sin(heading - (Math.PI / 4)) + rotate;
+        m1 = power * Math.cos(heading + (Math.PI / 4)) + rotate;
+        m2 = power * Math.sin(heading + (Math.PI / 4)) + rotate;
+        m3 = power * -Math.cos(heading - (Math.PI / 4)) + rotate;
         double[] XDriveMotors = {m0, m1, m2, m3};
         return XDriveMotors;
     }
 
-    public double[] calculateDrivePowersFSR (double gamepadx, double gamepady, double rotate) {
-        double heading = Math.atan2(gamepadx,gamepady);
-        double power = Math.sqrt((gamepadx*gamepadx)-(gamepady*gamepady));
-        return calculateDrivePowers(heading,power,rotate);
+    public double[] calculateDrivePowersFSR(double gamepadx, double gamepady, double rotate) {
+        double heading = Math.atan2(gamepadx, gamepady);
+        double power = Math.sqrt((gamepadx * gamepadx) - (gamepady * gamepady));
+        return calculateDrivePowers(heading, power, rotate);
     }
 
-    public void reportDrivePowers(double [] powers) {
+    public void reportDrivePowers(double[] powers) {
         telemetry.addLine()
-                .addData("XDrive Power FL",powers[0])
+                .addData("XDrive Power FL", powers[0])
                 .addData("FR", powers[0])
                 .addData("BL", powers[0])
                 .addData("BR", powers[0]);
     }
 
-    public int getArmPosition(){
+    public int getArmPosition() {
         return front_right.getCurrentPosition();
     }
 
-    public void setArmPosition(int armPosition) {
-        boolean done = false;
-        armPosition = -armPosition;
-        double maxPower = 0.25;
-        do {
-            int currentPosition = getArmPosition();
-            int error = armPosition - currentPosition;
-            done = Math.abs (error) < 5;
-            double p = 0;
-            if (done){
-                p = 0;
-            }else {
-                p = .01 * error;
-                p = Utility.clipToRange(p, maxPower, -maxPower);
-            }
-            arm.setPower(p);
-            telemetry.addLine()
-                    .addData("armPosition", currentPosition)
-                    .addData("error", error)
-                    .addData("p", p)
-                    .addData("tgt", armPosition);
+    public void setArmPosition(int armPosition, double timeoutSeconds) {
+        ElapsedTime timer = new ElapsedTime();
+        boolean done=false;
+       while (timer.seconds()<timeoutSeconds && !done)
+       {
+           done=setArmMotorPosition(armPosition);
+       }
+    }
 
+    public boolean setArmMotorPosition(double pos) {
+        armPosition = (int) pos;
+        boolean done = false;
+        double maxUpPower = 0.6, maxDownPower = -0.3;
+        int curentPosition = front_right.getCurrentPosition();
+        int error = armPosition - curentPosition;
+        done = Math.abs(error) < 3;
+        double p = 0;
+        if (done) {
+            p = 0;
+        } else {
+            p = .012 * error;
+            p = Utility.clipToRange(p, maxUpPower, maxDownPower);
         }
-        while (!done);
+        arm.setPower(-p);
+        telemetry.addLine()
+                .addData("armPosition", curentPosition)
+                .addData("error", error)
+                .addData("p", p)
+                .addData("tgt", armPosition);
+        return done;
     }
-    public void setArmMotorPosition(double pos) {
-        int armPosition = (int) pos;
-        boolean done = false;
-        double maxPower = 0.25;
-            int curentPosition = front_right.getCurrentPosition();
-            int error = armPosition - curentPosition;
-            done = Math.abs (error) < 5;
-            double p = 0;
-            if (done){
-                p = 0;
-            }else {
-                p = .01 * error;
-                p = Utility.clipToRange(p, maxPower, -maxPower);
-            }
-            arm.setPower(-p);
-            telemetry.addLine()
-                    .addData("armPosition", curentPosition)
-                    .addData("error", error)
-                    .addData("p", p)
-                    .addData("tgt", armPosition);
 
+    double maxWrist=.65, minWrist=0.0;
+    public double setWristOffset(double offset) {
+        wristOffset = Utility.clipToRange(offset, maxWrist, minWrist);
+        return wristOffset;
     }
+    public double calculateWristFromArm() {
+        double pos=0.0;
+        if (armPosition<100) pos=0;
+        else if (armPosition<200) pos=.15;
+        else if (armPosition>250) pos=armPosition/1000;
+        pos = Utility.clipToRange(pos,maxWrist,minWrist);
+        return pos;
+    }
+
+    public double getWristOffset() {
+        return wristOffset;
+    }
+
+    public void wristMove() {
+        intakeWrist.setPosition(wristOffset);
+        telemetry.addData("wrist",wristOffset);
+    }
+    public void wristMove(double pos) {
+        intakeWrist.setPosition(pos);
+    }
+
     public void reportEncoders() {
         int fl = front_left.getCurrentPosition();
         int fr = front_right.getCurrentPosition();
@@ -339,7 +350,7 @@ a claw system*/
         }
     }
 
-    public void reportColor(){
+    public void reportColor() {
         if (useColorSensor) {
             NormalizedRGBA colors = getRGBA();
             telemetry.addLine()
@@ -359,9 +370,11 @@ a claw system*/
         }
 
     }
+
     public void pusherOpen() {
         intakePusher.setPosition(0.0);
     }
+
     public void pusherClose() {
         intakePusher.setPosition(0.7);
     }
