@@ -5,8 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
+import java.util.List;
 
 @Autonomous(name = "Auto", group = "7079")
 public class Auto extends LinearOpMode {
@@ -47,11 +51,14 @@ public class Auto extends LinearOpMode {
 
     private TFObjectDetector tfod;
     public void runOpMode() {
-       
+
         waitForStart();
-
-
-
+        vision = new VisionBrain();
+        vision.showCamera=true; // useful for sighting on phone only
+        vision.showCameraOD=false; // useful for seeing object detection on phone only
+        vision.zoom=1f;  // 1.0 is no zoom, greater number is greater zoom
+        vision.init(this);
+        vision.activate();
         robot.init(hardwareMap, telemetry);
         robot.setDriveStopModeBreak();
         driveBrain = new DriveBrain(robot, this);
@@ -152,33 +159,7 @@ public class Auto extends LinearOpMode {
         sleep(5000);
         driveBrain.rotateToHeadingAbsolute(360,3,mediumPower,5);
     }
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
 
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
-        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
-    }
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
-        tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 320;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-    }
-    private double getBarcodeValue(){
-        double barcode = 1;
-
-        return barcode;
-    }
 }

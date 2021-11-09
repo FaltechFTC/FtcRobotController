@@ -21,18 +21,17 @@ public class TeleTesterVision extends OpMode {
         visionBrain = new VisionBrain();
         visionBrain.showCamera=true; // useful for sighting on phone only
         visionBrain.showCameraOD=false; // useful for seeing object detection on phone only
-        visionBrain.zoom=1.2f;  // 1.0 is no zoom, greater number is greater zoom
+        visionBrain.zoom=1f;  // 1.0 is no zoom, greater number is greater zoom
         visionBrain.init(this);
         visionBrain.activate();
+        //visionBrain.initTfod();
+       // visionBrain.initVuforia();
     }
 
     @Override
     public void loop() {
-
-//        if(gamepad1.a)
-            visionBrain.process(2000);
-  //      else
-            teleDrive();
+            visionBrain.getBarcode(2000);
+            //teleDrive();
     }
 
     private void teleDrive() {

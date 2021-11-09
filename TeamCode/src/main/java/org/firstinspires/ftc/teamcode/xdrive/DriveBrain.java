@@ -350,8 +350,8 @@ public class DriveBrain {
     public void setZeroHeading() {
         zeroHeadingOffset = robot.getHeading(AngleUnit.DEGREES);
     }
-    public int getBarcode(){
-        return 1;
+    public double getBarcode(){
+        return 0.5;
     }
     public void maint() {
         if (maintArm) {

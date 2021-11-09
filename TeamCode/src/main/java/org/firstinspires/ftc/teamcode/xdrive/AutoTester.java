@@ -84,4 +84,5 @@ public class AutoTester extends LinearOpMode {
         driveSquare(distance,power,90);
         driveSquare(distance,power,-90);
     }
+
 }
