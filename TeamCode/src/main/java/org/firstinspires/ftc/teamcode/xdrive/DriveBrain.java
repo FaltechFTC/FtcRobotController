@@ -293,6 +293,60 @@ public class DriveBrain {
             robot.carousel.setPower(0);
         }
     }
+//    public void carouselStart() {
+//        carouselTimer = new ElapsedTime();
+//    }
+    public void carouselMove() {
+        carouselStart();
+        if (carouselTimer!=null) {
+            if (carouselTimer.milliseconds() > 350) robot.carousel.setPower(.3);
+            else if (carouselTimer.milliseconds()>700)robot.carousel.setPower(.4);
+            else if (carouselTimer.milliseconds()>1500)robot.carousel.setPower(1);
+            else {
+                robot.carousel.setPower(0);
+                carouselTimer = null;
+            }
+        }
+    }
+//    public void pusherStart() {
+//        pusherTimer = new ElapsedTime();
+//    }
+//    public void pusherMove() {
+//        pusherStart();
+//        if (pusherTimer!=null) {
+//            if (pusherTimer.milliseconds()>500) {
+//                robot.pusherOpen();
+//            }
+//        }
+//    }
+    public void carouselMaint() {
+        if (Robot.useCarousel && carouselTimer!=null) {
+
+            if (carouselTimer.milliseconds() < 350) robot.carousel.setPower(.3);
+            else if (carouselTimer.milliseconds() < 700) robot.carousel.setPower(.4);
+            else if (carouselTimer.milliseconds() < 1500) robot.carousel.setPower(1);
+            else {
+                robot.carousel.setPower(0);
+                carouselTimer = null;
+            }
+        }
+    }
+    public void carouselStart() {
+        carouselTimer = new ElapsedTime();
+    }
+    public void pusherMaint() {
+        if (pusherTimer != null) {
+            if (pusherTimer.milliseconds() > 500) {
+                robot.pusherOpen();
+                pusherTimer = null;
+            }
+        }
+        carouselMaint();
+    }
+    public void pusherStart() {
+        pusherTimer = new ElapsedTime();
+        robot.pusherClose();
+    }
     public void setZeroHeading() {
         zeroHeadingOffset = robot.getHeading(AngleUnit.DEGREES);
     }
@@ -303,7 +357,8 @@ public class DriveBrain {
         if (maintArm) {
             robot.setArmMotorPosition(targetArmPos);
         }
-
+        carouselStart();
+        pusherStart();
     }
     public void setArmMotorPosition(int pos) {
         targetArmPos = pos;

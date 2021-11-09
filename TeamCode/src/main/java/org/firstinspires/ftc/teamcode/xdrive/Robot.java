@@ -372,7 +372,7 @@ a claw system*/
     }
 
     public void pusherOpen() {
-        intakePusher.setPosition(0.0);
+        intakePusher.setPosition(0.25);
     }
 
     public void pusherClose() {
