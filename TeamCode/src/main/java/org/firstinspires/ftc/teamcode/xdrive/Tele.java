@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.xdrive;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -98,22 +97,16 @@ public class Tele extends OpMode {
         boolean arm_layer1 = gamepad1.x || gamepad2.x;
         boolean arm_intake = gamepad1.b || gamepad2.b;
 
-        if (gamepad2.dpad_up) robot.setWristOffset(robot.getWristOffset()+.01);
-        if (gamepad2.dpad_down) robot.setWristOffset(robot.getWristOffset()-.01);
+        if (gamepad2.dpad_up) robot.setWristOffset(robot.getWristOffset()-.01);
+        if (gamepad2.dpad_down) robot.setWristOffset(robot.getWristOffset()+.01);
         if (gamepad2.dpad_right) robot.setWristOffset(robot.calculateWristFromArm());
         robot.wristMove();
 
         // PUSHER **************************
-        if (pusher_cycle) {
-            robot.pusherClose();
-            robot.setDriveStop(); // hack to prevent moving
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                ; // eat it
-            }
-            robot.pusherOpen();
-        }
+        if (pusher_cycle && driveBrain.pusherTimer!=null)
+            driveBrain.pusherStart();
+        else driveBrain.pusherMaint();
+
         pusher_pos = Utility.clipToRange(pusher_pos, 1, 0);
         robot.intakePusher.setPosition(pusher_pos);
 
@@ -140,10 +133,14 @@ public class Tele extends OpMode {
         boolean carousel_cycle = gamepad1.dpad_right || gamepad2.dpad_right;
 
         if (Robot.useCarousel) {
-            if (carousel_cycle) {
-                driveBrain.carouselMoves();
+            if (carousel_cycle&&driveBrain.carouselTimer==null) {
+                driveBrain.carouselStart();
             }
-            robot.carousel.setPower(carousel_power);
+            if (driveBrain.carouselTimer!=null) {
+                driveBrain.carouselMaint();
+            }
+            else
+                robot.carousel.setPower(carousel_power);
             telemetry.addData("Carousel Power:", carousel_power);
         }
     }
