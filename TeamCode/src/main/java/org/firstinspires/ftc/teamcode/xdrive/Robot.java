@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.Utility;
 import java.util.List;
 
 public class Robot {
-    static final boolean useColorSensor = true;
+    static final boolean useColorSensor = false;
     static final boolean useIMU = true;
     static boolean useArm = true;
     static boolean useCarousel = true;

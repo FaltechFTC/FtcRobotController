@@ -282,14 +282,16 @@ public class DriveBrain {
         targetHeading += robot.getHeading(AngleUnit.DEGREES)-zeroHeadingOffset;
         return rotateToHeadingAbsolute(targetHeading, tolerance, power, timeout);
     }
-    public void carouselMoves() {
+    public void carouselMoves(int direction) {
         if (robot.useCarousel) {
-            robot.carousel.setPower(.3);
-            sleep(350);
-            robot.carousel.setPower(.4);
-            sleep(350);
-            robot.carousel.setPower(1);
+            robot.carousel.setPower(.3 * direction);
+            sleep(500);
+            robot.carousel.setPower(.4 * direction);
+            sleep(500);
+            robot.carousel.setPower(1 * direction);
             sleep(800);
+            robot.carousel.setPower(-1 * direction);
+            sleep(350);
             robot.carousel.setPower(0);
         }
     }

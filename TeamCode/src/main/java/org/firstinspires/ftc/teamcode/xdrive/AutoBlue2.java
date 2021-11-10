@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Auto Generic", group = "7079")
-@Disabled
-public class Auto extends LinearOpMode {
+@Autonomous(name = "Auto Blue 2", group = "7079")
+public class AutoBlue2 extends LinearOpMode {
     AutoBrain brain= new AutoBrain();
 
     @Override
@@ -31,7 +30,6 @@ public class Auto extends LinearOpMode {
 
     public void doMission() throws Exception
     {
-        brain.autoPosTest();
+        brain.autoPark2Blue(true);
     }
-
 }
