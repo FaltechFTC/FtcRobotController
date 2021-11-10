@@ -134,13 +134,13 @@ public class AutoBrain {
         driveBrain.driveDistance(-20.5*modifier, mediumPower, 3);
 
         if (doCarousel) {
-            driveBrain.rotateToHeadingAbsolute(-80*modifier, 3, halfPower, mediumTimeout);
+            driveBrain.rotateToHeadingAbsolute(-90*modifier, 3, halfPower, mediumTimeout);
             robot.setDrive(-.2, .1, 0, 1);
             sleep(150);
-            driveBrain.carouselMoves(-1);//moves the carousel wheel
+            driveBrain.carouselMoves(1);//moves the carousel wheel
             robot.setDriveStop();
         }
-//        driveBrain.rotateToHeadingAbsolute(-90 * modifier, 3, 0.5, mediumTimeout);
+        driveBrain.rotateToHeadingAbsolute(-80 * modifier, 3, 0.5, mediumTimeout);
         driveBrain.driveDistance(-27*modifier, mediumPower, 2);
 //        driveBrain.rotateToHeadingAbsolute(sideBlue?180:0, 3, 0.5, mediumTimeout);
 

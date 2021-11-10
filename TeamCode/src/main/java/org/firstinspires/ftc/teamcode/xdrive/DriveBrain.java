@@ -285,7 +285,7 @@ public class DriveBrain {
     public void carouselMoves(int direction) {
         if (robot.useCarousel) {
             robot.carousel.setPower(.3 * direction);
-            sleep(500);
+            sleep(2000);
             robot.carousel.setPower(.4 * direction);
             sleep(500);
             robot.carousel.setPower(1 * direction);
