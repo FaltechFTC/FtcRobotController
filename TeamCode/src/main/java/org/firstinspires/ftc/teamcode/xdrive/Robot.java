@@ -45,7 +45,7 @@ a claw system*/
     //    public DcMotor  leftArm     = null;
     public Servo intakePusher = null;
     public Servo intakeWrist = null;
-    double wristOffset = 0.20;
+    double wristOffset = 0.40;
     int armPosition = 0;
 
 
