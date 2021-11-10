@@ -30,50 +30,74 @@ public class Auto extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     VisionBrain vision;
-
-//    static final double     FORWARD_SPEED = 0.6;
-//    static final double     TURN_SPEED    = 0.5;
-//    static final double     STRAFE_SPEED  = 0.5;
+    boolean useVision=false;
     static final double     POWER         = 1.0;
-    private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
-    private static final String[] LABELS = {
-            "Ball",
-            "Cube",
-            "Duck",
-            "Marker"
-    };
-    private static final String VUFORIA_KEY =
-            "AY7lK0j/////AAABmffl0hEQlUFfjdc9h8Aw+t5/CrgiSiIgNkZKZcw3qdOlnNEv3HarcW4e1pfYY5Nq+4XVrrnhKKNBeR/S08U41ogd0NpmWwOPgttli7io4p8WtbgWj+c/WL9uDzZK9u03K3Kfx+XFxdk/vy0tnFKCPg5w9M5iy7QQP2SDHFDJuhcAOtsayV8n8hQvB528RDRDykBtXei/V6xhN/qLc+S1Gp7eS0ZzpDFnT+uED0CwYK+oaWKNsPPv+3u9tCwofQ5PaRHlN05kH4V97Nn0N7WquSmDpcCZpAVqI1QnMEi7Fm9rvJgET+4OIlx4ZueF3ZTuXtJJSaEJ8Y6CEy9F7FS0RnlVtt4QlqpQVSmWmJQWYBNu";
 
 
-    private VuforiaLocalizer vuforia;
-
-
-    private TFObjectDetector tfod;
     public void runOpMode() {
 
-        waitForStart();
-        vision = new VisionBrain();
-        vision.showCamera=true; // useful for sighting on phone only
-        vision.showCameraOD=false; // useful for seeing object detection on phone only
-        vision.zoom=1f;  // 1.0 is no zoom, greater number is greater zoom
-        vision.init(this);
-        vision.activate();
+        telemetry.addData("Status", "RunOpMode");    //
+        telemetry.update();
+
+
         robot.init(hardwareMap, telemetry);
+        telemetry.addData("Status", "Robot Initialized");    //
+        telemetry.update();
+
         robot.setDriveStopModeBreak();
         driveBrain = new DriveBrain(robot, this);
+        telemetry.addData("Status", "DriveBrain Ready");    //
+        telemetry.update();
+
+        if (useVision) {
+            vision = new VisionBrain();
+            vision.showCamera = true; // useful for sighting on phone only
+            vision.showCameraOD = false; // useful for seeing object detection on phone only
+            vision.zoom = 1f;  // 1.0 is no zoom, greater number is greater zoom
+            vision.init(this);
+            //        vision.activate();
+        }
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-//        driveBrain.setZeroHeading();
-//        autoPosTest();
+
+        //doMission();
         autoPos1(false, true);
+
         robot.setDriveStop();
     }
-    //Side = true is blue
+
+        public  void doMission() {}
+
+    @Autonomous(name = "Auto Red1Std", group = "7079")
+    public class Red1Std extends Auto {
+        public Red1Std()
+        {
+            super();
+        }
+
+        public void doMission()
+        {
+            autoPos1(false, true);
+        }
+
+    }
+
+    @Autonomous(name = "Auto Red2Std", group = "7079")
+    public class Red2Std extends Auto {
+        public Red2Std() {
+            super();
+        }
+        public void Red2Std()
+        {
+            autoPos1(false, true);
+        }
+
+    }
+        //Side = true is blue
     //Side = false is red
     //carousel = false then we don't do carousel
     //carousel = true then we do carousel
