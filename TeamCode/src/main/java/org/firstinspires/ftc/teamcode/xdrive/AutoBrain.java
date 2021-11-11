@@ -137,7 +137,7 @@ public class AutoBrain {
             driveBrain.rotateToHeadingAbsolute(-90*modifier, 3, halfPower, mediumTimeout);
             robot.setDrive(-.2, .1, 0, 1);
             sleep(150);
-            driveBrain.carouselMoves(1);//moves the carousel wheel
+            driveBrain.carouselMoves(-1);//moves the carousel wheel
             robot.setDriveStop();
         }
         driveBrain.rotateToHeadingAbsolute(-80 * modifier, 3, 0.5, mediumTimeout);

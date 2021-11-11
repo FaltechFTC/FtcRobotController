@@ -59,7 +59,7 @@ a claw system*/
     static final int ARM_LAYER1_POS = 224;
     static final int ARM_LAYER2_POS = 353;
     static final int ARM_LAYER3_POS = 513;
-    static final int ARM_PARK_POS = 513; //to-do: set to park position
+    static final int ARM_PARK_POS = 800; //to-do: set to park position
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
