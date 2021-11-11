@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Auto Test", group = "7079")
-
+@Disabled
 public class AutoTester extends LinearOpMode {
     Robot robot = new Robot();
     DriveBrain driveBrain;
@@ -84,4 +84,5 @@ public class AutoTester extends LinearOpMode {
         driveSquare(distance,power,90);
         driveSquare(distance,power,-90);
     }
+
 }

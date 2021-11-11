@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
 
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -16,11 +16,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Utility;
 
 import java.util.List;
 
 public class Robot {
-    static final boolean useColorSensor = true;
+    static final boolean useColorSensor = false;
     static final boolean useIMU = true;
     static boolean useArm = true;
     static boolean useCarousel = true;
@@ -29,11 +30,12 @@ public class Robot {
     private DcMotor front_right = null;
     private DcMotor back_left = null;
     private DcMotor back_right = null;
-    public DcMotor[] driveMotors = new DcMotor[3];
-    public DcMotor[] driveMotors2WheelX = new DcMotor[2];
+    public DcMotor[] driveMotors = new DcMotor[4];
     public DcMotor[] driveMotors2WheelY = new DcMotor[2];
-    public DcMotor arm    = null;
-    public DcMotor[] armArray = new DcMotor[1];
+    public DcMotor[] driveMotors2WheelX = new DcMotor[2];
+    public DcMotor[] driveMotorsMode = new DcMotor[3];
+    public DcMotorSimple arm = null;
+    //    public DcMotorSimple[] armArray = new DcMotorSimple[1];
     public DcMotorSimple carousel = null;
     public int[] curPos = new int[4];
     public BNO055IMU imu = null;
@@ -41,19 +43,28 @@ public class Robot {
 a claw system*/
 
     //    public DcMotor  leftArm     = null;
-//    public Servo    leftClaw    = null;
-//    public Servo    rightClaw   = null;
-//    public static final double MID_SERVO       =  0.5 ;
-//    public static final double ARM_UP_POWER    =  0.45 ;
-//    public static final double ARM_DOWN_POWER  = -0.45 ;
+    public Servo intakePusher = null;
+    public Servo intakeWrist = null;
+    double wristOffset = 0.40;
+    int armPosition = 0;
+
+
     static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 19.2;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 6.0;     // For figuring circumference
     static final double COUNTS_PER_OUTPUT_REVOL = 537.7;
     static final double COUNTS_PER_INCH = (COUNTS_PER_OUTPUT_REVOL) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
+    static final int ARM_INTAKE_POS = 170;
+    static final int ARM_LAYER1_POS = 224;
+    static final int ARM_LAYER2_POS = 353;
+    static final int ARM_LAYER3_POS = 513;
+    static final int ARM_PARK_POS = 800; //to-do: set to park position
+
     /* local OpMode members. */
     HardwareMap hwMap = null;
+    LynxModule.BulkCachingMode bulkReadMode = LynxModule.BulkCachingMode.AUTO;
+
     private ElapsedTime period = new ElapsedTime();
 
     /* setting up color sensor*/
@@ -64,7 +75,7 @@ a claw system*/
         hwMap = ahwMap;
         telemetry = t;
 
-        setBulkReadMode(LynxModule.BulkCachingMode.AUTO);
+        setBulkReadMode(bulkReadMode);
 
         if (useColorSensor) {
             colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
@@ -76,9 +87,7 @@ a claw system*/
             //change to default set of parameters go here
             imu.initialize(params);
         }
-        if (useArm) {
-            arm = hwMap.get(DcMotor.class, "arm");
-        }
+        if (useArm) arm = hwMap.get(DcMotorSimple.class, "arm");
         if (useCarousel) carousel = hwMap.get(DcMotorSimple.class, "carousel");
 
         // Define and Initialize Motors
@@ -90,31 +99,30 @@ a claw system*/
         driveMotors[1] = back_left;
         driveMotors[2] = front_left;
         driveMotors[3] = back_right;
+        driveMotorsMode[0] = front_right;
+        driveMotorsMode[1] = back_left;
+        driveMotorsMode[2] = front_left;
         driveMotors2WheelY[0] = front_left;
         driveMotors2WheelY[1] = back_right;
         driveMotors2WheelX[0] = front_right;
         driveMotors2WheelX[1] = back_left;
-        front_left.setDirection(DcMotor.Direction.FORWARD);
-        front_right.setDirection(DcMotor.Direction.REVERSE);
-        back_left.setDirection(DcMotor.Direction.FORWARD);
-        back_right.setDirection(DcMotor.Direction.REVERSE);
+        front_left.setDirection(DcMotor.Direction.REVERSE);
+        front_right.setDirection(DcMotor.Direction.FORWARD);
+        back_left.setDirection(DcMotor.Direction.REVERSE);
+        back_right.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to zero power
         setDriveStop();
-//        leftArm.setPower(0);
 
         // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
         setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-//        leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         // Define and initialize ALL installed servos.
-//        leftClaw  = hwMap.get(Servo.class, "left_hand");
-//        rightClaw = hwMap.get(Servo.class, "right_hand");
-        //arm.setPosition(MID_SERVO);
-//        rightClaw.setPosition(MID_SERVO);
+        intakePusher = hwMap.get(Servo.class, "pusher");
+        intakeWrist = hwMap.get(Servo.class, "wrist");
 
+        pusherOpen();
+        wristMove();
     }
 
     public void setBulkReadMode(LynxModule.BulkCachingMode mode) {
@@ -125,11 +133,8 @@ a claw system*/
     }
 
     public void setRunMode(DcMotor.RunMode mode) {
-        for (DcMotor m : driveMotors) {
+        for (DcMotor m : driveMotors2WheelY) {
             m.setMode(mode);
-        }
-        for (DcMotor f : armArray){
-            f.setMode(mode);
         }
     }
 
@@ -138,7 +143,6 @@ a claw system*/
         for (DcMotor m : driveMotors) {
             m.setZeroPowerBehavior(mode);
         }
-
     }
 
     public void setDriveStopModeFloat() {
@@ -164,15 +168,7 @@ a claw system*/
         return motor;
     }
 
-    public int[] getCurPos() {
-        curPos[0] = front_left.getCurrentPosition();
-        curPos[1] = front_right.getCurrentPosition();
-        curPos[2] = back_left.getCurrentPosition();
-        return curPos;
-    }
-
-
-    public void setDrivePower(double [] wheelpowers){
+    public void setDrivePower(double[] wheelpowers) {
         double max = Math.abs(wheelpowers[0]);
         for (int i = 0; i < wheelpowers.length; i++) {
             if (max < Math.abs(wheelpowers[i])) max = Math.abs(wheelpowers[i]);
@@ -194,11 +190,15 @@ a claw system*/
 
     public void setDrive(double forward, double strafe, double rotate, double power) {
         double[] powers = calculateDrivePowersFSRSimple(forward, strafe, rotate);
+        telemetry.addData("Forward", forward);
+        telemetry.addData("Strafe", strafe);
+        telemetry.addData("Rotate", rotate);
+        telemetry.addData("Powers", powers);
         setDrivePower(powers);
     }
 
     public void setDriveStop() {
-        double[] powers = {0,0,0,0};
+        double[] powers = {0, 0, 0, 0};
         setDrivePower(powers);
     }
 
@@ -217,7 +217,7 @@ a claw system*/
     }
 
     public void setDrivePowersTank(double leftPower, double rightPower) {
-        double[] wheelpowers = { leftPower, rightPower, leftPower, rightPower };
+        double[] wheelpowers = {leftPower, rightPower, leftPower, rightPower};
 
         setDrivePower(wheelpowers); // apply the calculated values to the motors.
     }
@@ -225,47 +225,109 @@ a claw system*/
     public void setTwoWheelDrive(double forward, double strafe, double rotate) {
         //this function will combine wheel commands
         double[] wheelpowers = {
-                (strafe + rotate),
-                (forward - rotate),
-                (strafe + rotate),
-                (forward - rotate),
+                (strafe - rotate),
+                (forward + rotate),
+                (strafe - rotate),
+                (forward + rotate),
         };
 
         setDrivePower(wheelpowers); // apply the calculated values to the motors.
     }
 
-    public double[] calculateDrivePowersFSRSimple (double forward, double strafe, double rotate) {
-       double[] powers = {
-                (forward + strafe + rotate),
-                (forward - strafe - rotate),
-                (forward - strafe + rotate),
+    public double[] calculateDrivePowersFSRSimple(double forward, double strafe, double rotate) {
+        double[] powers = {
                 (forward + strafe - rotate),
+                (forward - strafe + rotate),
+                (forward - strafe - rotate),
+                (forward + strafe + rotate),
         };
         return powers;
     }
 
     public double[] calculateDrivePowers(double heading, double power, double rotate) {
         double m0, m1, m2, m3;
-        m0 = power * -Math.sin(heading-(Math.PI/4))-rotate;
-        m1 = power * Math.cos(heading+(Math.PI/4))-rotate;
-        m2 = power * Math.sin(heading+(Math.PI/4))-rotate;
-        m3 = power * -Math.cos(heading-(Math.PI/4))-rotate;
+        m0 = power * -Math.sin(heading - (Math.PI / 4)) + rotate;
+        m1 = power * Math.cos(heading + (Math.PI / 4)) + rotate;
+        m2 = power * Math.sin(heading + (Math.PI / 4)) + rotate;
+        m3 = power * -Math.cos(heading - (Math.PI / 4)) + rotate;
         double[] XDriveMotors = {m0, m1, m2, m3};
         return XDriveMotors;
     }
 
-    public double[] calculateDrivePowersFSR (double gamepadx, double gamepady, double rotate) {
-        double heading = Math.atan2(gamepadx,gamepady);
-        double power = Math.sqrt((gamepadx*gamepadx)-(gamepady*gamepady));
-        return calculateDrivePowers(heading,power,rotate);
+    public double[] calculateDrivePowersFSR(double gamepadx, double gamepady, double rotate) {
+        double heading = Math.atan2(gamepadx, gamepady);
+        double power = Math.sqrt((gamepadx * gamepadx) - (gamepady * gamepady));
+        return calculateDrivePowers(heading, power, rotate);
     }
 
-    public void reportDrivePowers(double [] powers) {
+    public void reportDrivePowers(double[] powers) {
         telemetry.addLine()
-                .addData("XDrive Power FL",powers[0])
+                .addData("XDrive Power FL", powers[0])
                 .addData("FR", powers[0])
                 .addData("BL", powers[0])
                 .addData("BR", powers[0]);
+    }
+
+    public int getArmPosition() {
+        return front_right.getCurrentPosition();
+    }
+
+    public void setArmPosition(int armPosition, double timeoutSeconds) {
+        ElapsedTime timer = new ElapsedTime();
+        boolean done=false;
+       while (timer.seconds()<timeoutSeconds && !done)
+       {
+           done=setArmMotorPosition(armPosition);
+       }
+    }
+
+    public boolean setArmMotorPosition(double pos) {
+        armPosition = (int) pos;
+        boolean done = false;
+        double maxUpPower = 0.6, maxDownPower = -0.3;
+        int curentPosition = front_right.getCurrentPosition();
+        int error = armPosition - curentPosition;
+        done = Math.abs(error) < 3;
+        double p = 0;
+        if (done) {
+            p = 0;
+        } else {
+            p = .012 * error;
+            p = Utility.clipToRange(p, maxUpPower, maxDownPower);
+        }
+        arm.setPower(-p);
+        telemetry.addLine()
+                .addData("armPosition", curentPosition)
+                .addData("error", error)
+                .addData("p", p)
+                .addData("tgt", armPosition);
+        return done;
+    }
+
+    double maxWrist=.65, minWrist=0.0;
+    public double setWristOffset(double offset) {
+        wristOffset = Utility.clipToRange(offset, maxWrist, minWrist);
+        return wristOffset;
+    }
+    public double calculateWristFromArm() {
+        double pos=0.0;
+        if (armPosition<100) pos=0;
+        else if (armPosition<200) pos=.15;
+        else if (armPosition>250) pos=armPosition/1000;
+        pos = Utility.clipToRange(pos,maxWrist,minWrist);
+        return pos;
+    }
+
+    public double getWristOffset() {
+        return wristOffset;
+    }
+
+    public void wristMove() {
+        intakeWrist.setPosition(wristOffset);
+        telemetry.addData("wrist",wristOffset);
+    }
+    public void wristMove(double pos) {
+        intakeWrist.setPosition(pos);
     }
 
     public void reportEncoders() {
@@ -288,7 +350,7 @@ a claw system*/
         }
     }
 
-    public void reportColor(){
+    public void reportColor() {
         if (useColorSensor) {
             NormalizedRGBA colors = getRGBA();
             telemetry.addLine()
@@ -309,4 +371,11 @@ a claw system*/
 
     }
 
+    public void pusherOpen() {
+        intakePusher.setPosition(0.25);
+    }
+
+    public void pusherClose() {
+        intakePusher.setPosition(0.7);
+    }
 }

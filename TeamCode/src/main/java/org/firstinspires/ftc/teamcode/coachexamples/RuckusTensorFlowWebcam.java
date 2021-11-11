@@ -53,7 +53,7 @@ import java.util.List;
  */
 
 @TeleOp(name = "Coach: Ruckus TensorFlow Webcam", group = "7079")
-
+@Disabled
 public class RuckusTensorFlowWebcam extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Gold Mineral";

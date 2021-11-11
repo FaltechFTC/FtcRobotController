@@ -18,10 +18,15 @@ public class DriveBrain {
     Robot robot;
     OpMode opmode;
     private final ElapsedTime runtime = new ElapsedTime();
-
+    public ElapsedTime carouselTimer = null;
+    public ElapsedTime pusherTimer = null;
     static final double P_DRIVE_COEFF = 0.15;
     static final double P_TURN_COEFF = 0.1;
     static final double HEADING_THRESHOLD = 1;
+    double zeroHeadingOffset = 0;
+    int targetArmPos = 0;
+    boolean maintArm = false;
+    boolean maintTimeout = false;
 
     public DriveBrain(Robot therobot, OpMode theopmode) {
         robot = therobot;
@@ -60,7 +65,7 @@ public class DriveBrain {
             if(robot.isDriveBusy()){
                runtimeBusy.reset();
             }
-
+            maint();
             // Display it for the driver.
            // opmode.telemetry.addData("Path1", "Running to %7d :%7d", robot.convertCountsToInches(inches));
          //   opmode.telemetry.addData("Path2", "Running at %7f :%7f", robot.getCurPos());
@@ -119,7 +124,6 @@ public class DriveBrain {
                 // Display drive status for the driver.
                 opmode.telemetry.addData("Err/St", "%5.1f/%5.1f", error, steer);
                 opmode.telemetry.addData("Target", "%7d", newTarget);
-                opmode.telemetry.addData("Actual", "%7d", robot.getCurPos());
                 opmode.telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
                 opmode.telemetry.update();
             }
@@ -233,13 +237,14 @@ public class DriveBrain {
             opmode.telemetry.addData("white", "%b", white);
             opmode.telemetry.update();
         }
-
+        carouselMaint();
         robot.setDriveStop();
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public boolean rotateToHeadingAbsolute(double targetHeading, double tolerance, double power, double timeout) {
         boolean fail = true;
+        targetHeading += zeroHeadingOffset;
         ElapsedTime runtimeInTolerance = new ElapsedTime();
         runtime.reset();
         double currentHeading = robot.getHeading(AngleUnit.DEGREES);
@@ -262,10 +267,11 @@ public class DriveBrain {
                 rotationCorrection = -0.1;
             }
             robot.setDrive(0, 0, rotationCorrection, 1);
-
+            opmode.telemetry.addData("Target Heading", targetHeading);
             opmode.telemetry.addData("Rotation Correction:", rotationCorrection);
             opmode.telemetry.addData("Heading Error:", headingError);
             opmode.telemetry.addData("Seconds Passed:", runtime.seconds());
+            maint();
         }
         robot.setDriveStop();
         return runtime.seconds() < timeout;
@@ -273,19 +279,99 @@ public class DriveBrain {
 
 
     public boolean rotateToHeadingRelative(double targetHeading, double tolerance, double power, double timeout) {
-        targetHeading += robot.getHeading(AngleUnit.DEGREES);
+        targetHeading += robot.getHeading(AngleUnit.DEGREES)-zeroHeadingOffset;
         return rotateToHeadingAbsolute(targetHeading, tolerance, power, timeout);
-
     }
-    public void carouselMoves() {
+    public void carouselMoves(int direction) {
         if (robot.useCarousel) {
-            robot.carousel.setPower(.3);
-            sleep(350);
-            robot.carousel.setPower(.4);
-            sleep(350);
-            robot.carousel.setPower(1);
+            robot.carousel.setPower(.3 * direction);
+            sleep(2000);
+            robot.carousel.setPower(.4 * direction);
+            sleep(500);
+            robot.carousel.setPower(1 * direction);
             sleep(800);
+            robot.carousel.setPower(-1 * direction);
+            sleep(350);
             robot.carousel.setPower(0);
         }
     }
+//    public void carouselStart() {
+//        carouselTimer = new ElapsedTime();
+//    }
+    public void carouselMove() {
+        carouselStart();
+        if (carouselTimer!=null) {
+            if (carouselTimer.milliseconds() > 350) robot.carousel.setPower(.3);
+            else if (carouselTimer.milliseconds()>700)robot.carousel.setPower(.4);
+            else if (carouselTimer.milliseconds()>1500)robot.carousel.setPower(1);
+            else {
+                robot.carousel.setPower(0);
+                carouselTimer = null;
+            }
+        }
+    }
+//    public void pusherStart() {
+//        pusherTimer = new ElapsedTime();
+//    }
+//    public void pusherMove() {
+//        pusherStart();
+//        if (pusherTimer!=null) {
+//            if (pusherTimer.milliseconds()>500) {
+//                robot.pusherOpen();
+//            }
+//        }
+//    }
+    public void carouselMaint() {
+        if (Robot.useCarousel && carouselTimer!=null) {
+
+            if (carouselTimer.milliseconds() < 350) robot.carousel.setPower(.3);
+            else if (carouselTimer.milliseconds() < 700) robot.carousel.setPower(.4);
+            else if (carouselTimer.milliseconds() < 1500) robot.carousel.setPower(1);
+            else {
+                robot.carousel.setPower(0);
+                carouselTimer = null;
+            }
+        }
+    }
+    public void carouselStart() {
+        carouselTimer = new ElapsedTime();
+    }
+    public void pusherMaint() {
+        if (pusherTimer != null) {
+            if (pusherTimer.milliseconds() > 500) {
+                robot.pusherOpen();
+                pusherTimer = null;
+            }
+        }
+        carouselMaint();
+    }
+    public void pusherStart() {
+        pusherTimer = new ElapsedTime();
+        robot.pusherClose();
+    }
+    public void setZeroHeading() {
+        zeroHeadingOffset = robot.getHeading(AngleUnit.DEGREES);
+    }
+    public double getBarcode(){
+        return 0.5;
+    }
+    public void maint() {
+        if (maintArm) {
+            robot.setArmMotorPosition(targetArmPos);
+        }
+        carouselStart();
+        pusherStart();
+    }
+    public void setArmMotorPosition(int pos) {
+        targetArmPos = pos;
+        maintArm = true;
+    }
+    public void maintTime(double timeout) {
+        ElapsedTime timer = new ElapsedTime();
+        while (timer.seconds()<timeout) {
+            maint();
+            sleep(1);
+        }
+    }
+
 }
