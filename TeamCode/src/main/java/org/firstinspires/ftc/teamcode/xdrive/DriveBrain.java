@@ -381,7 +381,7 @@ public class DriveBrain {
     final Pid pidDrivePrototype = new Pid(.001, 0.0, 0.0, -100, 100, -1.0, 1.0);
     final Pid pidRotatePrototype = new Pid(.001, 0.0, 0.0, -100, 100, -1.0, 1.0);
 
-    public void smartDrive(Pose targetPose, double maxPower, double toleranceInches, double toleranceDegees, double timeoutSeconds) {
+    public boolean smartDrive(Pose targetPose, double maxPower, double toleranceInches, double toleranceDegees, double timeoutSeconds) {
         ElapsedTime elapsed = new ElapsedTime();
         ElapsedTime elapsedInTolerance = new ElapsedTime();
         final double minToleranceSeconds = .1;
@@ -401,11 +401,12 @@ public class DriveBrain {
         targetPose.x = robot.convertInchesToCounts(targetPose.x);
         targetPose.y = robot.convertInchesToCounts(targetPose.y);
 
+        boolean inTolerance=false;
         do {
             Pose currentPose = new Pose(robot.driveMotors2WheelX[0].getCurrentPosition(), robot.driveMotors2WheelY[0].getCurrentPosition(),robot.getHeading(AngleUnit.DEGREES));
 
-            if (!currentPose.isInTolerance(targetPose,toleranceClicks, toleranceDegees))
-                elapsedInTolerance.reset();
+            inTolerance=currentPose.isInTolerance(targetPose,toleranceClicks, toleranceDegees);
+            if (!inTolerance) elapsedInTolerance.reset();
 
             // keep track of how much time per each loop
             double currentTime=runtime.seconds();
@@ -418,8 +419,9 @@ public class DriveBrain {
 
             robot.setDrive(powerY, powerX, powerRot,1);
 
-        } while (elapsedInTolerance.seconds()<minToleranceSeconds && elapsed.seconds()<timeoutSeconds);
+        } while (inTolerance && elapsedInTolerance.seconds()<minToleranceSeconds && elapsed.seconds()<timeoutSeconds);
 
         robot.setDriveStop();
+        return inTolerance;
     }
 }
