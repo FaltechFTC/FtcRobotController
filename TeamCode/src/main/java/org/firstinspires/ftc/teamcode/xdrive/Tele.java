@@ -92,20 +92,25 @@ public class Tele extends OpMode {
         double pusher_pos = gamepad2.left_trigger;
         double arm_power = -4.0 * Utility.deadStick(gamepad2.left_stick_y);
         if (arm_power > 0) arm_power *= 2;
-        boolean pusher_cycle = gamepad1.left_bumper || gamepad1.a || gamepad2.left_bumper;
+        boolean pusher_cycle = gamepad1.left_bumper || gamepad2.left_bumper;
         boolean arm_park = gamepad1.y || gamepad2.y;
         boolean arm_layer1 = gamepad1.x || gamepad2.x;
-        boolean arm_intake = gamepad1.b || gamepad2.b;
+//        boolean arm_intake = gamepad1.b || gamepad2.b;
+        boolean intakePos = gamepad2.b || gamepad1.b;
 
         if (gamepad2.dpad_up) robot.setWristOffset(robot.getWristOffset()+.01);
         if (gamepad2.dpad_down) robot.setWristOffset(robot.getWristOffset()-.01);
-        if (gamepad2.dpad_right) robot.setWristOffset(robot.calculateWristFromArm());
         robot.wristMove();
 
         // PUSHER **************************
-        if (pusher_cycle && driveBrain.pusherTimer!=null)
+        if (pusher_cycle && driveBrain.pusherTimer==null) {
             driveBrain.pusherStart();
-        else driveBrain.pusherMaint();
+            telemetry.addData("Pusher", gamepad1.left_bumper);
+        }
+        else if(driveBrain.pusherTimer!=null) driveBrain.pusherMaint();
+        else {
+            pusher_pos = 0;
+        }
 
         pusher_pos = Utility.clipToRange(pusher_pos, 1, 0);
         robot.intakePusher.setPosition(pusher_pos);
@@ -113,13 +118,17 @@ public class Tele extends OpMode {
         // ARM **************************************
         if (Robot.useArm) {
             if (arm_park) {
-                armPos = robot.ARM_PARK_POS;
+                armPos = Robot.ARM_PARK_POS;
             }
             else if (arm_layer1) {
-                armPos = robot.ARM_LAYER1_POS;
+                armPos = Robot.ARM_LAYER1_POS;
             }
-            else if (arm_intake) {
-                armPos = robot.ARM_INTAKE_POS;
+//            else if (arm_intake) {
+//                armPos = Robot.ARM_INTAKE_POS;
+//            }
+            else if (intakePos) {
+                armPos = Robot.ARM_INTAKE_POS;
+                robot.setWristOffset(.53);
             }
             else
                 armPos += arm_power;
@@ -130,18 +139,23 @@ public class Tele extends OpMode {
 
     public void doCarousel() {
         double carousel_power = Utility.deadStick(gamepad2.right_stick_x);
-        boolean carousel_cycle = gamepad1.dpad_right || gamepad2.dpad_right;
+        boolean carousel_cycle_left = gamepad2.dpad_left;
+        boolean carousel_cycle_right = gamepad2.dpad_right;
 
         if (Robot.useCarousel) {
-            if (carousel_cycle&&driveBrain.carouselTimer==null) {
-                driveBrain.carouselStart();
+            if (carousel_cycle_left && driveBrain.carouselTimer==null) {
+                driveBrain.carouselStart(false);
             }
+            else if (carousel_cycle_right && driveBrain.carouselTimer==null) {
+                driveBrain.carouselStart(true);
+            }
+
             if (driveBrain.carouselTimer!=null) {
                 driveBrain.carouselMaint();
             }
             else
                 robot.carousel.setPower(carousel_power);
-            telemetry.addData("Carousel Power:", carousel_power);
+//            telemetry.addData("Carousel Power:", carousel_power);
         }
     }
 

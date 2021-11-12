@@ -27,6 +27,7 @@ public class DriveBrain {
     int targetArmPos = 0;
     boolean maintArm = false;
     boolean maintTimeout = false;
+    float carouselDirection = 1;
 
     public DriveBrain(Robot therobot, OpMode theopmode) {
         robot = therobot;
@@ -299,7 +300,7 @@ public class DriveBrain {
 //        carouselTimer = new ElapsedTime();
 //    }
     public void carouselMove() {
-        carouselStart();
+        carouselStart(true);
         if (carouselTimer!=null) {
             if (carouselTimer.milliseconds() > 350) robot.carousel.setPower(.3);
             else if (carouselTimer.milliseconds()>700)robot.carousel.setPower(.4);
@@ -321,20 +322,24 @@ public class DriveBrain {
 //            }
 //        }
 //    }
+
     public void carouselMaint() {
         if (Robot.useCarousel && carouselTimer!=null) {
-
-            if (carouselTimer.milliseconds() < 350) robot.carousel.setPower(.3);
-            else if (carouselTimer.milliseconds() < 700) robot.carousel.setPower(.4);
-            else if (carouselTimer.milliseconds() < 1500) robot.carousel.setPower(1);
+            double m = carouselTimer.milliseconds();
+            if (m < 600) robot.carousel.setPower((m/600)*.75+.25);
+            else if (m<1500){
+                robot.carousel.setPower(.9);
+            }
             else {
                 robot.carousel.setPower(0);
                 carouselTimer = null;
             }
         }
     }
-    public void carouselStart() {
+    public void carouselStart(boolean direction) {
+        //true =
         carouselTimer = new ElapsedTime();
+        carouselDirection = direction?-1:1;
     }
     public void pusherMaint() {
         if (pusherTimer != null) {
@@ -343,7 +348,6 @@ public class DriveBrain {
                 pusherTimer = null;
             }
         }
-        carouselMaint();
     }
     public void pusherStart() {
         pusherTimer = new ElapsedTime();
@@ -359,8 +363,8 @@ public class DriveBrain {
         if (maintArm) {
             robot.setArmMotorPosition(targetArmPos);
         }
-        carouselStart();
-        pusherStart();
+        carouselMaint();
+        pusherMaint();
     }
     public void setArmMotorPosition(int pos) {
         targetArmPos = pos;

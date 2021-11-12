@@ -21,9 +21,9 @@ public class AutoBrain {
     double halfPower = 0.5;
     double highPower = 0.7;
     double veryHighPower = 1;
-    double shortTimeout=1.5;
-    double mediumTimeout=4;
-    double highTimeout = 7;
+    double shortTimeout=2;
+    double mediumTimeout=3;
+    double highTimeout = 5;
     int armMarkerPos = 0;
 
     public void init(LinearOpMode opmode) {
@@ -107,7 +107,7 @@ public class AutoBrain {
         //deliver preloaded box
         driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);//moves arm straight up
         driveBrain.maintTime(1.5);
-        driveBrain.driveDistance(-20.5*modifier, mediumPower, 2);
+        driveBrain.driveDistance(-20.5*modifier, mediumPower, shortTimeout);
 
         if (doCarousel) {
             robot.setDrive(-.2, -.1, 0, 1);
@@ -131,7 +131,7 @@ public class AutoBrain {
         //deliver preloaded box
         driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);//moves arm straight up
         driveBrain.maintTime(1.5);
-        driveBrain.driveDistance(-20.5*modifier, mediumPower, 3);
+        driveBrain.driveDistance(-20.5*modifier, mediumPower, mediumTimeout);
 
         if (doCarousel) {
             driveBrain.rotateToHeadingAbsolute(-90*modifier, 3, halfPower, mediumTimeout);
