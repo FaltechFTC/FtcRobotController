@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Pid;
+import org.firstinspires.ftc.teamcode.Pose;
 import org.firstinspires.ftc.teamcode.Utility;
 
 
@@ -378,4 +380,52 @@ public class DriveBrain {
         }
     }
 
+    // The following Pid() and smartDrive() was imported from internet resource (TODO: Insert URL)
+    // and used as a template for continued work.
+    final Pid pidDrivePrototype = new Pid(.001, 0.0, 0.0, -100, 100, -1.0, 1.0);
+    final Pid pidRotatePrototype = new Pid(.001, 0.0, 0.0, -100, 100, -1.0, 1.0);
+
+    public boolean smartDrive(Pose targetPose, double maxPower, double toleranceInches, double toleranceDegees, double timeoutSeconds) {
+        ElapsedTime elapsed = new ElapsedTime();
+        ElapsedTime elapsedInTolerance = new ElapsedTime();
+        final double minToleranceSeconds = .1;
+        int toleranceClicks = robot.convertInchesToCounts(toleranceInches);
+
+        final double maxRotationPower = .5;
+
+        Pid pidX = pidDrivePrototype.clone();
+        pidX.setOutputLimits(-maxPower,maxPower);
+        Pid pidY = pidDrivePrototype.clone();
+        pidY.setOutputLimits(-maxPower,maxPower);
+        Pid pidHeading = pidRotatePrototype.clone();
+        pidY.setOutputLimits(-maxRotationPower,maxRotationPower);
+
+        double lastTime=0.0;
+
+        targetPose.x = robot.convertInchesToCounts(targetPose.x);
+        targetPose.y = robot.convertInchesToCounts(targetPose.y);
+
+        boolean inTolerance=false;
+        do {
+            Pose currentPose = new Pose(robot.driveMotors2WheelX[0].getCurrentPosition(), robot.driveMotors2WheelY[0].getCurrentPosition(),robot.getHeading(AngleUnit.DEGREES));
+
+            inTolerance=currentPose.isInTolerance(targetPose,toleranceClicks, toleranceDegees);
+            if (!inTolerance) elapsedInTolerance.reset();
+
+            // keep track of how much time per each loop
+            double currentTime=runtime.seconds();
+            double deltaTime=currentTime-lastTime;
+            lastTime=currentTime;
+
+            double powerX=pidX.update(targetPose.x, currentPose.x, deltaTime);
+            double powerY=pidY.update(targetPose.y, currentPose.y, deltaTime);
+            double powerRot=pidHeading.update(targetPose.heading, currentPose.heading, deltaTime);
+
+            robot.setDrive(powerY, powerX, powerRot,1);
+
+        } while (inTolerance && elapsedInTolerance.seconds()<minToleranceSeconds && elapsed.seconds()<timeoutSeconds);
+
+        robot.setDriveStop();
+        return inTolerance;
+    }
 }
