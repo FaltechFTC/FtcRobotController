@@ -105,15 +105,12 @@ public class Tele extends OpMode {
         // PUSHER **************************
         if (pusher_cycle && driveBrain.pusherTimer==null) {
             driveBrain.pusherStart();
-            telemetry.addData("Pusher", gamepad1.left_bumper);
         }
         else if(driveBrain.pusherTimer!=null) driveBrain.pusherMaint();
         else {
-            pusher_pos = 0;
+            pusher_pos = Utility.clipToRange(pusher_pos, 1, 0);
+            robot.intakePusher.setPosition(pusher_pos);
         }
-
-        pusher_pos = Utility.clipToRange(pusher_pos, 1, 0);
-        robot.intakePusher.setPosition(pusher_pos);
 
         // ARM **************************************
         if (Robot.useArm) {

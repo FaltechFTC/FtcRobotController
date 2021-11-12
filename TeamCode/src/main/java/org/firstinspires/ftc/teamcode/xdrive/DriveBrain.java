@@ -329,7 +329,7 @@ public class DriveBrain {
         if (Robot.useCarousel && carouselTimer!=null) {
             double m = carouselTimer.milliseconds();
             if (m < 600) robot.carousel.setPower((m/600)*.75+.25);
-            else if (m<1500){
+            else if (m<1350){
                 robot.carousel.setPower(.9);
             }
             else {
