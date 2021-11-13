@@ -65,7 +65,7 @@ public class Tele extends OpMode {
             //calculate drive direction
             double direction = Math.atan2(drive_forward, drive_strafe);
             //offset by 45 degrees
-            direction += Math.toRadians(45);
+            direction += Math.toRadians(-45);
             double power = Math.sqrt(drive_forward*drive_forward+drive_strafe*drive_strafe);
             //calculate back to strafe and forward
             drive_forward = Math.sin(direction)*power;
@@ -95,7 +95,7 @@ public class Tele extends OpMode {
         boolean pusher_cycle = gamepad1.left_bumper || gamepad2.left_bumper;
         boolean arm_park = gamepad1.y || gamepad2.y;
         boolean arm_layer1 = gamepad1.x || gamepad2.x;
-//        boolean arm_intake = gamepad1.b || gamepad2.b;
+        boolean outTakePos = gamepad2.a;
         boolean intakePos = gamepad2.b || gamepad1.b;
 
         if (gamepad2.dpad_up) robot.setWristOffset(robot.getWristOffset()+.01);
@@ -126,6 +126,10 @@ public class Tele extends OpMode {
             else if (intakePos) {
                 armPos = Robot.ARM_INTAKE_POS;
                 robot.setWristOffset(.53);
+            }
+            else if (outTakePos) {
+                armPos = Robot.ARM_LAYER1_POS;
+                robot.setWristOffset(.03);
             }
             else
                 armPos += arm_power;
@@ -185,3 +189,4 @@ public class Tele extends OpMode {
     }
 
 }
+//Hi this is matthew, tell me if you see this!
