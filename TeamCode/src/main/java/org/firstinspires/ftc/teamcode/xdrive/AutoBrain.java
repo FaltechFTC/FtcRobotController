@@ -252,7 +252,7 @@ public class AutoBrain {
             driveBrain.driveDistance(-6*modifier,mediumPower, shortTimeout);
 //            driveBrain.rotateToHeadingAbsolute(-45 * modifier, 4, 0.35, shortTimeout);
             driveBrain.rotateToHeadingAbsolute(-90 * modifier, 4, 0.35, mediumTimeout);
-            driveBrain.driveDistance(-18*modifier, .25, mediumTimeout);//drives to warehouse
+            driveBrain.driveDistance(-20*modifier, .25, mediumTimeout);//drives to warehouse
 //
         }
     }
