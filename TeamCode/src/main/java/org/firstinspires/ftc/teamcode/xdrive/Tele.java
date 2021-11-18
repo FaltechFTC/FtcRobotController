@@ -53,6 +53,7 @@ public class Tele extends OpMode {
         boolean drive_tmode = gamepad1.right_trigger > 0.05;
         boolean drive_overdrive = gamepad1.right_bumper || gamepad2.right_bumper;
         boolean drive_rotate_90 = gamepad1.dpad_left;
+        boolean drive_global = gamepad1.a;
 
         // DRIVING *******************************************
         if (drive_overdrive) {
@@ -74,6 +75,15 @@ public class Tele extends OpMode {
 
         double currentHeading = robot.getHeading(AngleUnit.DEGREES);
         telemetry.addData("Heading", currentHeading);
+
+        if (drive_global) {
+            double direction = Math.atan2(drive_forward, drive_strafe);
+            direction += Math.toRadians(45 - currentHeading);
+            double power = Math.sqrt(drive_forward*drive_forward+drive_strafe*drive_strafe);
+            drive_forward = Math.sin(direction)*power;
+            drive_strafe = Math.cos(direction)*power;
+        }
+
         if (!drive_heading_lock || drive_tmode!=lastTMode) {
             fixedHeading = calculateLockHeading(currentHeading, 90, drive_tmode);
         }
