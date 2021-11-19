@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Utility;
 
 @TeleOp(name = "Tele", group = "7079")
@@ -32,6 +33,7 @@ public class Tele extends OpMode {
 
     @Override
     public void loop() {
+
         doDriving();
         doIntake();
         doCarousel();
@@ -42,6 +44,7 @@ public class Tele extends OpMode {
 
         cycles++;
         //telemetry.addData("cycle time (ms): ", timer.milliseconds() / cycles);
+        telemetry.addData("Distance Sensor Reading:", robot.distanceSensor.getDistance(DistanceUnit.INCH));
         telemetry.update();
     }
     public void doDriving() {

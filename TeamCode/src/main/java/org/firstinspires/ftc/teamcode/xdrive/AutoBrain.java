@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class AutoBrain {
     Robot robot;
@@ -64,15 +65,13 @@ public class AutoBrain {
         }
     }
 
-     public void autoNothing() throws Exception
-     {
+     public void autoNothing() throws Exception{
          telemetry.addData("Status", "Doing Nothing");
          telemetry.update();
          sleep(2000);
          telemetry.addData("Status", "Done");
          telemetry.update();
          sleep(1000);
-
      }
 
 
@@ -96,9 +95,19 @@ public class AutoBrain {
         driveBrain.rotateToHeadingAbsolute(360,3,mediumPower,5);
     }
 
+    public void autoPosDistanceTest() {
+        double distance = robot.distanceSensor.getDistance(DistanceUnit.INCH);
+        driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);//moves arm straight up
+        driveBrain.rotateToHeadingAbsolute(75, 2, slowPower, shortTimeout);
+        driveBrain.driveDistance(30, slowPower, 3);
+        driveBrain.rotateToHeadingAbsolute(-20, 2, halfPower, shortTimeout);
+        driveBrain.setArmMotorPosition(Robot.ARM_LAYER3_POS);
+        robot.setWristOffset(.53);
+        robot.pusherClose();
+        driveBrain.maintTime(1);
+    }
 
-
-    //carousel = false then we don't do carousel, else do carousel
+    //carousel = false then we don't do carousel, e lse do carousel
     public void autoPark1Red(boolean sideBlue, boolean doCarousel) {
         int barcode = 0; //TODO get barcode number from vision
         int modifier = 1;

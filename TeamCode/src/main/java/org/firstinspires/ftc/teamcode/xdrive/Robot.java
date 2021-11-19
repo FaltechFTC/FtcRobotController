@@ -5,6 +5,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -25,6 +26,7 @@ public class Robot {
     static final boolean useIMU = true;
     static boolean useArm = true;
     static boolean useCarousel = true;
+    static boolean useDistanceSensor = true;
     private Telemetry telemetry = null;
     private DcMotor front_left = null;
     private DcMotor front_right = null;
@@ -39,6 +41,7 @@ public class Robot {
     public DcMotorSimple carousel = null;
     public int[] curPos = new int[4];
     public BNO055IMU imu = null;
+    public DistanceSensor distanceSensor;
 /* we might need to leave this code for the arm here so that we can use it later is we are using
 a claw system*/
 
@@ -76,7 +79,6 @@ a claw system*/
         telemetry = t;
 
         setBulkReadMode(bulkReadMode);
-
         if (useColorSensor) {
             colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
             colorSensor.setGain(colorSensorGain);
@@ -89,6 +91,7 @@ a claw system*/
         }
         if (useArm) arm = hwMap.get(DcMotorSimple.class, "arm");
         if (useCarousel) carousel = hwMap.get(DcMotorSimple.class, "carousel");
+        if (useDistanceSensor) distanceSensor = hwMap.get(DistanceSensor.class, "distanceSensor");
 
         // Define and Initialize Motors
         front_left = hwMap.get(DcMotor.class, "fldrive");

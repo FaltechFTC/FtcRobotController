@@ -428,8 +428,4 @@ public class DriveBrain {
         robot.setDriveStop();
         return inTolerance;
     }
-    public void fieldCentered() {
-        double newHeading = robot.getHeading(AngleUnit.DEGREES);
-    }
-
 }
