@@ -22,9 +22,9 @@ public class AutoBrain {
     double halfPower = 0.5;
     double highPower = 0.7;
     double veryHighPower = 1;
-    double shortTimeout=2;
-    double mediumTimeout=3;
-    double highTimeout = 5;
+    double shortTimeout=1.5;
+    double mediumTimeout=4;
+    double highTimeout = 7;
     int armMarkerPos = 0;
 
     public void init(LinearOpMode opmode) {
@@ -76,6 +76,8 @@ public class AutoBrain {
 
 
     public void autoPosTest(){
+        vision.getBarcode(2000);
+        convertBarcode();
         driveBrain.driveDistance(20,mediumPower, 1);
         sleep(5000);
         driveBrain.rotateToHeadingAbsolute(90,3,mediumPower,3);
@@ -116,7 +118,7 @@ public class AutoBrain {
         //deliver preloaded box
         driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);//moves arm straight up
         driveBrain.maintTime(1.5);
-        driveBrain.driveDistance(-20.5*modifier, mediumPower, shortTimeout);
+        driveBrain.driveDistance(-20.5*modifier, mediumPower, 2);
 
         if (doCarousel) {
             robot.setDrive(-.2, -.1, 0, 1);
@@ -140,7 +142,7 @@ public class AutoBrain {
         //deliver preloaded box
         driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);//moves arm straight up
         driveBrain.maintTime(1.5);
-        driveBrain.driveDistance(-20.5*modifier, mediumPower, mediumTimeout);
+        driveBrain.driveDistance(-20.5*modifier, mediumPower, 3);
 
         if (doCarousel) {
             driveBrain.rotateToHeadingAbsolute(-90*modifier, 3, halfPower, mediumTimeout);
@@ -265,4 +267,18 @@ public class AutoBrain {
 //
         }
     }
+    public void convertBarcode(){
+        vision.getBarcode(200);
+        if(vision.returnvalue == 1){
+            robot.setArmMotorPosition(Robot.ARM_LAYER1_POS);
+        }
+        if(vision.returnvalue == 2){
+            robot.setArmMotorPosition(Robot.ARM_LAYER2_POS);
+        }
+        if(vision.returnvalue == 3){
+            robot.setArmMotorPosition(Robot.ARM_LAYER3_POS);
+        }
+    }
+
+
 }
