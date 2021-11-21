@@ -95,15 +95,25 @@ public class AutoBrain {
         driveBrain.rotateToHeadingAbsolute(360,3,mediumPower,5);
     }
 
-    public void autoPosDistanceTest() {
+    public void autoPosScore1() {
         double distance = robot.distanceSensor.getDistance(DistanceUnit.INCH);
         driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);//moves arm straight up
         driveBrain.rotateToHeadingAbsolute(75, 2, slowPower, shortTimeout);
-        driveBrain.driveDistance(30, slowPower, 3);
-        driveBrain.rotateToHeadingAbsolute(-20, 2, halfPower, shortTimeout);
+        driveBrain.driveDistance(27, slowPower, 3);
+        driveBrain.rotateToHeadingAbsolute(-15, 2, halfPower, shortTimeout);
         driveBrain.setArmMotorPosition(Robot.ARM_LAYER3_POS);
         robot.setWristOffset(.53);
-        robot.pusherClose();
+        driveBrain.pusherStart();
+        driveBrain.maintTime(1);
+    }
+    public void autoPosScore2() {
+        driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);
+        driveBrain.rotateToHeadingAbsolute(45,2, mediumPower, shortTimeout);
+        driveBrain.driveDistance(24, mediumPower, shortTimeout);
+        driveBrain.rotateToHeadingAbsolute(-50, 2, halfPower, shortTimeout);
+        driveBrain.driveDistance(24, slowPower, shortTimeout);
+        robot.setWristOffset(.53);
+        driveBrain.pusherStart();
         driveBrain.maintTime(1);
     }
 
