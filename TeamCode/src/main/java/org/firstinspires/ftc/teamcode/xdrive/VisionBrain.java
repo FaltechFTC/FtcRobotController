@@ -72,12 +72,12 @@ public class VisionBrain {
 
     final String VUFORIA_KEY = "AY7lK0j/////AAABmffl0hEQlUFfjdc9h8Aw+t5/CrgiSiIgNkZKZcw3qdOlnNEv3HarcW4e1pfYY5Nq+4XVrrnhKKNBeR/S08U41ogd0NpmWwOPgttli7io4p8WtbgWj+c/WL9uDzZK9u03K3Kfx+XFxdk/vy0tnFKCPg5w9M5iy7QQP2SDHFDJuhcAOtsayV8n8hQvB528RDRDykBtXei/V6xhN/qLc+S1Gp7eS0ZzpDFnT+uED0CwYK+oaWKNsPPv+3u9tCwofQ5PaRHlN05kH4V97Nn0N7WquSmDpcCZpAVqI1QnMEi7Fm9rvJgET+4OIlx4ZueF3ZTuXtJJSaEJ8Y6CEy9F7FS0RnlVtt4QlqpQVSmWmJQWYBNu";
 
-    final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
+    final String TFOD_MODEL_ASSET = "FreightFrenzy_BC.tflite";
     private static final String[] LABELS = {
             "Ball",
-            "Cube",
-            "Duck",
-            "Marker"
+            "Cube"
+      //      "Duck",
+      //      "Marker"
     };
 /*
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
@@ -192,7 +192,7 @@ public class VisionBrain {
                     "tfodMonitorViewId", "id", opmode.hardwareMap.appContext.getPackageName());
             tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         }
-        tfodParameters.minResultConfidence = 0.6f;
+        tfodParameters.minResultConfidence = 0.2f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 320;
 
@@ -230,20 +230,6 @@ public class VisionBrain {
                         winner = recognition;
                     }
                     else{
-                        if(winner.getLabel().equals("Marker")){
-                           if(recognition.getLabel().equals("Marker")){
-                               if(winner.getConfidence()>recognition.getConfidence()){
-                                  // winner = winner;
-                               }
-                               else{
-                                   winner = recognition;
-                               }
-                           }
-                           else{
-                               winner = recognition;
-                           }
-                        }
-                        else{
                             if(winner.getLabel().equals("Cube")){
                                 if(recognition.getLabel().equals("Cube")){
                                     if(recognition.getConfidence()>= winner.getConfidence()){
@@ -256,9 +242,7 @@ public class VisionBrain {
                                 if(recognition.getLabel().equals("Ball")){
                                     winner = recognition;
                                 }
-                                if(recognition.getLabel().equals("Duck")){
-                                    winner = winner;
-                                }
+
                             }
                             else if(winner.getLabel().equals("Ball")){
                                 if(recognition.getLabel().equals("Cube")){
@@ -272,26 +256,9 @@ public class VisionBrain {
                                         winner = winner;
                                     }
                                 }
-                                if(recognition.getLabel().equals("Duck")){
-                                    winner = winner;
-                                }
+
                             }
-                            else if(winner.getLabel().equals("Duck")){
-                                if(recognition.getLabel().equals("Cube")){
-                                    winner = recognition;
-                                }
-                                if(recognition.getLabel().equals("Ball")){
-                                    winner = recognition;
-                                }
-                                if(recognition.getLabel().equals("Duck")){
-                                    if(recognition.getConfidence()>= winner.getConfidence()){
-                                        winner = recognition;
-                                    }
-                                    else{
-                                        winner = winner;
-                                    }
-                                }
-                            }
+
                           /*  if(winner.getConfidence()> recognition.getConfidence()){
                                 winner = winner;
                             }
@@ -309,12 +276,12 @@ public class VisionBrain {
                             else{
                                 winner = recognition;
                             }*/
-                        }
+
                     }
                 }
             } else opmode.telemetry.addData("Status","Recognitions is NULL");
         } else opmode.telemetry.addData("Status","TFOD is NULL");
-        if(winner.getLabel().equals("Marker")||winner == null){
+        if(winner == null){
             returnvalue = 1;
             return returnvalue;
         }
@@ -322,7 +289,7 @@ public class VisionBrain {
             if(winner.getLeft()>100&&winner.getLeft()<500 ){
                  returnvalue = 2;
             }
-            else if(winner.getLeft()>500&&winner.getLeft()<1000){
+            else if(winner.getLeft()>500){
                  returnvalue = 3;
             }
             else{
@@ -335,4 +302,5 @@ public class VisionBrain {
         opmode.telemetry.update();
         return returnvalue;
     }
+
 }
