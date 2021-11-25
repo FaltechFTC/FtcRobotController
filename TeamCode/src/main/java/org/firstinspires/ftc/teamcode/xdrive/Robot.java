@@ -52,11 +52,11 @@ a claw system*/
     int armPosition = 0;
 
 
-    static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
+    static final double COUNTS_PER_MOTOR_REV = 1440.0;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 19.2;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 6.0;     // For figuring circumference
     static final double COUNTS_PER_OUTPUT_REVOL = 537.7;
-    static final double COUNTS_PER_INCH = (COUNTS_PER_OUTPUT_REVOL) / (WHEEL_DIAMETER_INCHES * Math.PI);
+    static final double COUNTS_PER_INCH = (22.0/16.0)* (COUNTS_PER_OUTPUT_REVOL) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
     static final int ARM_INTAKE_POS = 65;
     static final int ARM_LAYER1_POS = 224;
