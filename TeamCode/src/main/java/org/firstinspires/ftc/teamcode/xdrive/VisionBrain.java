@@ -60,7 +60,7 @@ public class VisionBrain {
     boolean showCamera = false;
     boolean showCameraOD = false;
     float zoom = 0.8f;
-
+    double returnvalue = 0;
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
@@ -200,7 +200,7 @@ public class VisionBrain {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET,LABELS);
     }
     public double getBarcodeTeamElement(double timeout){
-        double returnvalue = 0;
+
         opmode.telemetry.addData("Status","Processing!");
         Recognition winner = null;
         if (tfod != null) {
@@ -333,7 +333,7 @@ public class VisionBrain {
     }
 
     public double getBarcodeDuck(double timeout){
-        double returnvalue = 0;
+
         opmode.telemetry.addData("Status","Processing!");
         Recognition winner = null;
         if (tfod != null) {
@@ -464,6 +464,8 @@ public class VisionBrain {
         opmode.telemetry.update();
         return returnvalue;
     }
+
+
 
 
 
