@@ -56,7 +56,7 @@ a claw system*/
     static final double DRIVE_GEAR_REDUCTION = 19.2;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 6.0;     // For figuring circumference
     static final double COUNTS_PER_OUTPUT_REVOL = 537.7;
-    static final double COUNTS_PER_INCH = (COUNTS_PER_OUTPUT_REVOL) / (WHEEL_DIAMETER_INCHES * Math.PI);
+    static final double COUNTS_PER_INCH = (22.0/16.0)*(COUNTS_PER_OUTPUT_REVOL) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
     static final int ARM_INTAKE_POS = 65;
     static final int ARM_LAYER1_POS = 224;
@@ -156,11 +156,11 @@ a claw system*/
     }
 
     public int convertInchesToCounts(double inches) {
-        return (int) ((COUNTS_PER_INCH*(16.0/22.0)) * inches);
+        return (int) ((COUNTS_PER_INCH) * inches);
     }
 
     public double convertCountsToInches(int counts) {
-        return (double) (counts / (COUNTS_PER_INCH/(16.0/22.0)));
+        return (double) (counts / (COUNTS_PER_INCH));
     }
 
     public boolean isDriveBusy() {
