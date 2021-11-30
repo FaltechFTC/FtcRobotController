@@ -29,7 +29,7 @@ public class AutoRed1 extends LinearOpMode {
 
     public void doMission() throws Exception
     {
-        brain.autoPark1Red(false,true);
+        brain.autoPark1Red();
     }
 
 }
