@@ -59,7 +59,7 @@ public class VisionBrain {
     boolean useWebCam = false;
     boolean showCamera = false;
     boolean showCameraOD = false;
-    float zoom = 1.0f;
+    float zoom = 0.8f;
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -72,12 +72,12 @@ public class VisionBrain {
 
     final String VUFORIA_KEY = "AY7lK0j/////AAABmffl0hEQlUFfjdc9h8Aw+t5/CrgiSiIgNkZKZcw3qdOlnNEv3HarcW4e1pfYY5Nq+4XVrrnhKKNBeR/S08U41ogd0NpmWwOPgttli7io4p8WtbgWj+c/WL9uDzZK9u03K3Kfx+XFxdk/vy0tnFKCPg5w9M5iy7QQP2SDHFDJuhcAOtsayV8n8hQvB528RDRDykBtXei/V6xhN/qLc+S1Gp7eS0ZzpDFnT+uED0CwYK+oaWKNsPPv+3u9tCwofQ5PaRHlN05kH4V97Nn0N7WquSmDpcCZpAVqI1QnMEi7Fm9rvJgET+4OIlx4ZueF3ZTuXtJJSaEJ8Y6CEy9F7FS0RnlVtt4QlqpQVSmWmJQWYBNu";
 
-    final String TFOD_MODEL_ASSET = "FreightFrenzy_BC.tflite";
+    final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String[] LABELS = {
             "Ball",
-            "Cube"
-      //      "Duck",
-      //      "Marker"
+            "Cube",
+            "Duck",
+            "Marker"
     };
 /*
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
@@ -199,7 +199,7 @@ public class VisionBrain {
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET,LABELS);
     }
-    public double getBarcode(double timeout){
+    public double getBarcodeTeamElement(double timeout){
         double returnvalue = 0;
         opmode.telemetry.addData("Status","Processing!");
         Recognition winner = null;
@@ -242,7 +242,12 @@ public class VisionBrain {
                                 if(recognition.getLabel().equals("Ball")){
                                     winner = recognition;
                                 }
-
+                                if(recognition.getLabel().equals("Duck")){
+                                    winner = winner;
+                                }
+                                if(recognition.getLabel().equals("Marker")){
+                                    winner = winner;
+                                }
                             }
                             else if(winner.getLabel().equals("Ball")){
                                 if(recognition.getLabel().equals("Cube")){
@@ -256,33 +261,58 @@ public class VisionBrain {
                                         winner = winner;
                                     }
                                 }
-
-                            }
-
-                          /*  if(winner.getConfidence()> recognition.getConfidence()){
-                                winner = winner;
-                            }
-                            else if(winner.getConfidence() == recognition.getConfidence()){
-                                if(winner.getLabel().equals("Cube")&&recognition.getLabel().equals("Ball")){
-                                    winner = recognition;
-                                }
-                                else if(winner.getLabel().equals("Ball")&&recognition.getLabel().equals("Cube")){
+                                if(recognition.getLabel().equals("Duck")){
                                     winner = winner;
                                 }
-                                else{
-                                    winner = recognition;
+                                if(recognition.getLabel().equals("Marker")){
+                                    winner = winner;
                                 }
                             }
-                            else{
-                                winner = recognition;
-                            }*/
+                            else if(winner.getLabel().equals("Duck")){
+                                if(recognition.getLabel().equals("Duck")){
+                                    if(recognition.getConfidence()> winner.getConfidence()){
+                                        recognition = winner;
+                                    }
+                                    else{
+                                        winner = winner;
+                                    }
 
+                                }
+                                if(recognition.getLabel().equals("Ball")){
+                                    recognition = winner;
+                                }
+                                if(recognition.getLabel().equals("Cube")){
+                                    recognition = winner;
+                                }
+                                if(recognition.getLabel().equals("Marker")){
+                                    winner = winner;
+                                }
+                            }
+                            else if(winner.getLabel().equals("Marker")){
+                                if(recognition.getLabel().equals("Marker")){
+                                    if(recognition.getConfidence()> winner.getConfidence()){
+                                        recognition = winner;
+                                    }
+                                    else{
+                                        winner = winner;
+                                    }
+                                }
+                                if(recognition.getLabel().equals("Cube")){
+                                    recognition = winner;
+                                }
+                                if(recognition.getLabel().equals("Ball")){
+                                    recognition = winner;
+                                }
+                                if(recognition.getLabel().equals("Duck")){
+                                    recognition = winner;
+                                }
+                            }
                     }
                 }
             } else opmode.telemetry.addData("Status","Recognitions is NULL");
         } else opmode.telemetry.addData("Status","TFOD is NULL");
-        if(winner == null){
-            returnvalue = 1;
+        if(winner == null||winner.getLabel().equals("Marker")){
+            returnvalue = 3;
             return returnvalue;
         }
         else{
@@ -295,12 +325,146 @@ public class VisionBrain {
             else{
                  returnvalue = 1;
             }
-
         }
 
         opmode.telemetry.addData("Return Value",returnvalue);
         opmode.telemetry.update();
         return returnvalue;
     }
+
+    public double getBarcodeDuck(double timeout){
+        double returnvalue = 0;
+        opmode.telemetry.addData("Status","Processing!");
+        Recognition winner = null;
+        if (tfod != null) {
+            ElapsedTime timer = new ElapsedTime();
+
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
+            List<Recognition> updatedRecognitions = updatedRecognitions = tfod.getUpdatedRecognitions();;
+            while (updatedRecognitions==null && timer.seconds()<timeout) {
+                try {sleep(100);} catch (InterruptedException e) {}
+                updatedRecognitions = tfod.getUpdatedRecognitions();
+            }
+
+            if (updatedRecognitions != null) {
+                opmode.telemetry.addData("# Object Detected", updatedRecognitions.size());
+                // step through the list of recognitions and display boundary info.
+                int i = 0;
+                for (Recognition recognition : updatedRecognitions) {
+                    i++;
+
+                    opmode.telemetry.addLine()
+                            .addData(String.format("label (%d)", i), recognition.getLabel())
+                            .addData("Conf", "%.02f", recognition.getConfidence())
+                            .addData("Loc","(%.01f,%.01f,%.01f,%.01f)", recognition.getLeft(), recognition.getTop(), recognition.getRight(), recognition.getBottom());
+
+                    if (winner == null){
+                        winner = recognition;
+                    }
+                    else{
+                        if(winner.getLabel().equals("Cube")){
+                            if(recognition.getLabel().equals("Cube")){
+                                if(recognition.getConfidence()>= winner.getConfidence()){
+                                    winner = recognition;
+                                }
+                                else{
+                                    winner = winner;
+                                }
+                            }
+                            if(recognition.getLabel().equals("Ball")){
+                                winner = recognition;
+                            }
+                            if(recognition.getLabel().equals("Duck")){
+                                winner = recognition;
+                            }
+                            if(recognition.getLabel().equals("Marker")){
+                                winner = winner;
+                            }
+                        }
+                        else if(winner.getLabel().equals("Ball")){
+                            if(recognition.getLabel().equals("Cube")){
+                                winner = winner;
+                            }
+                            if(recognition.getLabel().equals("Ball")){
+                                if(recognition.getConfidence()>= winner.getConfidence()){
+                                    winner = recognition;
+                                }
+                                else{
+                                    winner = winner;
+                                }
+                            }
+                            if(recognition.getLabel().equals("Duck")){
+                                winner = recognition;
+                            }
+                            if(recognition.getLabel().equals("Marker")){
+                                winner = winner;
+                            }
+                        }
+                        else if(winner.getLabel().equals("Duck")){
+                            if(recognition.getLabel().equals("Duck")){
+                                if(recognition.getConfidence()> winner.getConfidence()){
+                                    recognition = winner;
+                                }
+                                else{
+                                    winner = winner;
+                                }
+
+                            }
+                            if(recognition.getLabel().equals("Ball")){
+                                winner = winner;
+                            }
+                            if(recognition.getLabel().equals("Cube")){
+                                winner = winner;
+                            }
+                            if(recognition.getLabel().equals("Marker")){
+                                winner = winner;
+                            }
+                        }
+                        else if(winner.getLabel().equals("Marker")){
+                            if(recognition.getLabel().equals("Marker")){
+                                if(recognition.getConfidence()> winner.getConfidence()){
+                                    recognition = winner;
+                                }
+                                else{
+                                    winner = winner;
+                                }
+                            }
+                            if(recognition.getLabel().equals("Cube")){
+                                recognition = winner;
+                            }
+                            if(recognition.getLabel().equals("Ball")){
+                                recognition = winner;
+                            }
+                            if(recognition.getLabel().equals("Duck")){
+                                recognition = winner;
+                            }
+                        }
+                    }
+                }
+            } else opmode.telemetry.addData("Status","Recognitions is NULL");
+        } else opmode.telemetry.addData("Status","TFOD is NULL");
+        if(winner == null||winner.getLabel().equals("Marker")){
+            returnvalue = 3;
+            return returnvalue;
+        }
+        else{
+            if(winner.getLeft()>100&&winner.getLeft()<500 ){
+                returnvalue = 2;
+            }
+            else if(winner.getLeft()>500){
+                returnvalue = 3;
+            }
+            else{
+                returnvalue = 1;
+            }
+        }
+
+        opmode.telemetry.addData("Return Value",returnvalue);
+        opmode.telemetry.update();
+        return returnvalue;
+    }
+
+
 
 }

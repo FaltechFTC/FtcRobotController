@@ -124,6 +124,7 @@ public class AutoBrain {
 
     //carousel = false then we don't do carousel, e lse do carousel
     public void autoPark1Red(boolean sideBlue, boolean doCarousel) {
+
         int barcode = 0; //TODO get barcode number from vision
         int modifier = 1;
         if (sideBlue) modifier = -1;
