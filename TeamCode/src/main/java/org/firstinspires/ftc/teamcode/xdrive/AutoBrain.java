@@ -107,6 +107,7 @@ public class AutoBrain {
         driveBrain.maintTime(1);
     }
     public void autoPosScore2() {
+
         driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);
         driveBrain.rotateToHeadingAbsolute(45,2, mediumPower, shortTimeout);
         driveBrain.driveDistance(24, mediumPower, shortTimeout);
