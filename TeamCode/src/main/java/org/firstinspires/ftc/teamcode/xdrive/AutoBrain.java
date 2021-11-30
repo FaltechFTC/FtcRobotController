@@ -100,11 +100,16 @@ public class AutoBrain {
         driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);//moves arm straight up
         driveBrain.rotateToHeadingAbsolute(75, 2, slowPower, shortTimeout);
         driveBrain.driveDistance(27, slowPower, 3);
-        driveBrain.rotateToHeadingAbsolute(-15, 2, halfPower, shortTimeout);
+        driveBrain.rotateToHeadingAbsolute(-15, 2, slowPower, shortTimeout);
         driveBrain.setArmMotorPosition(Robot.ARM_LAYER3_POS);
         robot.setWristOffset(.53);
         driveBrain.pusherStart();
         driveBrain.maintTime(1);
+        driveBrain.rotateToHeadingAbsolute(110,2, slowPower, shortTimeout);
+        driveBrain.driveDistance(36, slowPower, shortTimeout);
+        driveBrain.carouselStart(false);
+        driveBrain.carouselMaint();
+
     }
     public void autoPosScore2() {
         driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);

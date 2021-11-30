@@ -156,11 +156,11 @@ a claw system*/
     }
 
     public int convertInchesToCounts(double inches) {
-        return (int) (COUNTS_PER_INCH * inches);
+        return (int) ((COUNTS_PER_INCH/(16.0/22.0)) * inches);
     }
 
     public double convertCountsToInches(int counts) {
-        return counts / COUNTS_PER_INCH;
+        return (double) (counts / (COUNTS_PER_INCH*(16.0/22.0)));
     }
 
     public boolean isDriveBusy() {
