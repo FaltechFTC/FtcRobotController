@@ -117,14 +117,14 @@ public class Tele extends OpMode {
 
         // PUSHER **************************
         if (pusher_cycle && driveBrain.pusherTimer==null) {
-            driveBrain.pusherStart();
+            driveBrain.pusherStart(500);
         }
         else if(driveBrain.pusherTimer!=null) driveBrain.pusherMaint();
         else {
             pusher_pos = Utility.clipToRange(pusher_pos, 1, 0);
             robot.intakePusher.setPosition(pusher_pos);
         }
-
+        telemetry.addData("Pusher:", pusher_pos);
         // ARM **************************************
         if (Robot.useArm) {
             if (arm_park) {

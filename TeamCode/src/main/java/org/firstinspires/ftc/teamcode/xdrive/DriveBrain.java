@@ -31,6 +31,7 @@ public class DriveBrain {
     boolean maintArm = false;
     boolean maintTimeout = false;
     float carouselDirection = 1;
+    public double pushTime = 500;
 
     public DriveBrain(Robot therobot, OpMode theopmode) {
         robot = therobot;
@@ -346,14 +347,15 @@ public class DriveBrain {
     }
     public void pusherMaint() {
         if (pusherTimer != null) {
-            if (pusherTimer.milliseconds() > 500) {
+            if (pusherTimer.milliseconds() > pushTime) {
                 robot.pusherOpen();
                 pusherTimer = null;
             }
         }
     }
-    public void pusherStart() {
+    public void pusherStart(double pushms) {
         pusherTimer = new ElapsedTime();
+        pushTime = pushms;
         robot.pusherClose();
     }
     public void setZeroHeading() {
@@ -373,9 +375,9 @@ public class DriveBrain {
         targetArmPos = pos;
         maintArm = true;
     }
-    public void maintTime(double timeout) {
+    public void maintTime(double timeoutSeconds) {
         ElapsedTime timer = new ElapsedTime();
-        while (timer.seconds()<timeout) {
+        while (timer.seconds()<timeoutSeconds) {
             maint();
             sleep(1);
         }

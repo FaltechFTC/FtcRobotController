@@ -17,6 +17,14 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 @Config
 public class DriveConstants {
 
+
+    public static double rp1_d1 = 27;
+    public static double rp1_r1 = -2;
+    public static double rp1_r2 = 175;
+    public static double rp1_d2 = 36;
+    public static double rp1_m1 = 2;
+    public static double rp1_m2 = 2;
+    public static double rp1_m3 = 2;
     /*
      * These are motor constants that should be listed online for your motors.
      */

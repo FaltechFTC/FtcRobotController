@@ -1,10 +1,22 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.rp1_d1;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.rp1_d2;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.rp1_m1;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.rp1_m2;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.rp1_m3;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.rp1_r1;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.rp1_r2;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants.*;
+
+@Config
 
 public class AutoBrain {
     Robot robot;
@@ -103,7 +115,7 @@ public class AutoBrain {
         driveBrain.rotateToHeadingAbsolute(-15, 2, slowPower, shortTimeout);
         driveBrain.setArmMotorPosition(Robot.ARM_LAYER3_POS);
         robot.setWristOffset(.53);
-        driveBrain.pusherStart();
+        driveBrain.pusherStart(2000);
         driveBrain.maintTime(1);
         driveBrain.rotateToHeadingAbsolute(110,2, slowPower, shortTimeout);
         driveBrain.driveDistance(36, slowPower, shortTimeout);
@@ -119,41 +131,44 @@ public class AutoBrain {
         driveBrain.rotateToHeadingAbsolute(-50, 2, halfPower, shortTimeout);
         driveBrain.driveDistance(24, slowPower, shortTimeout);
         robot.setWristOffset(.53);
-        driveBrain.pusherStart();
+        driveBrain.pusherStart(2000);
         driveBrain.maintTime(1);
     }
 
     //carousel = false then we don't do carousel, else do carousel
-    public void autoPark1Red() {
 
+
+    public void autoPark1Red() {
 
         int barcode = 0; //TODO get barcode number from vision
         double distance = robot.distanceSensor.getDistance(DistanceUnit.INCH);
-        driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);//moves arm straight up
-//        driveBrain.rotateToHeadingAbsolute(15, 2, mediumPower, mediumTimeout);
-        driveBrain.driveDistance(27, mediumPower, 3);
-        driveBrain.rotateToHeadingAbsolute(-10, 2, mediumPower, mediumTimeout);
+        driveBrain.setArmMotorPosition(Robot.ARM_LAYER3_POS);//moves arm straight up
+        driveBrain.maintTime(.250);
+//
+        driveBrain.driveDistance(rp1_d1, mediumPower, 3);
+//        driveBrain.rotateToHeadingAbsolute(rp1_r1, 7, mediumPower, mediumTimeout);
+//        driveBrain.setArmMotorPosition(Robot.ARM_LAYER3_POS);
+        robot.setWristOffset(.6);
+        robot.pusherClose();
+        driveBrain.maintTime(rp1_m2);
 
-        driveBrain.setArmMotorPosition(Robot.ARM_LAYER3_POS);
-        robot.setWristOffset(.53);
-        driveBrain.maintTime(1);
-        driveBrain.pusherStart();
-        driveBrain.maintTime(1.5);
         driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);
 
-        driveBrain.rotateToHeadingAbsolute(10, 2, mediumPower, mediumTimeout);
-        driveBrain.driveDistance(-27, mediumPower, 3);
-        driveBrain.rotateToHeadingAbsolute(175, 2, mediumPower, mediumTimeout);
-        driveBrain.driveDistance(36, mediumPower, 3);
-        driveBrain.carouselStart(false);
-        driveBrain.carouselMaint();
-        driveBrain.maintTime(1);
-//        driveBrain.rotateToHeadingAbsolute(90,2, mediumPower, mediumTimeout);
-//        driveBrain.driveDistance(36, mediumPower, mediumTimeout);
-//        driveBrain.carouselStart(false);
-//        driveBrain.carouselMaint();
-//        driveBrain.rotateToHeadingAbsolute(0, 2, mediumPower, mediumTimeout);
-//        driveBrain.driveDistance(24, mediumPower, mediumTimeout);
+        driveBrain.driveDistance(-rp1_d1+.5, mediumPower, 3);
+        driveBrain.rotateToHeadingAbsolute(-15, 7, mediumPower, mediumTimeout);
+        driveBrain.driveDistance(-30, mediumPower, 3);
+
+        robot.setDrive(-.2,.1,0,verySlowPower);
+        robot.carousel.setPower(.35);
+        driveBrain.maintTime(5);
+        robot.carousel.setPower(0);
+        robot.setDriveStop();
+
+        driveBrain.rotateToHeadingAbsolute(90, 3, mediumPower, mediumTimeout);
+        driveBrain.driveDistance(20, mediumPower, mediumTimeout);
+        driveBrain.rotateToHeadingAbsolute(0, 3, mediumPower, mediumTimeout);
+        driveBrain.setArmMotorPosition(Robot.ARM_INTAKE_POS);
+        robot.pusherOpen();
     }
     public void autoPark1Blue(boolean sideBlue, boolean doCarousel) {
         int barcode = 0; //TODO get barcode number from vision
@@ -237,7 +252,30 @@ public class AutoBrain {
 //        //end
 //        telemetry.addData("Autonomous For Resource Depot Complete!",8);
     }
+    public void autoPark2Red(){
+        int barcode = 0; //TODO get barcode number from vision
+        double distance = robot.distanceSensor.getDistance(DistanceUnit.INCH);
+        driveBrain.setArmMotorPosition(Robot.ARM_LAYER3_POS);//moves arm straight up
+        driveBrain.maintTime(.250);
 
+        driveBrain.rotateToHeadingAbsolute(-90, 3, mediumPower, mediumTimeout);
+        driveBrain.driveDistance(rp1_d1, mediumPower, 3);
+
+        driveBrain.pusherStart(1500);
+        driveBrain.maintTime(rp1_m2);
+
+        driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);
+
+        driveBrain.driveDistance(-rp1_d1, mediumPower, 3);
+        driveBrain.rotateToHeadingAbsolute(0, 7, mediumPower, mediumTimeout);
+        driveBrain.driveDistance(36, mediumPower, 3);
+
+        driveBrain.rotateToHeadingAbsolute(90, 3, mediumPower, mediumTimeout);
+        driveBrain.driveDistance(16, mediumPower, mediumTimeout);
+        driveBrain.rotateToHeadingAbsolute(-90, 3, mediumPower, mediumTimeout);
+        driveBrain.setArmMotorPosition(Robot.ARM_INTAKE_POS);
+        robot.pusherOpen();
+    }
 
     public void autoPark2Blue(boolean sideBlue) {
         int barcode = 0; //TODO get barcode number from vision
@@ -263,7 +301,8 @@ public class AutoBrain {
             driveBrain.driveDistance(-20*modifier, .25, mediumTimeout);//drives to warehouse
         }
     }
-    public void autoPark2Red(boolean sideBlue) {
+
+    public void autoPark2RedOG(boolean sideBlue) {
         int barcode = 0; //TODO get barcode number from vision
         int modifier = 1;
         if (sideBlue) modifier=-1;
