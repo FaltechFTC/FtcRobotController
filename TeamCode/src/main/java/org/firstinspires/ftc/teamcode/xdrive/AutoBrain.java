@@ -132,7 +132,7 @@ public class AutoBrain {
         driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);//moves arm straight up
 //        driveBrain.rotateToHeadingAbsolute(15, 2, mediumPower, mediumTimeout);
         driveBrain.driveDistance(27, mediumPower, 3);
-        driveBrain.rotateToHeadingAbsolute(-40, 2, mediumPower, mediumTimeout);
+        driveBrain.rotateToHeadingAbsolute(-10, 2, mediumPower, mediumTimeout);
 
         driveBrain.setArmMotorPosition(Robot.ARM_LAYER3_POS);
         robot.setWristOffset(.53);
@@ -141,9 +141,9 @@ public class AutoBrain {
         driveBrain.maintTime(1.5);
         driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);
 
-        driveBrain.rotateToHeadingAbsolute(0, 2, mediumPower, mediumTimeout);
+        driveBrain.rotateToHeadingAbsolute(10, 2, mediumPower, mediumTimeout);
         driveBrain.driveDistance(-27, mediumPower, 3);
-        driveBrain.rotateToHeadingAbsolute(135, 2, mediumPower, mediumTimeout);
+        driveBrain.rotateToHeadingAbsolute(175, 2, mediumPower, mediumTimeout);
         driveBrain.driveDistance(36, mediumPower, 3);
         driveBrain.carouselStart(false);
         driveBrain.carouselMaint();
