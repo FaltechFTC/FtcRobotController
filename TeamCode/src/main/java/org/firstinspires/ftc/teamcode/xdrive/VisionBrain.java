@@ -42,6 +42,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.xdrive.Robot;
 
 import java.util.List;
+import com.acmerobotics.dashboard.FtcDashboard;
 
 /**
  * This 2020-2021 OpMode illustrates the basics of using the TensorFlow Object Detection API to
@@ -178,6 +179,8 @@ public class VisionBrain {
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        FtcDashboard.getInstance().startCameraStream(vuforia,0);
+
 
         // Loading trackables is not necessary for the TensorFlow Object Detection engine.
     }

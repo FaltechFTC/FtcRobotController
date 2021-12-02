@@ -54,6 +54,7 @@ public class Tele extends OpMode {
         boolean arm_layer1 = gamepad1.x || gamepad2.x;
         boolean outTakePos = gamepad2.a;
         boolean intakePos = gamepad2.b || gamepad1.b;
+
         boolean wrist_up = gamepad2.dpad_up;
         boolean wrist_down = gamepad2.dpad_down;
         brain.doIntake(pusher_pos, arm_power, pusher_cycle, arm_park,
