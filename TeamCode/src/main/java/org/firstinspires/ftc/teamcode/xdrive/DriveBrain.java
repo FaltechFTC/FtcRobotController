@@ -31,6 +31,7 @@ public class DriveBrain {
     boolean maintArm = false;
     boolean maintTimeout = false;
     float carouselDirection = 1;
+    public double pushTime = 500;
 
     public DriveBrain(Robot therobot, OpMode theopmode) {
         robot = therobot;
@@ -253,7 +254,8 @@ public class DriveBrain {
         runtime.reset();
         double currentHeading = robot.getHeading(AngleUnit.DEGREES);
         double headingError = Utility.wrapDegrees360(targetHeading - currentHeading);
-        while ( (runtime.seconds() < timeout)&& ((Math.abs(headingError) > tolerance)||runtimeInTolerance.seconds()<0.25)) {
+        while ( (runtime.seconds() < timeout)&& ((Math.abs(headingError) > tolerance)||runtimeInTolerance.seconds()<0.25)
+                && opModeIsActive()) {
             if(Math.abs(headingError) > tolerance){
                 runtimeInTolerance.reset();
             }
@@ -287,32 +289,32 @@ public class DriveBrain {
         return rotateToHeadingAbsolute(targetHeading, tolerance, power, timeout);
     }
     public void carouselMoves(int direction) {
-        if (robot.useCarousel) {
-            robot.carousel.setPower(.3 * direction);
-            sleep(2000);
-            robot.carousel.setPower(.4 * direction);
-            sleep(500);
-            robot.carousel.setPower(1 * direction);
-            sleep(800);
-            robot.carousel.setPower(-1 * direction);
-            sleep(350);
-            robot.carousel.setPower(0);
+            if (robot.useCarousel) {
+                robot.carousel.setPower(.3 * direction);
+                sleep(2000);
+                robot.carousel.setPower(.4 * direction);
+                sleep(500);
+                robot.carousel.setPower(1 * direction);
+                sleep(800);
+                robot.carousel.setPower(-1 * direction);
+                sleep(350);
+                robot.carousel.setPower(0);
+            }
         }
-    }
 //    public void carouselStart() {
 //        carouselTimer = new ElapsedTime();
 //    }
     public void carouselMove() {
-        carouselStart(true);
-        if (carouselTimer!=null) {
-            if (carouselTimer.milliseconds() > 350) robot.carousel.setPower(.3);
-            else if (carouselTimer.milliseconds()>700)robot.carousel.setPower(.4);
-            else if (carouselTimer.milliseconds()>1500)robot.carousel.setPower(1);
-            else {
-                robot.carousel.setPower(0);
-                carouselTimer = null;
+            carouselStart(true);
+            if (carouselTimer!=null) {
+                if (carouselTimer.milliseconds() > 350) robot.carousel.setPower(.3);
+                else if (carouselTimer.milliseconds()>700)robot.carousel.setPower(.4);
+                else if (carouselTimer.milliseconds()>1500)robot.carousel.setPower(1);
+                else {
+                    robot.carousel.setPower(0);
+                    carouselTimer = null;
+                }
             }
-        }
     }
 //    public void pusherStart() {
 //        pusherTimer = new ElapsedTime();
@@ -327,33 +329,34 @@ public class DriveBrain {
 //    }
 
     public void carouselMaint() {
-        if (Robot.useCarousel && carouselTimer!=null) {
-            double m = carouselTimer.milliseconds();
-            if (m < 600) robot.carousel.setPower((m/600)*.75+.25);
-            else if (m<1350){
-                robot.carousel.setPower(.85);
+            if (Robot.useCarousel && carouselTimer!=null) {
+                double m = carouselTimer.milliseconds();
+                if (m < 600) robot.carousel.setPower((m/600)*.75+.25);
+                else if (m<1350){
+                    robot.carousel.setPower(.85);
+                }
+                else {
+                    robot.carousel.setPower(0);
+                    carouselTimer = null;
+                }
             }
-            else {
-                robot.carousel.setPower(0);
-                carouselTimer = null;
-            }
-        }
     }
     public void carouselStart(boolean direction) {
-        //true =
-        carouselTimer = new ElapsedTime();
-        carouselDirection = direction?-1:1;
+            //true =
+            carouselTimer = new ElapsedTime();
+            carouselDirection = direction?-1:1;
     }
     public void pusherMaint() {
         if (pusherTimer != null) {
-            if (pusherTimer.milliseconds() > 500) {
+            if (pusherTimer.milliseconds() > pushTime) {
                 robot.pusherOpen();
                 pusherTimer = null;
             }
         }
     }
-    public void pusherStart() {
+    public void pusherStart(double pushms) {
         pusherTimer = new ElapsedTime();
+        pushTime = pushms;
         robot.pusherClose();
     }
     public void setZeroHeading() {
@@ -373,9 +376,9 @@ public class DriveBrain {
         targetArmPos = pos;
         maintArm = true;
     }
-    public void maintTime(double timeout) {
+    public void maintTime(double timeoutSeconds) {
         ElapsedTime timer = new ElapsedTime();
-        while (timer.seconds()<timeout) {
+        while (timer.seconds()<timeout && opModeIsActive()) {
             maint();
             sleep(1);
         }
@@ -424,7 +427,7 @@ public class DriveBrain {
 
             robot.setDrive(powerY, powerX, powerRot,1);
 
-        } while (inTolerance && elapsedInTolerance.seconds()<minToleranceSeconds && elapsed.seconds()<timeoutSeconds);
+        } while (inTolerance && elapsedInTolerance.seconds()<minToleranceSeconds && elapsed.seconds()<timeoutSeconds && opModeIsActive());
 
         robot.setDriveStop();
         return inTolerance;
