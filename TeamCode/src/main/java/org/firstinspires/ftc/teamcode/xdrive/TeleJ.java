@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Utility;
 
-@TeleOp(name = "Tele", group = "7079")
-public class Tele extends OpMode {
+@TeleOp(name = "TeleJ", group = "7079")
+public class TeleJ extends OpMode {
     TeleBrain brain = new TeleBrain();
 
     @Override
@@ -39,7 +37,7 @@ public class Tele extends OpMode {
         boolean drive_tmode = gamepad1.right_trigger > 0.05;
         boolean drive_overdrive = gamepad1.right_bumper || gamepad2.right_bumper;
         boolean drive_rotate_90 = gamepad1.dpad_left;
-        boolean drive_global = gamepad1.a;
+        boolean drive_global = gamepad1.left_bumper;
 
         brain.doDriving(drive_forward, drive_strafe, drive_rotate, drive_heading_lock,
                 drive_tmode, drive_overdrive,drive_rotate_90,drive_global);
@@ -49,7 +47,7 @@ public class Tele extends OpMode {
         double pusher_pos = gamepad2.left_trigger;
         double arm_power = -4.0 * Utility.deadStick(gamepad2.left_stick_y);
         if (arm_power > 0) arm_power *= 2;
-        boolean pusher_cycle = gamepad1.left_bumper || gamepad2.left_bumper;
+        boolean pusher_cycle = gamepad1.a || gamepad2.left_bumper;
         boolean arm_park = gamepad1.y || gamepad2.y;
         boolean arm_layer1 = gamepad1.x || gamepad2.x;
         boolean outTakePos = gamepad2.a;

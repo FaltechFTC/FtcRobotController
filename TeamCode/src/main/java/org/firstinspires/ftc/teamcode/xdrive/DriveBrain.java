@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.Utility;
 public class DriveBrain {
 
     Robot robot;
+    VisionBrain vision;
     OpMode opmode;
     private final ElapsedTime runtime = new ElapsedTime();
     public ElapsedTime carouselTimer = null;
@@ -428,5 +429,16 @@ public class DriveBrain {
 
         robot.setDriveStop();
         return inTolerance;
+    }
+    public void convertBarcode(){
+        if(vision.returnvalue == 1){
+            setArmMotorPosition(robot.ARM_LAYER1_POS);
+        }
+        else if(vision.returnvalue == 2){
+            setArmMotorPosition(robot.ARM_LAYER2_POS);
+        }
+        else if(vision.returnvalue == 3){
+            setArmMotorPosition(robot.ARM_LAYER3_POS);
+        }
     }
 }
