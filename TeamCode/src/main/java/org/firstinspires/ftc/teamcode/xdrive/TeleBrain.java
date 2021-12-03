@@ -91,7 +91,7 @@ public class TeleBrain{
 
         // PUSHER **************************
         if (pusher_cycle && driveBrain.pusherTimer==null) {
-            driveBrain.pusherStart();
+            driveBrain.pusherStart(500);
         }
         else if(driveBrain.pusherTimer!=null) driveBrain.pusherMaint();
         else {

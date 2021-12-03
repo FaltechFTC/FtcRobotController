@@ -378,7 +378,7 @@ public class DriveBrain {
     }
     public void maintTime(double timeoutSeconds) {
         ElapsedTime timer = new ElapsedTime();
-        while (timer.seconds()<timeout && opModeIsActive()) {
+        while (timer.seconds()<timeoutSeconds && opModeIsActive()) {
             maint();
             sleep(1);
         }
