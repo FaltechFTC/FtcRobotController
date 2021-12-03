@@ -27,7 +27,7 @@ public class Tele extends OpMode {
         brain.robot.reportEncoders();
         //robot.reportColor();
         //telemetry.addData("cycle time (ms): ", timer.milliseconds() / cycles);
-        telemetry.addData("Distance Sensor Reading:", brain.robot.distanceSensor.getDistance(DistanceUnit.INCH));
+        //brain.robot.reportDistance();
         telemetry.update();
     }
     public void doDriving() {

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,17 +17,22 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Utility;
 
 import java.util.List;
 
+@Config
 public class Robot {
     static final boolean useColorSensor = false;
     static final boolean useIMU = true;
+    public static double MAGNET_ENGAGE_POS = 0.25;
+    public static double MAGNUS_RELEASE_POS = 0.7;
     static boolean useArm = true;
     static boolean useCarousel = true;
-    static boolean useDistanceSensor = true;
+    static boolean useDistanceSensor = false;
+    static boolean debugTelemetry=false;
     private Telemetry telemetry = null;
     private DcMotor front_left = null;
     private DcMotor front_right = null;
@@ -48,8 +54,10 @@ a claw system*/
     //    public DcMotor  leftArm     = null;
     public Servo intakePusher = null;
     public Servo intakeWrist = null;
-    double wristOffset = 0.40;
-    int armPosition = 0;
+    public double wristOffset = 0.40;
+    public int armPosition = 0;
+    public double maxUpPower = 0.6;
+    public double maxDownPower = -0.3;
 
 
     static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
@@ -193,10 +201,11 @@ a claw system*/
 
     public void setDrive(double forward, double strafe, double rotate, double power) {
         double[] powers = calculateDrivePowersFSRSimple(forward, strafe, rotate);
-        telemetry.addData("Forward", forward);
-        telemetry.addData("Strafe", strafe);
-        telemetry.addData("Rotate", rotate);
-        telemetry.addData("Powers", powers);
+       if (debugTelemetry) {
+           telemetry.addData("Forward", forward);
+           telemetry.addData("Strafe", strafe);
+           telemetry.addData("Rotate", rotate);
+       }
         setDrivePower(powers);
     }
 
@@ -287,7 +296,6 @@ a claw system*/
     public boolean setArmMotorPosition(double pos) {
         armPosition = (int) pos;
         boolean done = false;
-        double maxUpPower = 0.6, maxDownPower = -0.3;
         int curentPosition = front_right.getCurrentPosition();
         int error = armPosition - curentPosition;
         done = Math.abs(error) < 3;
@@ -364,6 +372,11 @@ a claw system*/
         }
     }
 
+    public void reportDistance() {
+        if (useDistanceSensor) {
+            telemetry.addData("Distance Sensor Reading:", distanceSensor.getDistance(DistanceUnit.INCH));
+        }
+    }
     public double getHeading(AngleUnit angleUnit) {
         if (useIMU) {
             Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, angleUnit);
@@ -375,10 +388,17 @@ a claw system*/
     }
 
     public void pusherOpen() {
-        intakePusher.setPosition(0.25);
+        intakePusher.setPosition(MAGNET_ENGAGE_POS);
+    }
+    public void magnetEngage() {
+        intakePusher.setPosition(MAGNET_ENGAGE_POS);
     }
 
+
     public void pusherClose() {
-        intakePusher.setPosition(0.7);
+        intakePusher.setPosition(MAGNUS_RELEASE_POS);
+    }
+    public void magnetRelease() {
+        intakePusher.setPosition(MAGNUS_RELEASE_POS);
     }
 }
