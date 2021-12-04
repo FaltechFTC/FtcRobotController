@@ -199,6 +199,7 @@ public class AutoBrain {
         driveBrain.driveDistance(rp1_d1/2, mediumPower, 3);
         driveBrain.rotateToHeadingAbsolute(5, 2, mediumPower, mediumTimeout);
         driveBrain.driveDistance(rp1_d1/2, mediumPower, 3);
+        driveBrain.rotateToHeadingAbsolute(-15, 2, slowPower, mediumTimeout);
 
         robot.setWristOffset(0);
         robot.magnetRelease();
@@ -206,8 +207,9 @@ public class AutoBrain {
 
         driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);
 
+        driveBrain.rotateToHeadingAbsolute(5, 2, slowPower, mediumTimeout);
         driveBrain.driveDistance(-rp1_d1/2, mediumPower, 3);
-        driveBrain.rotateToHeadingAbsolute(-5, 2, mediumPower, mediumTimeout);
+        driveBrain.rotateToHeadingAbsolute(0, 2, mediumPower, mediumTimeout);
         driveBrain.driveDistance((-rp1_d1/2)+1, mediumPower, 3);
         driveBrain.rotateToHeadingAbsolute(90, 2, mediumPower, mediumTimeout);
         driveBrain.driveDistance(30, mediumPower, 3);
@@ -230,7 +232,6 @@ public class AutoBrain {
         //double distance = robot.distanceSensor.getDistance(DistanceUnit.INCH);
         driveBrain.setArmMotorPosition(Robot.ARM_LAYER3_POS);//moves arm straight up
         driveBrain.maintTime(.250);
-//
 
         driveBrain.driveDistance(rp1_d1, mediumPower, 3);
 //        driveBrain.rotateToHeadingAbsolute(rp1_r1, 7, mediumPower, mediumTimeout);
