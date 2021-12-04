@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.xdrive;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Utility;
 
 @TeleOp(name = "TeleJ", group = "7079")
@@ -38,9 +37,10 @@ public class TeleJ extends OpMode {
         boolean drive_overdrive = gamepad1.right_bumper || gamepad2.right_bumper;
         boolean drive_rotate_90 = gamepad1.dpad_left;
         boolean drive_global = gamepad1.left_bumper;
+        boolean reset_heading = gamepad1.dpad_down;
 
         brain.doDriving(drive_forward, drive_strafe, drive_rotate, drive_heading_lock,
-                drive_tmode, drive_overdrive,drive_rotate_90,drive_global);
+                drive_tmode, drive_overdrive,drive_rotate_90,drive_global, reset_heading);
     }
 
     public void doIntake() {

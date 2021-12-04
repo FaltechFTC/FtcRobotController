@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode.xdrive;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Utility;
 
 public class TeleBrain{
@@ -36,7 +33,10 @@ public class TeleBrain{
 
     public void doDriving(double drive_forward,double drive_strafe,double drive_rotate,
                           boolean drive_heading_lock,boolean drive_tmode,
-                          boolean drive_overdrive,boolean drive_rotate_90,boolean drive_global) {
+                          boolean drive_overdrive,boolean drive_rotate_90,boolean drive_global, boolean reset_heading) {
+        if(reset_heading){
+            robot.setZeroHeading();
+        }
 
         // DRIVING *******************************************
         if (drive_overdrive) {
@@ -51,7 +51,7 @@ public class TeleBrain{
             //offset by 45 degrees
             direction += Math.toRadians(-45);
             double power = Math.sqrt(drive_forward*drive_forward+drive_strafe*drive_strafe);
-            //calculate back to strafe and forward
+            /* calculate back to strafe and forward */
             drive_forward = Math.sin(direction)*power;
             drive_strafe = Math.cos(direction)*power;
         }
@@ -113,11 +113,11 @@ public class TeleBrain{
 //            }
             else if (intakePos) {
                 armPos = Robot.ARM_INTAKE_POS;
-                robot.setWristOffset(.53);
+                robot.wristMove(.53);
             }
             else if (outTakePos) {
                 armPos = Robot.ARM_LAYER1_POS;
-                robot.setWristOffset(.03);
+                robot.wristMove(.03);
             }
             else
                 armPos += arm_power;

@@ -433,13 +433,13 @@ public class DriveBrain {
     }
     public void convertBarcode(){
         if(vision.returnvalue == 1){
-            setArmMotorPosition(robot.ARM_LAYER1_POS);
+            setArmMotorPosition(Robot.ARM_LAYER1_POS);
         }
         else if(vision.returnvalue == 2){
-            setArmMotorPosition(robot.ARM_LAYER2_POS);
+            setArmMotorPosition(Robot.ARM_LAYER2_POS);
         }
         else if(vision.returnvalue == 3){
-            setArmMotorPosition(robot.ARM_LAYER3_POS);
+            setArmMotorPosition(Robot.ARM_LAYER3_POS);
         }
     }
 }
