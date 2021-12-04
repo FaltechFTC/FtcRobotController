@@ -85,7 +85,7 @@ public class TeleBrain{
         lastTMode=drive_tmode; // remember
     }
 
-    public void doIntake(double pusher_pos,double arm_power,boolean pusher_cycle,
+    public void doIntake(double arm_power,boolean pusher_cycle,
                          boolean arm_park,boolean arm_layer1,boolean outTakePos,
                          boolean intakePos,boolean wrist_up,boolean wrist_down) {
 
@@ -98,10 +98,6 @@ public class TeleBrain{
             driveBrain.pusherStart(500);
         }
         else if(driveBrain.pusherTimer!=null) driveBrain.pusherMaint();
-        else {
-            pusher_pos = Utility.clipToRange(pusher_pos, 1, 0);
-            robot.intakePusher.setPosition(pusher_pos);
-        }
 
         // ARM **************************************
         if (Robot.useArm) {

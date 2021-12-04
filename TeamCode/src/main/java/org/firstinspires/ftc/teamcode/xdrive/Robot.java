@@ -134,7 +134,7 @@ a claw system*/
         intakeWrist = hwMap.get(Servo.class, "wrist");
 
         magnetEngage();
-        wristMove();
+        //wristMove();
     }
 
     public void setBulkReadMode(LynxModule.BulkCachingMode mode) {

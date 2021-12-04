@@ -44,7 +44,7 @@ public class Tele extends OpMode {
     }
 
     public void doIntake() {
-        double pusher_pos = gamepad2.left_trigger;
+//        double pusher_pos = gamepad2.left_trigger;
         double arm_power = -4.0 * Utility.deadStick(gamepad2.left_stick_y);
         if (arm_power > 0) arm_power *= 2;
         boolean pusher_cycle = gamepad1.left_bumper || gamepad2.left_bumper;
@@ -55,7 +55,8 @@ public class Tele extends OpMode {
 
         boolean wrist_up = gamepad2.dpad_up;
         boolean wrist_down = gamepad2.dpad_down;
-        brain.doIntake(pusher_pos, arm_power, pusher_cycle, arm_park,
+
+        brain.doIntake(arm_power, pusher_cycle, arm_park,
                 arm_layer1, outTakePos, intakePos, wrist_up, wrist_down);
     }
 
