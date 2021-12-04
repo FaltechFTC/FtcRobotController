@@ -28,7 +28,8 @@ public class Robot {
     static final boolean useColorSensor = false;
     static final boolean useIMU = true;
     public static double MAGNET_ENGAGE_POS = 0.25;
-    public static double MAGNUS_RELEASE_POS = 0.7;
+    public static double MAGNET_RELEASE_POS = 0.7;
+    static double zeroHeadingOffset = 0;
     static boolean useArm = true;
     static boolean useCarousel = true;
     static boolean useDistanceSensor = false;
@@ -132,7 +133,7 @@ a claw system*/
         intakePusher = hwMap.get(Servo.class, "pusher");
         intakeWrist = hwMap.get(Servo.class, "wrist");
 
-        pusherOpen();
+        magnetEngage();
         wristMove();
     }
 
@@ -378,6 +379,9 @@ a claw system*/
         }
     }
     public double getHeading(AngleUnit angleUnit) {
+        return getRawHeading(AngleUnit.DEGREES) - zeroHeadingOffset;
+    }
+    public double getRawHeading(AngleUnit angleUnit) {
         if (useIMU) {
             Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, angleUnit);
             return angles.firstAngle;
@@ -386,7 +390,6 @@ a claw system*/
         }
 
     }
-
     public void pusherOpen() {
         intakePusher.setPosition(MAGNET_ENGAGE_POS);
     }
@@ -396,9 +399,14 @@ a claw system*/
 
 
     public void pusherClose() {
-        intakePusher.setPosition(MAGNUS_RELEASE_POS);
+        intakePusher.setPosition(MAGNET_RELEASE_POS);
     }
     public void magnetRelease() {
-        intakePusher.setPosition(MAGNUS_RELEASE_POS);
+        intakePusher.setPosition(MAGNET_RELEASE_POS);
     }
+    public void setZeroHeading() {
+        zeroHeadingOffset = getRawHeading(AngleUnit.DEGREES);
+        telemetry.addData("Zero Heading Offset" , zeroHeadingOffset);
+    }
+
 }

@@ -57,11 +57,12 @@ public class TeleBrain{
         }
 
         double currentHeading = robot.getHeading(AngleUnit.DEGREES);
+        telemetry.addData("Raw Heading", robot.getRawHeading(AngleUnit.DEGREES));
         telemetry.addData("Heading", currentHeading);
 
         if (drive_global) {
             double direction = Math.atan2(drive_forward, drive_strafe);
-            direction += Math.toRadians(45 - currentHeading);
+            direction += Math.toRadians(-currentHeading);
             double power = Math.sqrt(drive_forward*drive_forward+drive_strafe*drive_strafe);
             drive_forward = Math.sin(direction)*power;
             drive_strafe = Math.cos(direction)*power;
@@ -71,7 +72,7 @@ public class TeleBrain{
             fixedHeading = calculateLockHeading(currentHeading, 90, drive_tmode);
         }
         if (drive_heading_lock) {
-            drive_rotate += calculateRotationCorrection(fixedHeading, currentHeading, .25, 45.0);
+            drive_rotate += calculateRotationCorrection(fixedHeading, currentHeading, .15, 45.0);
         }
         if (drive_rotate_90) {
             driveBrain.rotateToHeadingRelative(90, 3, 0.3, 3);

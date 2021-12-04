@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.rp1_d1;
@@ -41,21 +42,20 @@ public class AutoBrain {
 
     public void init(LinearOpMode opmode) {
         telemetry = opmode.telemetry;
-        telemetry.addData("Status", "RunOpMode");
-        telemetry.update();
+//        telemetry.addData("Status", "RunOpMode");
+//        telemetry.update();
 
         robot = new Robot();
         robot.init(opmode.hardwareMap, telemetry);
         robot.setDriveStopModeBreak();
         robot.maxUpPower=.3; // slower during auto
-        telemetry.addData("Status", "Robot Initialized");
-        telemetry.update();
+//        telemetry.addData("Status", "Robot Initialized");
+//        telemetry.update();
 
         driveBrain = new DriveBrain(robot, opmode);
-        //driveBrain.setZeroHeading();
         robot.maxUpPower=.3; // slower during auto
-        telemetry.addData("Status", "DriveBrain Ready");
-        telemetry.update();
+//        telemetry.addData("Status", "DriveBrain Ready");
+//        telemetry.update();
 
         if (useVision) {
 
@@ -64,11 +64,22 @@ public class AutoBrain {
             vision.showCameraOD = false; // useful for seeing object detection on phone only
             vision.zoom = 1f;  // 1.0 is no zoom, greater number is greater zoom
             vision.init(opmode);
-            telemetry.addData("Status", "Vision Ready");
-            telemetry.update();
+//            telemetry.addData("Status", "Vision Ready");
+//            telemetry.update();
 
             // vision.activate();
         }
+
+        ElapsedTime setZeroTimer = new ElapsedTime();
+        setZeroTimer.reset();
+
+        // wait for heading to be non-zero
+        while(setZeroTimer.seconds() < 3.0
+                && Math.abs(robot.getRawHeading(AngleUnit.DEGREES)) < 0.1)
+        {
+            sleep(100);
+        }
+        robot.setZeroHeading();
 
     }
 
@@ -153,7 +164,12 @@ public class AutoBrain {
             driveBrain.maintTime(LONG_MAINT_SECS);
         }
 
+        telemetry.addData("current heading", robot.getHeading(AngleUnit.DEGREES));
+        telemetry.addData("raw heading", robot.getRawHeading(AngleUnit.DEGREES));
+        sleep(3000);
+
         if (true) {
+            driveBrain.setArmMotorPosition(Robot.ARM_INTAKE_POS);
             driveBrain.rotateToHeadingAbsolute(0, 2, mediumPower, mediumTimeout);
             driveBrain.rotateToHeadingAbsolute(90, 2, mediumPower, mediumTimeout);
             driveBrain.rotateToHeadingAbsolute(-90, 2, mediumPower, mediumTimeout);
