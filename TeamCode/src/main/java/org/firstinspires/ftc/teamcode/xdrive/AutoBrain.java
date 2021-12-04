@@ -67,13 +67,19 @@ public class AutoBrain {
         ElapsedTime setZeroTimer = new ElapsedTime();
         setZeroTimer.reset();
 
-        // wait for heading to be non-zero
-        while(setZeroTimer.seconds() < 3.0
-                && Math.abs(robot.getRawHeading(AngleUnit.DEGREES)) < 0.1)
-        {
+        // wait for heading to be non-zero and stable
+        double heading = 0.;
+        double prev_heading = 0.;
+        do {
             sleep(100);
-        }
+            prev_heading = heading;
+            heading = robot.getRawHeading(AngleUnit.DEGREES);
+        } while(setZeroTimer.seconds() < 3.0
+                && (Math.abs(heading) < 0.1
+                || Math.abs(heading - prev_heading) > 1.));
         robot.setZeroHeading();
+        telemetry.addData("Heading", robot.getHeading(AngleUnit.DEGREES));
+        telemetry.update();
 
     }
 

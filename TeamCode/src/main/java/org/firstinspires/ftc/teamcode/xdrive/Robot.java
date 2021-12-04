@@ -29,7 +29,7 @@ public class Robot {
     static final boolean useIMU = true;
     public static double MAGNET_ENGAGE_POS = 0.25;
     public static double MAGNET_RELEASE_POS = 0.7;
-    static double zeroHeadingOffset = 0;
+    public static double zeroHeadingOffset = 0;
     static boolean useArm = true;
     static boolean useCarousel = true;
     static boolean useDistanceSensor = false;

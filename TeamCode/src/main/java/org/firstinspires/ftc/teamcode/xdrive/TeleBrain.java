@@ -29,6 +29,9 @@ public class TeleBrain{
 
         timer = new ElapsedTime();
         cycles = 0;
+
+        telemetry.addData("Zero Offset", Robot.zeroHeadingOffset);
+
     }
 
     public void doDriving(double drive_forward,double drive_strafe,double drive_rotate,
