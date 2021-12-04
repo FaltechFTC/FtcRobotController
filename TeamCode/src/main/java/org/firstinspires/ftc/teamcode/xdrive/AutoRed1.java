@@ -13,8 +13,8 @@ public class AutoRed1 extends LinearOpMode {
     public void runOpMode() {
         brain.init(this);
 
-        telemetry.addData("Status", "Ready to run");    //
-        telemetry.update();
+//        telemetry.addData("Status", "Ready to run");    //
+//        telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
