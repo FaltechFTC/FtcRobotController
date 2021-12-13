@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.xdrive;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Utility;
 
 @TeleOp(name = "TeleJ", group = "7079")
@@ -25,7 +24,7 @@ public class TeleJ extends OpMode {
         brain.robot.reportEncoders();
         //robot.reportColor();
         //telemetry.addData("cycle time (ms): ", timer.milliseconds() / cycles);
-        telemetry.addData("Distance Sensor Reading:", brain.robot.distanceSensor.getDistance(DistanceUnit.INCH));
+//        telemetry.addData("Distance Sensor Reading:", brain.robot.distanceSensor.getDistance(DistanceUnit.INCH));
         telemetry.update();
     }
     public void doDriving() {
@@ -38,13 +37,13 @@ public class TeleJ extends OpMode {
         boolean drive_overdrive = gamepad1.right_bumper || gamepad2.right_bumper;
         boolean drive_rotate_90 = gamepad1.dpad_left;
         boolean drive_global = gamepad1.left_bumper;
+        boolean reset_heading = gamepad1.dpad_down;
 
         brain.doDriving(drive_forward, drive_strafe, drive_rotate, drive_heading_lock,
-                drive_tmode, drive_overdrive,drive_rotate_90,drive_global);
+                drive_tmode, drive_overdrive,drive_rotate_90,drive_global, reset_heading);
     }
 
     public void doIntake() {
-        double pusher_pos = gamepad2.left_trigger;
         double arm_power = -4.0 * Utility.deadStick(gamepad2.left_stick_y);
         if (arm_power > 0) arm_power *= 2;
         boolean pusher_cycle = gamepad1.a || gamepad2.left_bumper;
@@ -54,7 +53,7 @@ public class TeleJ extends OpMode {
         boolean intakePos = gamepad2.b || gamepad1.b;
         boolean wrist_up = gamepad2.dpad_up;
         boolean wrist_down = gamepad2.dpad_down;
-        brain.doIntake(pusher_pos, arm_power, pusher_cycle, arm_park,
+        brain.doIntake(arm_power, pusher_cycle, arm_park,
                 arm_layer1, outTakePos, intakePos, wrist_up, wrist_down);
     }
 

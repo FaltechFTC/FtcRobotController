@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class DriveConstants {
 
 
-    public static double rp1_d1 = 27;
+    public static double rp1_d1 = 29;
     public static double rp1_r1 = -2;
     public static double rp1_r2 = 175;
     public static double rp1_d2 = 36;

@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode.xdrive;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Utility;
 
 public class TeleBrain{
@@ -32,11 +29,17 @@ public class TeleBrain{
 
         timer = new ElapsedTime();
         cycles = 0;
+
+        telemetry.addData("Zero Offset", Robot.zeroHeadingOffset);
+
     }
 
     public void doDriving(double drive_forward,double drive_strafe,double drive_rotate,
                           boolean drive_heading_lock,boolean drive_tmode,
-                          boolean drive_overdrive,boolean drive_rotate_90,boolean drive_global) {
+                          boolean drive_overdrive,boolean drive_rotate_90,boolean drive_global, boolean reset_heading) {
+        if(reset_heading){
+            robot.setZeroHeading();
+        }
 
         // DRIVING *******************************************
         if (drive_overdrive) {
@@ -51,17 +54,18 @@ public class TeleBrain{
             //offset by 45 degrees
             direction += Math.toRadians(-45);
             double power = Math.sqrt(drive_forward*drive_forward+drive_strafe*drive_strafe);
-            //calculate back to strafe and forward
+            /* calculate back to strafe and forward */
             drive_forward = Math.sin(direction)*power;
             drive_strafe = Math.cos(direction)*power;
         }
 
         double currentHeading = robot.getHeading(AngleUnit.DEGREES);
+        telemetry.addData("Raw Heading", robot.getRawHeading(AngleUnit.DEGREES));
         telemetry.addData("Heading", currentHeading);
 
         if (drive_global) {
             double direction = Math.atan2(drive_forward, drive_strafe);
-            direction += Math.toRadians(45 - currentHeading);
+            direction += Math.toRadians(-currentHeading);
             double power = Math.sqrt(drive_forward*drive_forward+drive_strafe*drive_strafe);
             drive_forward = Math.sin(direction)*power;
             drive_strafe = Math.cos(direction)*power;
@@ -71,7 +75,7 @@ public class TeleBrain{
             fixedHeading = calculateLockHeading(currentHeading, 90, drive_tmode);
         }
         if (drive_heading_lock) {
-            drive_rotate += calculateRotationCorrection(fixedHeading, currentHeading, .25, 45.0);
+            drive_rotate += calculateRotationCorrection(fixedHeading, currentHeading, .15, 45.0);
         }
         if (drive_rotate_90) {
             driveBrain.rotateToHeadingRelative(90, 3, 0.3, 3);
@@ -81,7 +85,7 @@ public class TeleBrain{
         lastTMode=drive_tmode; // remember
     }
 
-    public void doIntake(double pusher_pos,double arm_power,boolean pusher_cycle,
+    public void doIntake(double arm_power,boolean pusher_cycle,
                          boolean arm_park,boolean arm_layer1,boolean outTakePos,
                          boolean intakePos,boolean wrist_up,boolean wrist_down) {
 
@@ -94,10 +98,6 @@ public class TeleBrain{
             driveBrain.pusherStart(500);
         }
         else if(driveBrain.pusherTimer!=null) driveBrain.pusherMaint();
-        else {
-            pusher_pos = Utility.clipToRange(pusher_pos, 1, 0);
-            robot.intakePusher.setPosition(pusher_pos);
-        }
 
         // ARM **************************************
         if (Robot.useArm) {
@@ -112,11 +112,11 @@ public class TeleBrain{
 //            }
             else if (intakePos) {
                 armPos = Robot.ARM_INTAKE_POS;
-                robot.setWristOffset(.53);
+                robot.wristMove(.53);
             }
             else if (outTakePos) {
                 armPos = Robot.ARM_LAYER1_POS;
-                robot.setWristOffset(.03);
+                robot.wristMove(.03);
             }
             else
                 armPos += arm_power;
