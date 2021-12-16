@@ -195,7 +195,7 @@ public class AutoBrain {
 
         int barcode = 0; //TODO get barcode number from vision
         //double distance = robot.distanceSensor.getDistance(DistanceUnit.INCH);
-        driveBrain.setArmMotorPosition(Robot.ARM_LAYER3_POS);//moves arm straight up
+        driveBrain.setArmMotorPosition(Robot.ARM_LAYER3_POS-15);//moves arm straight up
         driveBrain.maintTime(.250);
 //
         driveBrain.driveDistance(rp1_d1/2, mediumPower, 3);
@@ -223,9 +223,9 @@ public class AutoBrain {
         robot.setDriveStop();
 
         driveBrain.rotateToHeadingAbsolute(45, 3, mediumPower, mediumTimeout);
-        driveBrain.driveDistance(23, mediumPower, mediumTimeout);
+        driveBrain.driveDistance(21, mediumPower, mediumTimeout);
         driveBrain.rotateToHeadingAbsolute(0, 3, mediumPower, mediumTimeout);
-        driveBrain.setArmMotorPosition(Robot.ARM_INTAKE_POS);
+//        driveBrain.setArmMotorPosition(Robot.ARM_INTAKE_POS);
         robot.magnetEngage();
         driveBrain.maintTime(.5);
     }
@@ -233,7 +233,7 @@ public class AutoBrain {
     public void autoPark1Blue() {
         int barcode = 0; //TODO get barcode number from vision
         //double distance = robot.distanceSensor.getDistance(DistanceUnit.INCH);
-        driveBrain.setArmMotorPosition(Robot.ARM_LAYER3_POS);//moves arm straight up
+        driveBrain.setArmMotorPosition(Robot.ARM_LAYER3_POS-15);//moves arm straight up
         driveBrain.maintTime(.250);
 //
         driveBrain.rotateToHeadingAbsolute(60, 2, mediumPower, mediumTimeout);
@@ -262,9 +262,9 @@ public class AutoBrain {
         robot.setDriveStop();
 
 //        driveBrain.rotateToHeadingAbsolute(45, 3, mediumPower, mediumTimeout);
-        driveBrain.driveDistance(23, mediumPower, mediumTimeout);
+        driveBrain.driveDistance(21, mediumPower, mediumTimeout);
         driveBrain.rotateToHeadingAbsolute(0, 3, mediumPower, mediumTimeout);
-        driveBrain.setArmMotorPosition(Robot.ARM_INTAKE_POS);
+//        driveBrain.setArmMotorPosition(Robot.ARM_INTAKE_POS);
         robot.magnetEngage();
         driveBrain.maintTime(.5);
     }
