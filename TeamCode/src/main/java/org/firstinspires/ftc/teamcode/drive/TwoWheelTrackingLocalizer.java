@@ -42,12 +42,12 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     // pos Y is strafe left
     // pos rotation is rotate left
 
-    public static double ENC1_X = 4;
-    public static double ENC1_Y = 4;
+    public static double ENC1_X = 3.89;
+    public static double ENC1_Y = 3.89;
     public static double ENC1_DEG = -45;
 
-    public static double ENC2_X = -4;
-    public static double ENC2_Y = 4;
+    public static double ENC2_X = -3.89;
+    public static double ENC2_Y = 3.89;
     public static double ENC2_DEG =45;
 
     // Parallel/Perpendicular to the forward axis
