@@ -71,9 +71,9 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
         encoder1.setDirection(Encoder.Direction.REVERSE);
         encoder2.setDirection(Encoder.Direction.REVERSE);
     }
-
     public static double encoderTicksToInches(double ticks) {
-        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+        double correction=Math.sqrt(2);
+        return WHEEL_RADIUS * 2.0 * Math.PI * GEAR_RATIO * ticks / correction / TICKS_PER_REV;
     }
 
     @Override
