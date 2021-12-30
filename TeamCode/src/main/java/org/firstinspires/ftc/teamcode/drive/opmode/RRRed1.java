@@ -2,8 +2,11 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -24,58 +27,71 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @Config
 @Autonomous(group = "drive")
 public class RRRed1 extends LinearOpMode {
+    public static double DRIFT_YPOW = .11;
+    public static double DRIFT_XPOW = -.16;
+    SampleMecanumDrive drive;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
+        drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(-36, -60.4, Math.toRadians(90));
-        Pose2d sharedHubPose = new Pose2d(startPose.getX() + 15, startPose.getY() + 24, Math.toRadians(90 - 25));
-        Pose2d carouselPose = new Pose2d(startPose.getX() - 28, startPose.getY() + 8, Math.toRadians(90));
-        Pose2d parkPose = new Pose2d(carouselPose.getX() + 1, carouselPose.getY() + 22, Math.toRadians(0));
-
+        Pose2d sharedHubPose = new Pose2d(startPose.getX() + 15, startPose.getY() + 26, Math.toRadians(90 - 25));
+        Pose2d carouselPose = new Pose2d(startPose.getX() - 30, startPose.getY() + 11, Math.toRadians(90));
+        Pose2d parkPose = new Pose2d(carouselPose.getX() + 1, carouselPose.getY() + 24, Math.toRadians(0));
+        Pose2d warePose = new Pose2d(carouselPose.getX() + 106, carouselPose.getY() -15, Math.toRadians(0));
 
         drive.setPoseEstimate(startPose);
 
         waitForStart();
 
-
+        Trajectory traj2carousel = drive.trajectoryBuilder(sharedHubPose,true)
+                .splineToLinearHeading(carouselPose,carouselPose.getHeading())
             double pauseSeconds = .25;
             TrajectorySequence traj = drive.trajectorySequenceBuilder(startPose)
                     .splineToLinearHeading(sharedHubPose,sharedHubPose.getHeading())
                     .waitSeconds(1.5) //TODO remember to drop the block
-                    .splineToLinearHeading(startPose,startPose.getHeading())
-                    .waitSeconds(pauseSeconds)
-                    .splineToLinearHeading(carouselPose,carouselPose.getHeading())
-                    .waitSeconds(1.5) //TODO remember to do carousel
-                    .splineToLinearHeading(parkPose,parkPose.getHeading())
-                    .waitSeconds(pauseSeconds)
+        ;
+
                     .build();
-//                    .turn(Math.toRadians(45))
-//                    .waitSeconds(pauseSeconds)
-//                    .forward(15)
-//                    .waitSeconds(pauseSeconds)
-//                    .back(15)
-//                    .waitSeconds(pauseSeconds)
-//                    .turn(Math.toRadians(-45))
-//                    .waitSeconds(pauseSeconds)
-//                    .back(20 - .5)
-//                    .waitSeconds(pauseSeconds)
-//                    .turn(Math.toRadians(-90))
-//                    .waitSeconds(pauseSeconds)
-//                    .forward(36)
-//                    .waitSeconds(pauseSeconds)
-//                    .turn(Math.toRadians(45))
-//                    .waitSeconds(pauseSeconds)
-//                    .turn(Math.toRadians(-45))
-//                    .waitSeconds(pauseSeconds)
-//                    .back(36)
-//                    .waitSeconds(pauseSeconds)
-//                    .turn(Math.toRadians(90))
-//                    .back(.5)
-//                    .build();
 
-            drive.followTrajectorySequence(traj);
+        drive.followTrajectorySequence(traj);
 
+        Pose2d afterDuckPose = drive.getPoseEstimate();
+        //TODO remember to start spinner
+        driftDrive(DRIFT_XPOW, DRIFT_YPOW, 3);
+        //TODO remember to stop spinner
+
+        TrajectorySequence trajUnitPark = drive.trajectorySequenceBuilder(carouselPose)
+                .splineToLinearHeading(parkPose,parkPose.getHeading())
+                //.waitSeconds(pauseSeconds)
+                .build();
+
+        TrajectorySequence trajWarePark = drive.trajectorySequenceBuilder(carouselPose)
+                .lineTo(new Vector2d(warePose.getX(), warePose.getY()))
+                //.waitSeconds(pauseSeconds)
+                .turn(Math.toRadians(-90))
+                .build();
+
+            drive.followTrajectorySequence(trajWarePark);
+
+    }
+    public void driftDrive(double x, double y, double timeouts){
+        ElapsedTime timer = new ElapsedTime();
+        while (!isStopRequested() && timer.seconds() < timeouts) {
+            drive.setWeightedDrivePower(
+                    new Pose2d(x, y, 0)
+            );
+
+            drive.update();
+
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("x", poseEstimate.getX());
+            telemetry.addData("y", poseEstimate.getY());
+            telemetry.addData("heading", poseEstimate.getHeading());
+            telemetry.update();
+        }
+        drive.setMotorPowers(0,0,0,0);
     }
 }
