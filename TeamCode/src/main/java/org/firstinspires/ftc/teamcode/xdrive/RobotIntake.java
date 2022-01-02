@@ -73,11 +73,6 @@ a claw system*/
         hwMap = ahwMap;
         telemetry = t;
 
-        setBulkReadMode(bulkReadMode);
-        if (useColorSensor) {
-            colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
-            colorSensor.setGain(colorSensorGain);
-        }
         if (useIMU) {
             imu = hwMap.get(BNO055IMU.class, "imu");
             BNO055IMU.Parameters params = new BNO055IMU.Parameters();
@@ -97,12 +92,6 @@ a claw system*/
         //wristMove();
     }
 
-    public void setBulkReadMode(LynxModule.BulkCachingMode mode) {
-        List<LynxModule> allHubs = hwMap.getAll(LynxModule.class);
-        for (LynxModule module : allHubs) {
-            module.setBulkCachingMode(mode);
-        }
-    }
 
 
 
