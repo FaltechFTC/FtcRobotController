@@ -30,10 +30,7 @@ public class RobotIntake {
     static boolean useDistanceSensor = false;
     static boolean debugTelemetry=false;
     private Telemetry telemetry = null;
-    private DcMotor front_left = null;
-    private DcMotor front_right = null;
-    private DcMotor back_left = null;
-    private DcMotor back_right = null;
+    private DcMotor armEncoder = null;
     public DcMotorSimple arm = null;
     //    public DcMotorSimple[] armArray = new DcMotorSimple[1];
     public DcMotorSimple carousel = null;
@@ -103,7 +100,7 @@ a claw system*/
 
 
     public int getArmPosition() {
-        return front_right.getCurrentPosition();
+        return armEncoder.getCurrentPosition();
     }
 
     public void setArmPosition(int armPosition, double timeoutSeconds) {
@@ -118,7 +115,7 @@ a claw system*/
     public boolean setArmMotorPosition(double pos) {
         armPosition = (int) pos;
         boolean done = false;
-        int curentPosition = front_right.getCurrentPosition();
+        int curentPosition = armEncoder.getCurrentPosition();
         int error = armPosition - curentPosition;
         done = Math.abs(error) < 3;
         double p = 0;

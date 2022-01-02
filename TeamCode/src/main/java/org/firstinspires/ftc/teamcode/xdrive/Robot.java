@@ -75,6 +75,7 @@ a claw system*/
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
+    private DcMotor armMotorEncoder= hwMap.get(DcMotor.class, "frdrive");
     LynxModule.BulkCachingMode bulkReadMode = LynxModule.BulkCachingMode.AUTO;
 
     private ElapsedTime period = new ElapsedTime();
