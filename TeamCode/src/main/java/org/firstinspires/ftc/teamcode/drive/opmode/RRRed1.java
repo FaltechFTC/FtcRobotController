@@ -68,28 +68,30 @@ public class RRRed1 extends LinearOpMode {
 
         tsBuilder = tsBuilder
                 .addTrajectory(traj2hub)
-                .addTrajectory(traj2hub)
-                .waitSeconds(1.5) // todo
                 .addTrajectory(traj2carousel);
+
+        TrajectorySequence trajectories = tsBuilder.build();
+
+        drive.followTrajectorySequence(trajectories);
+
+        //TODO remember to start spinner
+        driftDrive(DRIFT_XPOW, DRIFT_YPOW, 3);
+        //TODO remember to stop spinner
+        Pose2d afterDuckPose = drive.getPoseEstimate();
+
+        drive.setPoseEstimate(carouselPose);
+        tsBuilder = drive.trajectorySequenceBuilder(carouselPose);
 
         boolean doWarehousePark = true;
         if (doWarehousePark) {
             tsBuilder.addTrajectory(trajWarePark)
                 .turn(Math.toRadians(-90));
         } else  {
-            tsBuilder.addTrajectory(trajWarePark);
+            tsBuilder.addTrajectory(trajUnitPark);
         }
 
-        TrajectorySequence trajectories = tsBuilder.build();
-
+        trajectories = tsBuilder.build();
         drive.followTrajectorySequence(trajectories);
-
-        /*
-        Pose2d afterDuckPose = drive.getPoseEstimate();
-        //TODO remember to start spinner
-        driftDrive(DRIFT_XPOW, DRIFT_YPOW, 3);
-        //TODO remember to stop spinner
-*/
 
 
     }
