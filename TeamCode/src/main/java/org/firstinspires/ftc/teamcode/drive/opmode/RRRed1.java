@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 
 /*
  * Op mode for preliminary tuning of the follower PID coefficients (located in the drive base
@@ -42,39 +43,54 @@ public class RRRed1 extends LinearOpMode {
         Pose2d parkPose = new Pose2d(carouselPose.getX() + 1, carouselPose.getY() + 24, Math.toRadians(0));
         Pose2d warePose = new Pose2d(carouselPose.getX() + 106, carouselPose.getY() -15, Math.toRadians(0));
 
+        double pauseSeconds = .25;
+
         drive.setPoseEstimate(startPose);
 
         waitForStart();
 
+        Trajectory traj2hub = drive.trajectoryBuilder(startPose,true)
+                .splineToLinearHeading(sharedHubPose,sharedHubPose.getHeading())
+                .build();
         Trajectory traj2carousel = drive.trajectoryBuilder(sharedHubPose,true)
                 .splineToLinearHeading(carouselPose,carouselPose.getHeading())
-            double pauseSeconds = .25;
-            TrajectorySequence traj = drive.trajectorySequenceBuilder(startPose)
-                    .splineToLinearHeading(sharedHubPose,sharedHubPose.getHeading())
-                    .waitSeconds(1.5) //TODO remember to drop the block
-        ;
+                .build();
 
-                    .build();
+        Trajectory trajUnitPark = drive.trajectoryBuilder(carouselPose)
+                .splineToLinearHeading(parkPose,parkPose.getHeading())
+                .build();
 
-        drive.followTrajectorySequence(traj);
+        Trajectory trajWarePark = drive.trajectoryBuilder(carouselPose)
+                .lineTo(new Vector2d(warePose.getX(), warePose.getY()))
+                .build();
 
+        TrajectorySequenceBuilder  tsBuilder = drive.trajectorySequenceBuilder(startPose);
+
+        tsBuilder = tsBuilder
+                .addTrajectory(traj2hub)
+                .addTrajectory(traj2hub)
+                .waitSeconds(1.5) // todo
+                .addTrajectory(traj2carousel);
+
+        boolean doWarehousePark = true;
+        if (doWarehousePark) {
+            tsBuilder.addTrajectory(trajWarePark)
+                .turn(Math.toRadians(-90));
+        } else  {
+            tsBuilder.addTrajectory(trajWarePark);
+        }
+
+        TrajectorySequence trajectories = tsBuilder.build();
+
+        drive.followTrajectorySequence(trajectories);
+
+        /*
         Pose2d afterDuckPose = drive.getPoseEstimate();
         //TODO remember to start spinner
         driftDrive(DRIFT_XPOW, DRIFT_YPOW, 3);
         //TODO remember to stop spinner
+*/
 
-        TrajectorySequence trajUnitPark = drive.trajectorySequenceBuilder(carouselPose)
-                .splineToLinearHeading(parkPose,parkPose.getHeading())
-                //.waitSeconds(pauseSeconds)
-                .build();
-
-        TrajectorySequence trajWarePark = drive.trajectorySequenceBuilder(carouselPose)
-                .lineTo(new Vector2d(warePose.getX(), warePose.getY()))
-                //.waitSeconds(pauseSeconds)
-                .turn(Math.toRadians(-90))
-                .build();
-
-            drive.followTrajectorySequence(trajWarePark);
 
     }
     public void driftDrive(double x, double y, double timeouts){
