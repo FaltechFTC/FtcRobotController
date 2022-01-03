@@ -23,35 +23,48 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
  */
 @Config
 @Autonomous(group = "drive")
-//@Disabled
-
-public class FollowerPIDTuner extends LinearOpMode {
-    public static double DISTANCE = 48; // in
+public class RRRed2 extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0);
+        Pose2d startPose = new Pose2d(12.4, -60.4, Math.toRadians(90));
 
         drive.setPoseEstimate(startPose);
 
         waitForStart();
 
-        if (isStopRequested()) return;
-
         while (!isStopRequested()) {
-            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
-                    .forward(DISTANCE)
+            double pauseSeconds = .25;
+            TrajectorySequence traj = drive.trajectorySequenceBuilder(startPose)
+                    .forward(20)
+                    .waitSeconds(pauseSeconds)
+                    .turn(Math.toRadians(45))
+                    .waitSeconds(pauseSeconds)
+                    .forward(15)
+                    .waitSeconds(pauseSeconds)
+                    .back(15)
+                    .waitSeconds(pauseSeconds)
+                    .turn(Math.toRadians(-45))
+                    .waitSeconds(pauseSeconds)
+                    .back(20 - .5)
+                    .waitSeconds(pauseSeconds)
+                    .turn(Math.toRadians(-90))
+                    .waitSeconds(pauseSeconds)
+                    .forward(36)
+                    .waitSeconds(pauseSeconds)
+                    .turn(Math.toRadians(45))
+                    .waitSeconds(pauseSeconds)
+                    .turn(Math.toRadians(-45))
+                    .waitSeconds(pauseSeconds)
+                    .back(36)
+                    .waitSeconds(pauseSeconds)
                     .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
+                    .back(.5)
                     .build();
-            drive.followTrajectorySequence(trajSeq);
+
+            drive.followTrajectorySequence(traj);
         }
     }
 }
