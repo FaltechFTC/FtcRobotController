@@ -28,7 +28,7 @@ public class RobotIntake {
     static boolean useArm = true;
     static boolean useCarousel = true;
     static boolean useDistanceSensor = false;
-    static boolean debugTelemetry=false;
+    static boolean debugTelemetry = false;
     private Telemetry telemetry = null;
     private DcMotor armEncoder = null;
     public DcMotorSimple arm = null;
@@ -47,7 +47,6 @@ a claw system*/
     public int armPosition = 0;
     public double maxUpPower = 0.6;
     public double maxDownPower = -0.3;
-
 
 
     static final int ARM_INTAKE_POS = 65;
@@ -90,26 +89,16 @@ a claw system*/
     }
 
 
-
-
-
-
-
-
-
-
-
     public int getArmPosition() {
         return armEncoder.getCurrentPosition();
     }
 
     public void setArmPosition(int armPosition, double timeoutSeconds) {
         ElapsedTime timer = new ElapsedTime();
-        boolean done=false;
-       while (timer.seconds()<timeoutSeconds && !done)
-       {
-           done=setArmMotorPosition(armPosition);
-       }
+        boolean done = false;
+        while (timer.seconds() < timeoutSeconds && !done) {
+            done = setArmMotorPosition(armPosition);
+        }
     }
 
     public boolean setArmMotorPosition(double pos) {
@@ -134,17 +123,19 @@ a claw system*/
         return done;
     }
 
-    double maxWrist=.65, minWrist=0.0;
+    double maxWrist = .65, minWrist = 0.0;
+
     public double setWristOffset(double offset) {
         wristOffset = Utility.clipToRange(offset, maxWrist, minWrist);
         return wristOffset;
     }
+
     public double calculateWristFromArm() {
-        double pos=0.0;
-        if (armPosition<100) pos=0;
-        else if (armPosition<200) pos=.15;
-        else if (armPosition>250) pos=armPosition/1000;
-        pos = Utility.clipToRange(pos,maxWrist,minWrist);
+        double pos = 0.0;
+        if (armPosition < 100) pos = 0;
+        else if (armPosition < 200) pos = .15;
+        else if (armPosition > 250) pos = armPosition / 1000;
+        pos = Utility.clipToRange(pos, maxWrist, minWrist);
         return pos;
     }
 
@@ -154,8 +145,9 @@ a claw system*/
 
     public void wristMove() {
         intakeWrist.setPosition(wristOffset);
-        telemetry.addData("wrist",wristOffset);
+        telemetry.addData("wrist", wristOffset);
     }
+
     public void wristMove(double pos) {
         intakeWrist.setPosition(pos);
     }
@@ -185,9 +177,11 @@ a claw system*/
             telemetry.addData("Distance Sensor Reading:", distanceSensor.getDistance(DistanceUnit.INCH));
         }
     }
+
     public void pusherOpen() {
         intakePusher.setPosition(MAGNET_ENGAGE_POS);
     }
+
     public void magnetEngage() {
         intakePusher.setPosition(MAGNET_ENGAGE_POS);
     }
@@ -196,6 +190,7 @@ a claw system*/
     public void pusherClose() {
         intakePusher.setPosition(MAGNET_RELEASE_POS);
     }
+
     public void magnetRelease() {
         intakePusher.setPosition(MAGNET_RELEASE_POS);
     }

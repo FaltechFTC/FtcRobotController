@@ -4,10 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 @Disabled
 @Autonomous(name = "Auto Blue 2", group = "7079")
 public class AutoBlue2 extends LinearOpMode {
-    AutoBrain brain= new AutoBrain();
+    AutoBrain brain = new AutoBrain();
 
     @Override
     public void runOpMode() {
@@ -29,8 +30,7 @@ public class AutoBlue2 extends LinearOpMode {
         brain.robot.setDriveStop();
     }
 
-    public void doMission() throws Exception
-    {
+    public void doMission() throws Exception {
         brain.autoPark2Blue();
     }
 }

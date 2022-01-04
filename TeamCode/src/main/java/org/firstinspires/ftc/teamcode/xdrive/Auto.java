@@ -3,11 +3,12 @@ package org.firstinspires.ftc.teamcode.xdrive;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 @Disabled
 @Autonomous(name = "Auto Generic", group = "7079")
 //@Disabled
 public class Auto extends LinearOpMode {
-    AutoBrain brain= new AutoBrain();
+    AutoBrain brain = new AutoBrain();
 
     @Override
     public void runOpMode() {
@@ -29,8 +30,7 @@ public class Auto extends LinearOpMode {
         brain.robot.setDriveStop();
     }
 
-    public void doMission() throws Exception
-    {
+    public void doMission() throws Exception {
         brain.autoPosScore1();
     }
 

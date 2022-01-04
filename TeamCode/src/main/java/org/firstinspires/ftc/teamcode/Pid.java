@@ -18,13 +18,14 @@ public class Pid {
 
     /**
      * Creates a PID Controller.
-     * @param kp Proportional factor to scale error to output.
-     * @param ki Factor of the integral
-     * @param kd Factor of the derivative or dampening.
+     *
+     * @param kp          Proportional factor to scale error to output.
+     * @param ki          Factor of the integral
+     * @param kd          Factor of the derivative or dampening.
      * @param integralMin The min of the running integral.
      * @param integralMax The max of the running integral.
-     * @param outputMin The min of the PID output.
-     * @param outputMax The max of the PID output.
+     * @param outputMin   The min of the PID output.
+     * @param outputMax   The max of the PID output.
      */
     public Pid(double kp, double ki, double kd, double integralMin,
                double integralMax, double outputMin, double outputMax) {
@@ -38,27 +39,27 @@ public class Pid {
 
         this.previousError = 0;
         this.runningIntegral = 0;
-        lastOutput=0.0;
-        lastPTerm=0.0;
-        lastITerm=0.0;
-        lastDTerm=0.0;
+        lastOutput = 0.0;
+        lastPTerm = 0.0;
+        lastITerm = 0.0;
+        lastDTerm = 0.0;
     }
 
     public Pid clone() {
         return new Pid(kp, ki, kd, integralMin, integralMax, outputMin, outputMax);
     }
 
-    public void setOutputLimits(double outputMin,double outputMax)
-    {
+    public void setOutputLimits(double outputMin, double outputMax) {
         this.outputMin = outputMin;
         this.outputMax = outputMax;
     }
 
     /**
      * Performs a PID update and returns the output control.
+     *
      * @param desiredValue The desired state value (e.g. speed).
-     * @param actualValue The actual state value (e.g. speed).
-     * @param dt The amount of time (sec) elapsed since last update.
+     * @param actualValue  The actual state value (e.g. speed).
+     * @param dt           The amount of time (sec) elapsed since last update.
      * @return The output which impacts state value (e.g. motor throttle).
      */
     public double update(double desiredValue, double actualValue, double dt) {
@@ -66,22 +67,23 @@ public class Pid {
         runningIntegral = clampValue(runningIntegral + error * dt,
                 integralMin, integralMax);
         double dErr = (error - previousError) / dt;
-        lastPTerm=kp*error;
-        lastITerm=runningIntegral * ki;
-        lastDTerm=kd * dErr;
+        lastPTerm = kp * error;
+        lastITerm = runningIntegral * ki;
+        lastDTerm = kd * dErr;
         double output = lastPTerm + lastITerm + lastDTerm;
         // clamp to expected range
         output = clampValue(output, outputMin, outputMax);
-        lastOutput=output;
+        lastOutput = output;
         previousError = error;
         return output;
     }
 
     /**
      * Clamps a value to a given range.
+     *
      * @param value The value to clamp.
-     * @param min The min clamp.
-     * @param max The max clamp.
+     * @param min   The min clamp.
+     * @param max   The max clamp.
      * @return The clamped value.
      */
     public static double clampValue(double value, double min, double max) {
@@ -100,10 +102,10 @@ public class Pid {
                 ", outputMax=" + outputMax +
                 ", previousError=" + previousError +
                 ", runningIntegral=" + runningIntegral +
-                ", lastOutput=" + lastOutput+
+                ", lastOutput=" + lastOutput +
                 ", lastPTerm=" + lastPTerm +
-                ", lastITerm=" + lastITerm+
-                ", lastDTerm=" + lastDTerm+
+                ", lastITerm=" + lastITerm +
+                ", lastDTerm=" + lastDTerm +
                 '}';
     }
 

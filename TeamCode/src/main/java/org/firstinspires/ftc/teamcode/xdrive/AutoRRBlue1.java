@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "Auto RR Blue 1", group = "7079")
 public class AutoRRBlue1 extends LinearOpMode {
-    AutoBrainRR brain= new AutoBrainRR();
+    AutoBrainRR brain = new AutoBrainRR();
 
     @Override
     public void runOpMode() {
@@ -24,11 +24,10 @@ public class AutoRRBlue1 extends LinearOpMode {
             // TODO log this properly
         }
 
-        brain.drive.setMotorPowers(0,0,0,0);
+        brain.drive.setMotorPowers(0, 0, 0, 0);
     }
 
-    public void doMission() throws Exception
-    {
+    public void doMission() throws Exception {
         brain.blue1();
     }
 

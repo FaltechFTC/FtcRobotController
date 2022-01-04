@@ -14,9 +14,9 @@ public class DriveBrainMecanum {
 
     private final ElapsedTime runtime = new ElapsedTime();
 
-    static final double     P_DRIVE_COEFF           = 0.15;
-    static final double     P_TURN_COEFF            = 0.1;
-    static final double     HEADING_THRESHOLD       = 1 ;
+    static final double P_DRIVE_COEFF = 0.15;
+    static final double P_TURN_COEFF = 0.1;
+    static final double HEADING_THRESHOLD = 1;
 
     public DriveBrainMecanum(faltechBotMecanum therobot, OpMode theopmode) {
         robot = therobot;
@@ -33,17 +33,19 @@ public class DriveBrainMecanum {
         }
         robot.setDriveStop();
     }
+
     public boolean opModeIsActive() {
         return true;
 //        opmode.OpModeIsActive();
     }
+
     public void driveDistance(double inches, double power, double timeoutSeconds) {
         runtime.reset();
 
         double forward = power;
 
         if (inches < 0) forward = forward;
-            if (opModeIsActive()) {
+        if (opModeIsActive()) {
             robot.setDriveDeltaPos(10, .5);
             robot.setDrive(forward, 0, 0, 1.0);
         }
@@ -57,20 +59,21 @@ public class DriveBrainMecanum {
         robot.setDriveStop();
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
     public void gyroDrive(double speed, double distance, double angle) {
-        int     moveCounts;
+        int moveCounts;
         int[] newTarget = new int[3];
-        double  max;
-        double  error;
-        double  steer;
-        double  leftSpeed;
-        double  rightSpeed;
+        double max;
+        double error;
+        double steer;
+        double leftSpeed;
+        double rightSpeed;
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            moveCounts = (int)(distance * robot.convertCountsToInches(distance));
+            moveCounts = (int) (distance * robot.convertCountsToInches(distance));
 
             robot.setDriveDeltaPos(moveCounts, .5);
 
@@ -118,15 +121,16 @@ public class DriveBrainMecanum {
 
     /**
      * returns desired steering force.  +/- 1 range.  +ve = steer left
-     * @param error   Error angle in robot relative degrees
-     * @param PCoeff  Proportional Gain Coefficient
+     *
+     * @param error  Error angle in robot relative degrees
+     * @param PCoeff Proportional Gain Coefficient
      * @return
      */
     public double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1, 1);
     }
 
-//    public void gyroHold( double speed, double angle, double holdTime) {
+    //    public void gyroHold( double speed, double angle, double holdTime) {
 //
 //        ElapsedTime holdTimer = new ElapsedTime();
 //
@@ -181,7 +185,7 @@ public class DriveBrainMecanum {
 //        return onTarget;
 //    }
     public boolean checkWhite(NormalizedRGBA color) {
-        if(color.blue > 200 && color.red > 200  && color.green >200)
+        if (color.blue > 200 && color.red > 200 && color.green > 200)
             return true;
         return false;
     }
@@ -198,12 +202,12 @@ public class DriveBrainMecanum {
         NormalizedRGBA rgba = robot.getRGBA();
         boolean white = checkWhite(rgba);
 
-        while (  opModeIsActive() && (runtime.seconds() < timeoutSeconds) && !white) {
+        while (opModeIsActive() && (runtime.seconds() < timeoutSeconds) && !white) {
             rgba = robot.getRGBA();
             white = checkWhite(rgba);
 
             // Display it for the driver.
-            opmode.telemetry.addData("white",  "%b", white);
+            opmode.telemetry.addData("white", "%b", white);
             opmode.telemetry.update();
         }
 

@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.xdrive;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -27,6 +28,7 @@ public class TeleJ extends OpMode {
 //        telemetry.addData("Distance Sensor Reading:", brain.robot.distanceSensor.getDistance(DistanceUnit.INCH));
         telemetry.update();
     }
+
     public void doDriving() {
         double drive_forward = -0.5 * Utility.deadStick(gamepad1.left_stick_y);
         double drive_strafe = 0.5 * Utility.deadStick(gamepad1.left_stick_x);
@@ -40,7 +42,7 @@ public class TeleJ extends OpMode {
         boolean reset_heading = gamepad1.dpad_down;
 
         brain.doDriving(drive_forward, drive_strafe, drive_rotate, drive_heading_lock,
-                drive_tmode, drive_overdrive,drive_rotate_90,drive_global, reset_heading);
+                drive_tmode, drive_overdrive, drive_rotate_90, drive_global, reset_heading);
     }
 
     public void doIntake() {

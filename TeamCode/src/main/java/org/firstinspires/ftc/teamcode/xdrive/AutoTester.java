@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Auto Test", group = "7079")
 public class AutoTester extends LinearOpMode {
-    AutoBrain brain= new AutoBrain();
+    AutoBrain brain = new AutoBrain();
 
     @Override
     public void runOpMode() {
@@ -30,8 +30,7 @@ public class AutoTester extends LinearOpMode {
         brain.robot.setDriveStop();
     }
 
-    public void doMission() throws Exception
-    {
+    public void doMission() throws Exception {
         brain.simpleTest();
     }
 

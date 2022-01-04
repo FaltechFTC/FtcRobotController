@@ -33,7 +33,7 @@ public class Robot {
     static boolean useArm = true;
     static boolean useCarousel = true;
     static boolean useDistanceSensor = false;
-    static boolean debugTelemetry=false;
+    static boolean debugTelemetry = false;
     private Telemetry telemetry = null;
     private DcMotor front_left = null;
     private DcMotor front_right = null;
@@ -65,7 +65,7 @@ a claw system*/
     static final double DRIVE_GEAR_REDUCTION = 19.2;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 6.0;     // For figuring circumference
     static final double COUNTS_PER_OUTPUT_REVOL = 537.7;
-    static final double COUNTS_PER_INCH = (22.0/16.0)*(COUNTS_PER_OUTPUT_REVOL) / (WHEEL_DIAMETER_INCHES * Math.PI);
+    static final double COUNTS_PER_INCH = (22.0 / 16.0) * (COUNTS_PER_OUTPUT_REVOL) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
     static final int ARM_INTAKE_POS = 65;
     static final int ARM_LAYER1_POS = 224;
@@ -75,7 +75,7 @@ a claw system*/
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
-    private DcMotor armMotorEncoder= hwMap.get(DcMotor.class, "frdrive");
+    private DcMotor armMotorEncoder = hwMap.get(DcMotor.class, "frdrive");
     LynxModule.BulkCachingMode bulkReadMode = LynxModule.BulkCachingMode.AUTO;
 
     private ElapsedTime period = new ElapsedTime();
@@ -203,11 +203,11 @@ a claw system*/
 
     public void setDrive(double forward, double strafe, double rotate, double power) {
         double[] powers = calculateDrivePowersFSRSimple(forward, strafe, rotate);
-       if (debugTelemetry) {
-           telemetry.addData("Forward", forward);
-           telemetry.addData("Strafe", strafe);
-           telemetry.addData("Rotate", rotate);
-       }
+        if (debugTelemetry) {
+            telemetry.addData("Forward", forward);
+            telemetry.addData("Strafe", strafe);
+            telemetry.addData("Rotate", rotate);
+        }
         setDrivePower(powers);
     }
 
@@ -288,11 +288,10 @@ a claw system*/
 
     public void setArmPosition(int armPosition, double timeoutSeconds) {
         ElapsedTime timer = new ElapsedTime();
-        boolean done=false;
-       while (timer.seconds()<timeoutSeconds && !done)
-       {
-           done=setArmMotorPosition(armPosition);
-       }
+        boolean done = false;
+        while (timer.seconds() < timeoutSeconds && !done) {
+            done = setArmMotorPosition(armPosition);
+        }
     }
 
     public boolean setArmMotorPosition(double pos) {
@@ -317,17 +316,19 @@ a claw system*/
         return done;
     }
 
-    double maxWrist=.65, minWrist=0.0;
+    double maxWrist = .65, minWrist = 0.0;
+
     public double setWristOffset(double offset) {
         wristOffset = Utility.clipToRange(offset, maxWrist, minWrist);
         return wristOffset;
     }
+
     public double calculateWristFromArm() {
-        double pos=0.0;
-        if (armPosition<100) pos=0;
-        else if (armPosition<200) pos=.15;
-        else if (armPosition>250) pos=armPosition/1000;
-        pos = Utility.clipToRange(pos,maxWrist,minWrist);
+        double pos = 0.0;
+        if (armPosition < 100) pos = 0;
+        else if (armPosition < 200) pos = .15;
+        else if (armPosition > 250) pos = armPosition / 1000;
+        pos = Utility.clipToRange(pos, maxWrist, minWrist);
         return pos;
     }
 
@@ -337,8 +338,9 @@ a claw system*/
 
     public void wristMove() {
         intakeWrist.setPosition(wristOffset);
-        telemetry.addData("wrist",wristOffset);
+        telemetry.addData("wrist", wristOffset);
     }
+
     public void wristMove(double pos) {
         intakeWrist.setPosition(pos);
     }
@@ -379,9 +381,11 @@ a claw system*/
             telemetry.addData("Distance Sensor Reading:", distanceSensor.getDistance(DistanceUnit.INCH));
         }
     }
+
     public double getHeading(AngleUnit angleUnit) {
         return getRawHeading(AngleUnit.DEGREES) - zeroHeadingOffset;
     }
+
     public double getRawHeading(AngleUnit angleUnit) {
         if (useIMU) {
             Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, angleUnit);
@@ -391,9 +395,11 @@ a claw system*/
         }
 
     }
+
     public void pusherOpen() {
         intakePusher.setPosition(MAGNET_ENGAGE_POS);
     }
+
     public void magnetEngage() {
         intakePusher.setPosition(MAGNET_ENGAGE_POS);
     }
@@ -402,12 +408,14 @@ a claw system*/
     public void pusherClose() {
         intakePusher.setPosition(MAGNET_RELEASE_POS);
     }
+
     public void magnetRelease() {
         intakePusher.setPosition(MAGNET_RELEASE_POS);
     }
+
     public void setZeroHeading() {
         zeroHeadingOffset = getRawHeading(AngleUnit.DEGREES);
-        telemetry.addData("Zero Heading Offset" , zeroHeadingOffset);
+        telemetry.addData("Zero Heading Offset", zeroHeadingOffset);
     }
 
 }

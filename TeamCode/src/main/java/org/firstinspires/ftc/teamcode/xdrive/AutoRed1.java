@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Config
 @Autonomous(name = "Auto Red 1", group = "7079")
 public class AutoRed1 extends LinearOpMode {
-    AutoBrain brain= new AutoBrain();
+    AutoBrain brain = new AutoBrain();
 
     @Override
     public void runOpMode() {
@@ -31,8 +31,7 @@ public class AutoRed1 extends LinearOpMode {
         brain.robot.setDriveStop();
     }
 
-    public void doMission() throws Exception
-    {
+    public void doMission() throws Exception {
         brain.autoPark1Red();
     }
 

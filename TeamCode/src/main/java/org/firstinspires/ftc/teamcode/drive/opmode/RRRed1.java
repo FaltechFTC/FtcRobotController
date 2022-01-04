@@ -35,7 +35,6 @@ public class RRRed1 extends LinearOpMode {
     SampleMecanumDrive drive;
 
 
-
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new SampleMecanumDrive(hardwareMap);
@@ -43,7 +42,7 @@ public class RRRed1 extends LinearOpMode {
         Pose2d sharedHubPose = new Pose2d(startPose.getX() + 15, startPose.getY() + 26, Math.toRadians(90 - 25));
         Pose2d carouselPose = new Pose2d(startPose.getX() - 30, startPose.getY() + 11, Math.toRadians(90));
         Pose2d parkPose = new Pose2d(carouselPose.getX() + 1, carouselPose.getY() + 24, Math.toRadians(0));
-        Pose2d warePose = new Pose2d(carouselPose.getX() + 106, carouselPose.getY() -15, Math.toRadians(0));
+        Pose2d warePose = new Pose2d(carouselPose.getX() + 106, carouselPose.getY() - 15, Math.toRadians(0));
 
         double pauseSeconds = .25;
 
@@ -51,22 +50,22 @@ public class RRRed1 extends LinearOpMode {
 
         waitForStart();
 
-        Trajectory traj2hub = drive.trajectoryBuilder(startPose,true)
-                .splineToLinearHeading(sharedHubPose,sharedHubPose.getHeading())
+        Trajectory traj2hub = drive.trajectoryBuilder(startPose, true)
+                .splineToLinearHeading(sharedHubPose, sharedHubPose.getHeading())
                 .build();
-        Trajectory traj2carousel = drive.trajectoryBuilder(sharedHubPose,true)
-                .splineToLinearHeading(carouselPose,carouselPose.getHeading())
+        Trajectory traj2carousel = drive.trajectoryBuilder(sharedHubPose, true)
+                .splineToLinearHeading(carouselPose, carouselPose.getHeading())
                 .build();
 
         Trajectory trajUnitPark = drive.trajectoryBuilder(carouselPose)
-                .splineToLinearHeading(parkPose,parkPose.getHeading())
+                .splineToLinearHeading(parkPose, parkPose.getHeading())
                 .build();
 
         Trajectory trajWarePark = drive.trajectoryBuilder(carouselPose)
                 .lineTo(new Vector2d(warePose.getX(), warePose.getY()))
                 .build();
 
-        TrajectorySequenceBuilder  tsBuilder = drive.trajectorySequenceBuilder(startPose);
+        TrajectorySequenceBuilder tsBuilder = drive.trajectorySequenceBuilder(startPose);
 
         tsBuilder = tsBuilder
                 .addTrajectory(traj2hub)
@@ -87,8 +86,8 @@ public class RRRed1 extends LinearOpMode {
         boolean doWarehousePark = true;
         if (doWarehousePark) {
             tsBuilder.addTrajectory(trajWarePark)
-                .turn(Math.toRadians(-90));
-        } else  {
+                    .turn(Math.toRadians(-90));
+        } else {
             tsBuilder.addTrajectory(trajUnitPark);
         }
 
@@ -97,7 +96,8 @@ public class RRRed1 extends LinearOpMode {
 
 
     }
-    public void driftDrive(double x, double y, double timeouts){
+
+    public void driftDrive(double x, double y, double timeouts) {
         ElapsedTime timer = new ElapsedTime();
         while (!isStopRequested() && timer.seconds() < timeouts) {
             drive.setWeightedDrivePower(
@@ -112,6 +112,6 @@ public class RRRed1 extends LinearOpMode {
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.update();
         }
-        drive.setMotorPowers(0,0,0,0);
+        drive.setMotorPowers(0, 0, 0, 0);
     }
 }

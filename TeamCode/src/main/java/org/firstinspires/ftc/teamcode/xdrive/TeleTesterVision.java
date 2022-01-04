@@ -13,35 +13,35 @@ public class TeleTesterVision extends OpMode {
     @Override
     public void init() {
         if (useDrive) {
-            robot =new Robot();
+            robot = new Robot();
             robot.init(hardwareMap, telemetry);
             driveBrain = new DriveBrain(robot, this);
         }
 
         visionBrain = new VisionBrain();
-        visionBrain.useWebCam=true;
-        visionBrain.showCamera=false; // useful for sighting on phone only
-        visionBrain.showCameraOD=true; // useful for seeing object detection on phone only
-        visionBrain.zoom=1f;  // 1.0 is no zoom, greater number is greater zoom
+        visionBrain.useWebCam = true;
+        visionBrain.showCamera = false; // useful for sighting on phone only
+        visionBrain.showCameraOD = true; // useful for seeing object detection on phone only
+        visionBrain.zoom = 1f;  // 1.0 is no zoom, greater number is greater zoom
         visionBrain.init(this);
         visionBrain.activate();
         //visionBrain.initTfod();
-       // visionBrain.initVuforia();
+        // visionBrain.initVuforia();
     }
 
     @Override
     public void loop() {
         visionBrain.getBarcodeDuck(2000);
-            //teleDrive();
+        //teleDrive();
     }
 
     private void teleDrive() {
-        if (robot == null ) return;
+        if (robot == null) return;
 
-        double forward  = gamepad1.left_stick_y;
+        double forward = gamepad1.left_stick_y;
         double strafe = -gamepad1.left_stick_x;
-        double rotate  = -gamepad1.right_stick_x;
-        robot.setDrive(forward,strafe,rotate,1);
+        double rotate = -gamepad1.right_stick_x;
+        robot.setDrive(forward, strafe, rotate, 1);
     }
 }
 

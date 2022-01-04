@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.xdrive;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Utility;
 
-public class TeleBrain{
+public class TeleBrain {
     Robot robot = new Robot();
     DriveBrain driveBrain;
     double fixedHeading = 0;
@@ -34,10 +36,10 @@ public class TeleBrain{
 
     }
 
-    public void doDriving(double drive_forward,double drive_strafe,double drive_rotate,
-                          boolean drive_heading_lock,boolean drive_tmode,
-                          boolean drive_overdrive,boolean drive_rotate_90,boolean drive_global, boolean reset_heading) {
-        if(reset_heading){
+    public void doDriving(double drive_forward, double drive_strafe, double drive_rotate,
+                          boolean drive_heading_lock, boolean drive_tmode,
+                          boolean drive_overdrive, boolean drive_rotate_90, boolean drive_global, boolean reset_heading) {
+        if (reset_heading) {
             robot.setZeroHeading();
         }
 
@@ -53,10 +55,10 @@ public class TeleBrain{
             double direction = Math.atan2(drive_forward, drive_strafe);
             //offset by 45 degrees
             direction += Math.toRadians(-45);
-            double power = Math.sqrt(drive_forward*drive_forward+drive_strafe*drive_strafe);
+            double power = Math.sqrt(drive_forward * drive_forward + drive_strafe * drive_strafe);
             /* calculate back to strafe and forward */
-            drive_forward = Math.sin(direction)*power;
-            drive_strafe = Math.cos(direction)*power;
+            drive_forward = Math.sin(direction) * power;
+            drive_strafe = Math.cos(direction) * power;
         }
 
         double currentHeading = robot.getHeading(AngleUnit.DEGREES);
@@ -66,12 +68,12 @@ public class TeleBrain{
         if (drive_global) {
             double direction = Math.atan2(drive_forward, drive_strafe);
             direction += Math.toRadians(-currentHeading);
-            double power = Math.sqrt(drive_forward*drive_forward+drive_strafe*drive_strafe);
-            drive_forward = Math.sin(direction)*power;
-            drive_strafe = Math.cos(direction)*power;
+            double power = Math.sqrt(drive_forward * drive_forward + drive_strafe * drive_strafe);
+            drive_forward = Math.sin(direction) * power;
+            drive_strafe = Math.cos(direction) * power;
         }
 
-        if (!drive_heading_lock || drive_tmode!=lastTMode) {
+        if (!drive_heading_lock || drive_tmode != lastTMode) {
             fixedHeading = calculateLockHeading(currentHeading, 90, drive_tmode);
         }
         if (drive_heading_lock) {
@@ -82,29 +84,27 @@ public class TeleBrain{
         }
         robot.setDrive(drive_forward, drive_strafe, drive_rotate, 1);
 
-        lastTMode=drive_tmode; // remember
+        lastTMode = drive_tmode; // remember
     }
 
-    public void doIntake(double arm_power,boolean pusher_cycle,
-                         boolean arm_park,boolean arm_layer1,boolean outTakePos,
-                         boolean intakePos,boolean wrist_up,boolean wrist_down) {
+    public void doIntake(double arm_power, boolean pusher_cycle,
+                         boolean arm_park, boolean arm_layer1, boolean outTakePos,
+                         boolean intakePos, boolean wrist_up, boolean wrist_down) {
 
-        if (wrist_up) robot.setWristOffset(robot.getWristOffset()+.01);
-        if (wrist_down) robot.setWristOffset(robot.getWristOffset()-.01);
+        if (wrist_up) robot.setWristOffset(robot.getWristOffset() + .01);
+        if (wrist_down) robot.setWristOffset(robot.getWristOffset() - .01);
         robot.wristMove();
 
         // PUSHER **************************
-        if (pusher_cycle && driveBrain.pusherTimer==null) {
+        if (pusher_cycle && driveBrain.pusherTimer == null) {
             driveBrain.pusherStart(500);
-        }
-        else if(driveBrain.pusherTimer!=null) driveBrain.pusherMaint();
+        } else if (driveBrain.pusherTimer != null) driveBrain.pusherMaint();
 
         // ARM **************************************
         if (Robot.useArm) {
             if (arm_park) {
                 armPos = Robot.ARM_PARK_POS;
-            }
-            else if (arm_layer1) {
+            } else if (arm_layer1) {
                 armPos = Robot.ARM_LAYER1_POS;
             }
 //            else if (arm_intake) {
@@ -113,48 +113,45 @@ public class TeleBrain{
             else if (intakePos) {
                 armPos = Robot.ARM_INTAKE_POS;
                 robot.wristMove(.53);
-            }
+            }//easter eggo
             else if (outTakePos) {
                 armPos = Robot.ARM_LAYER1_POS;
                 robot.wristMove(.03);
-            }
-            else
+            } else
                 armPos += arm_power;
             armPos = Utility.clipToRange(armPos, 1000, 0);
             robot.setArmMotorPosition(armPos);
         }
     }
 
-    public void doCarousel(double carousel_power,boolean carousel_cycle_left,
+    public void doCarousel(double carousel_power, boolean carousel_cycle_left,
                            boolean carousel_cycle_right) {
 
         if (Robot.useCarousel) {
-            if (carousel_cycle_left && driveBrain.carouselTimer==null) {
+            if (carousel_cycle_left && driveBrain.carouselTimer == null) {
                 driveBrain.carouselStart(false);
-            }
-            else if (carousel_cycle_right && driveBrain.carouselTimer==null) {
+            } else if (carousel_cycle_right && driveBrain.carouselTimer == null) {
                 driveBrain.carouselStart(true);
             }
 
-            if (driveBrain.carouselTimer!=null) {
+            if (driveBrain.carouselTimer != null) {
                 driveBrain.carouselMaint();
-            }
-            else
+            } else
                 robot.carousel.setPower(carousel_power);
 //            telemetry.addData("Carousel Power:", carousel_power);
         }
     }
 
-    double calculateLockHeading(double heading, double lockMultipleDeg, boolean tmode){
-        double lockOffset=tmode?0:45;
-        double lockMultiple=Math.round((heading-lockOffset)/lockMultipleDeg);
-        heading = lockMultiple*lockMultipleDeg+lockOffset;
+    double calculateLockHeading(double heading, double lockMultipleDeg, boolean tmode) {
+        double lockOffset = tmode ? 0 : 45;
+        double lockMultiple = Math.round((heading - lockOffset) / lockMultipleDeg);
+        heading = lockMultiple * lockMultipleDeg + lockOffset;
         return Utility.wrapDegrees360(heading);
     }
 
     double calculateRotationCorrection(double fixedHeading, double currentHeading, double maxCorrectivePower, double maxError) {
         double headingError = Utility.wrapDegrees360(fixedHeading - currentHeading);
-        headingError = Utility.clipToRange(headingError,maxError,-maxError);
+        headingError = Utility.clipToRange(headingError, maxError, -maxError);
 
         double rotationCorrection = maxCorrectivePower * headingError / maxError;
         /*
@@ -171,6 +168,9 @@ public class TeleBrain{
         telemetry.addData("Rotation Correction", rotationCorrection);
 
         return rotationCorrection;
+    }
+
+    public void saveLastPos() {
     }
 
 }

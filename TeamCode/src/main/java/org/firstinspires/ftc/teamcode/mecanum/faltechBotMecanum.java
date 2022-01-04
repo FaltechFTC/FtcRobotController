@@ -38,28 +38,27 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * This is NOT an opmode.
- *
+ * <p>
  * This class can be used to define all the specific hardware for a single robot.
  * In this case that robot is a Pushbot.
  * See PushbotTeleopTank_Iterative and others classes starting with "Pushbot" for usage examples.
- *
+ * <p>
  * This hardware class assumes the following device names have been configured on the robot:
  * Note:  All names are lower case and some have single spaces between words.
- *
+ * <p>
  * Motor channel:  Left  drive motor:        "left_drive"
  * Motor channel:  Right drive motor:        "right_drive"
  * Motor channel:  Manipulator drive motor:  "left_arm"
  * Servo channel:  Servo to open left claw:  "left_hand"
  * Servo channel:  Servo to open right claw: "right_hand"
  */
-public class faltechBotMecanum
-{
+public class faltechBotMecanum {
     /* Public OpMode members. */
-    private DcMotor front_left  = null;
+    private DcMotor front_left = null;
     private DcMotor front_right = null;
-    private DcMotor back_left   = null;
-    private DcMotor back_right  = null;
-    public DcMotor[] driveMotors= new DcMotor[4];
+    private DcMotor back_left = null;
+    private DcMotor back_right = null;
+    public DcMotor[] driveMotors = new DcMotor[4];
     public int[] curPos = new int[4];
 //    public ModernRoboticsI2cGyro gyro = null;
 
@@ -67,18 +66,18 @@ public class faltechBotMecanum
 //    public Servo    leftClaw    = null;
 //    public Servo    rightClaw   = null;
 
-//    public static final double MID_SERVO       =  0.5 ;
+    //    public static final double MID_SERVO       =  0.5 ;
 //    public static final double ARM_UP_POWER    =  0.45 ;
 //    public static final double ARM_DOWN_POWER  = -0.45 ;
-    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+    static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
+    static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
+    static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
 
     /* local OpMode members. */
-    HardwareMap hwMap           =  null;
-    private ElapsedTime period  = new ElapsedTime();
+    HardwareMap hwMap = null;
+    private ElapsedTime period = new ElapsedTime();
 
     /* setting up color sensor*/
     float gain = 2;
@@ -94,14 +93,14 @@ public class faltechBotMecanum
         colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
         //gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("gyro");
         // Define and Initialize Motors
-        front_left  = hwMap.get(DcMotor.class, "fldrive");
+        front_left = hwMap.get(DcMotor.class, "fldrive");
         front_right = hwMap.get(DcMotor.class, "frdrive");
-        back_left = hwMap.get(DcMotor.class,"bldrive");
+        back_left = hwMap.get(DcMotor.class, "bldrive");
         back_right = hwMap.get(DcMotor.class, "brdrive");
-        driveMotors[0]=front_left;
-        driveMotors[1]=front_right;
-        driveMotors[2]=back_left;
-        driveMotors[3]=back_right;
+        driveMotors[0] = front_left;
+        driveMotors[1] = front_right;
+        driveMotors[2] = back_left;
+        driveMotors[3] = back_right;
 //        leftArm    = hwMap.get(DcMotor.class, "left_arm");
         front_left.setDirection(DcMotor.Direction.FORWARD);
         front_right.setDirection(DcMotor.Direction.REVERSE);
@@ -125,7 +124,8 @@ public class faltechBotMecanum
         colorSensor.setGain(gain);
 
     }
-    public void setDrive(double forward, double strafe, double rotate, double power){
+
+    public void setDrive(double forward, double strafe, double rotate, double power) {
         //this function will combine wheel commands
 
         double[] wheelpowers = {
@@ -135,8 +135,8 @@ public class faltechBotMecanum
                 (forward + strafe - rotate),
         };
         double max = Math.abs(wheelpowers[0]);
-        for(int i = 0; i < wheelpowers.length; i++) {
-            if ( max < Math.abs(wheelpowers[i]) ) max = Math.abs(wheelpowers[i]);
+        for (int i = 0; i < wheelpowers.length; i++) {
+            if (max < Math.abs(wheelpowers[i])) max = Math.abs(wheelpowers[i]);
         }
 
         // If and only if the maximum is outside of the range we want it to be,
@@ -151,27 +151,30 @@ public class faltechBotMecanum
         back_left.setPower(wheelpowers[2]);
         back_right.setPower(wheelpowers[3]);
     }
-    public void setDriveStop(){
-        setDrive(0,0,0,0);
+
+    public void setDriveStop() {
+        setDrive(0, 0, 0, 0);
     }
-    public void setRunMode(DcMotor.RunMode RunMode){
+
+    public void setRunMode(DcMotor.RunMode RunMode) {
         front_left.setMode(RunMode);
         front_right.setMode(RunMode);
         back_left.setMode(RunMode);
         back_right.setMode(RunMode);
     }
-    public void setDriveStopMode(boolean haltOnStop){
-        if (haltOnStop){
+
+    public void setDriveStopMode(boolean haltOnStop) {
+        if (haltOnStop) {
             front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
-        else {
+        } else {
             front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
     }
-    public double convertInchesToCounts(double inches){
+
+    public double convertInchesToCounts(double inches) {
         return COUNTS_PER_INCH * inches;
     }
 
@@ -181,9 +184,12 @@ public class faltechBotMecanum
 
     public boolean isDriveBusy() {
         boolean motor = false;
-        if (front_left.isBusy()||front_right.isBusy()||back_right.isBusy()||back_left.isBusy()) {motor = true;}
+        if (front_left.isBusy() || front_right.isBusy() || back_right.isBusy() || back_left.isBusy()) {
+            motor = true;
+        }
         return motor;
     }
+
     public int[] getCurPos() {
         curPos[0] = front_left.getCurrentPosition();
         curPos[1] = front_right.getCurrentPosition();
@@ -191,9 +197,10 @@ public class faltechBotMecanum
         curPos[3] = back_right.getCurrentPosition();
         return curPos;
     }
+
     public void setDriveDeltaPos(int deltaPos, double power) {
 
-        for (DcMotor m: driveMotors) {
+        for (DcMotor m : driveMotors) {
             int curPos = m.getCurrentPosition();
             int newPos = curPos + deltaPos;
             m.setTargetPosition(newPos);
@@ -202,10 +209,11 @@ public class faltechBotMecanum
             m.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        for (DcMotor m: driveMotors) {
+        for (DcMotor m : driveMotors) {
             m.setPower(Math.abs(power));
         }
     }
+
     public void setDrivePowersTank(double leftPower, double rightPower) {
         front_left.setPower(leftPower);
         back_left.setPower(leftPower);

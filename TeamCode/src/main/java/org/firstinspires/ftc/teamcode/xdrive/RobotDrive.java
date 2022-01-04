@@ -23,7 +23,7 @@ public class RobotDrive {
     static final boolean useIMU = true;
     public static double zeroHeadingOffset = 0;
     static boolean useDistanceSensor = false;
-    static boolean debugTelemetry=false;
+    static boolean debugTelemetry = false;
     private Telemetry telemetry = null;
     private DcMotor front_left = null;
     private DcMotor front_right = null;
@@ -42,7 +42,7 @@ public class RobotDrive {
     static final double DRIVE_GEAR_REDUCTION = 19.2;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 6.0;     // For figuring circumference
     static final double COUNTS_PER_OUTPUT_REVOL = 537.7;
-    static final double COUNTS_PER_INCH = (22.0/16.0)*(COUNTS_PER_OUTPUT_REVOL) / (WHEEL_DIAMETER_INCHES * Math.PI);
+    static final double COUNTS_PER_INCH = (22.0 / 16.0) * (COUNTS_PER_OUTPUT_REVOL) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -156,11 +156,11 @@ public class RobotDrive {
 
     public void setDrive(double forward, double strafe, double rotate, double power) {
         double[] powers = calculateDrivePowersFSRSimple(forward, strafe, rotate);
-       if (debugTelemetry) {
-           telemetry.addData("Forward", forward);
-           telemetry.addData("Strafe", strafe);
-           telemetry.addData("Rotate", rotate);
-       }
+        if (debugTelemetry) {
+            telemetry.addData("Forward", forward);
+            telemetry.addData("Strafe", strafe);
+            telemetry.addData("Rotate", rotate);
+        }
         setDrivePower(powers);
     }
 
@@ -258,9 +258,11 @@ public class RobotDrive {
             telemetry.addData("Distance Sensor Reading:", distanceSensor.getDistance(DistanceUnit.INCH));
         }
     }
+
     public double getHeading(AngleUnit angleUnit) {
         return getRawHeading(AngleUnit.DEGREES) - zeroHeadingOffset;
     }
+
     public double getRawHeading(AngleUnit angleUnit) {
         if (useIMU) {
             Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, angleUnit);
@@ -270,9 +272,10 @@ public class RobotDrive {
         }
 
     }
+
     public void setZeroHeading() {
         zeroHeadingOffset = getRawHeading(AngleUnit.DEGREES);
-        telemetry.addData("Zero Heading Offset" , zeroHeadingOffset);
+        telemetry.addData("Zero Heading Offset", zeroHeadingOffset);
     }
 
 }

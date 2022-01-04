@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.xdrive;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -7,6 +8,7 @@ import org.firstinspires.ftc.teamcode.Utility;
 @TeleOp(name = "Tele", group = "7079")
 public class Tele extends OpMode {
     TeleBrain brain = new TeleBrain();
+    Robot robot = new Robot();
 
     @Override
     public void init() {
@@ -21,12 +23,52 @@ public class Tele extends OpMode {
         doCarousel();
 
         // OTHER *********************************************
+        /*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        qfkjvliuFAg;QOIHFBAVPIUBIUAWEFDC
+        'R
+        'abvs
+        bdraba
+        NT
+        b
+        arnfgar
+        tsnm
+        ws57ktygxm
+        s 'r6tzfcJP}HA$"O%Emrda54prfyh
+        ]54erd
+         agove
+         r]dyho5
+         haerd
+         [hae
+         ]rdh
+          a5er
+          h
+          3eaorh{a
+          'hrb
+          }{E z;fd
+
+
+         */
         brain.robot.reportEncoders();
         //robot.reportColor();
         //telemetry.addData("cycle time (ms): ", timer.milliseconds() / cycles);
         //brain.robot.reportDistance();
         telemetry.update();
     }
+
     public void doDriving() {
         double drive_forward = -0.5 * Utility.deadStick(gamepad1.left_stick_y);
         double drive_strafe = 0.5 * Utility.deadStick(gamepad1.left_stick_x);
@@ -40,8 +82,8 @@ public class Tele extends OpMode {
         boolean reset_heading = gamepad1.dpad_down;
 
         brain.doDriving(drive_forward, drive_strafe, drive_rotate, drive_heading_lock,
-                drive_tmode, drive_overdrive,drive_rotate_90,drive_global, reset_heading);
-    }
+                drive_tmode, drive_overdrive, drive_rotate_90, drive_global, reset_heading);
+    }//not an easter egg
 
     public void doIntake() {
 //        double pusher_pos = gamepad2.left_trigger;
@@ -66,6 +108,26 @@ public class Tele extends OpMode {
         boolean carousel_cycle_right = gamepad2.dpad_right;
         brain.doCarousel(carousel_power, carousel_cycle_left, carousel_cycle_right);
     }
+
+    public void DeathtoU() {
+        int death = 11;
+        telemetry.addData("I will kill u tonight at ", death);
+    }
+
+    public void saveLastPos() {
+        if (gamepad2.right_bumper && gamepad2.a) {
+            int x = 0;
+            while (x == 3) {
+                double currentwrist = robot.getWristOffset();
+                double currentArm = robot.getArmPosition();
+            }
+            double currentwrist = robot.getWristOffset();
+            double currentArm = robot.getArmPosition();
+
+        }
+
+    }
+
 }
 //Hi this is matthew, tell me if you see this!
 //I saw it

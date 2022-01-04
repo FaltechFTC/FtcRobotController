@@ -51,7 +51,7 @@ public class DriveBrain {
 
     public boolean opModeIsActive() {
         if (opmode instanceof LinearOpMode)
-            return ((LinearOpMode)opmode).opModeIsActive();
+            return ((LinearOpMode) opmode).opModeIsActive();
         else return false;
     }
 
@@ -66,15 +66,15 @@ public class DriveBrain {
         if (opModeIsActive()) {
             robot.setDriveDeltaPos(clicks, forward);
         }
-        while (opModeIsActive() && (runtime.seconds() < timeoutSeconds) && (robot.isDriveBusy()||runtimeBusy.seconds()<0.25)) {
-            if(robot.isDriveBusy()){
-               runtimeBusy.reset();
+        while (opModeIsActive() && (runtime.seconds() < timeoutSeconds) && (robot.isDriveBusy() || runtimeBusy.seconds() < 0.25)) {
+            if (robot.isDriveBusy()) {
+                runtimeBusy.reset();
             }
             maint();
-             //Display it for the driver.
-           //opmode.telemetry.addData("Path1", "Running to %7d :%7d", robot.convertCountsToInches(inches));
-         //   opmode.telemetry.addData("Path2", "Running at %7f :%7f", robot.getCurPos());
-           // opmode.telemetry.update();
+            //Display it for the driver.
+            //opmode.telemetry.addData("Path1", "Running to %7d :%7d", robot.convertCountsToInches(inches));
+            //   opmode.telemetry.addData("Path2", "Running at %7f :%7f", robot.getCurPos());
+            // opmode.telemetry.update();
         }
 
         robot.setDriveStop();
@@ -254,15 +254,15 @@ public class DriveBrain {
         runtime.reset();
         double currentHeading = robot.getHeading(AngleUnit.DEGREES);
         double headingError = Utility.wrapDegrees360(targetHeading - currentHeading);
-        while ( (runtime.seconds() < timeout)&& ((Math.abs(headingError) > tolerance)||runtimeInTolerance.seconds()<0.25)
+        while ((runtime.seconds() < timeout) && ((Math.abs(headingError) > tolerance) || runtimeInTolerance.seconds() < 0.25)
                 && opModeIsActive()) {
-            if(Math.abs(headingError) > tolerance){
+            if (Math.abs(headingError) > tolerance) {
                 runtimeInTolerance.reset();
             }
             currentHeading = robot.getHeading(AngleUnit.DEGREES);
-            headingError = Utility.wrapDegrees360(targetHeading-currentHeading);
+            headingError = Utility.wrapDegrees360(targetHeading - currentHeading);
             headingError = Utility.clipToRange(headingError, 45, -45);
-            if (Math.abs(headingError) < Math.min(.5,tolerance)) {
+            if (Math.abs(headingError) < Math.min(.5, tolerance)) {
                 headingError = 0;
             }
             double rotationCorrection = (headingError / 45.00) * power;
@@ -274,7 +274,7 @@ public class DriveBrain {
             }
             robot.setDrive(0, 0, rotationCorrection, 1);
             opmode.telemetry.addData("Target Heading", targetHeading);
-            opmode.telemetry.addData("Current Heading" , currentHeading);
+            opmode.telemetry.addData("Current Heading", currentHeading);
             opmode.telemetry.addData("Rotation Correction:", rotationCorrection);
             opmode.telemetry.addData("Heading Error:", headingError);
             opmode.telemetry.addData("Seconds Passed:", runtime.seconds());
@@ -290,33 +290,35 @@ public class DriveBrain {
         targetHeading += robot.getHeading(AngleUnit.DEGREES);
         return rotateToHeadingAbsolute(targetHeading, tolerance, power, timeout);
     }
+
     public void carouselMoves(int direction) {
-            if (robot.useCarousel) {
-                robot.carousel.setPower(.3 * direction);
-                sleep(2000);
-                robot.carousel.setPower(.4 * direction);
-                sleep(500);
-                robot.carousel.setPower(1 * direction);
-                sleep(800);
-                robot.carousel.setPower(-1 * direction);
-                sleep(350);
-                robot.carousel.setPower(0);
-            }
+        if (robot.useCarousel) {
+            robot.carousel.setPower(.3 * direction);
+            sleep(2000);
+            robot.carousel.setPower(.4 * direction);
+            sleep(500);
+            robot.carousel.setPower(1 * direction);
+            sleep(800);
+            robot.carousel.setPower(-1 * direction);
+            sleep(350);
+            robot.carousel.setPower(0);
         }
-//    public void carouselStart() {
+    }
+
+    //    public void carouselStart() {
 //        carouselTimer = new ElapsedTime();
 //    }
     public void carouselMove() {
-            carouselStart(true);
-            if (carouselTimer!=null) {
-                if (carouselTimer.milliseconds() > 350) robot.carousel.setPower(.3);
-                else if (carouselTimer.milliseconds()>700)robot.carousel.setPower(.4);
-                else if (carouselTimer.milliseconds()>1500)robot.carousel.setPower(1);
-                else {
-                    robot.carousel.setPower(0);
-                    carouselTimer = null;
-                }
+        carouselStart(true);
+        if (carouselTimer != null) {
+            if (carouselTimer.milliseconds() > 350) robot.carousel.setPower(.3);
+            else if (carouselTimer.milliseconds() > 700) robot.carousel.setPower(.4);
+            else if (carouselTimer.milliseconds() > 1500) robot.carousel.setPower(1);
+            else {
+                robot.carousel.setPower(0);
+                carouselTimer = null;
             }
+        }
     }
 //    public void pusherStart() {
 //        pusherTimer = new ElapsedTime();
@@ -331,23 +333,24 @@ public class DriveBrain {
 //    }
 
     public void carouselMaint() {
-            if (Robot.useCarousel && carouselTimer!=null) {
-                double m = carouselTimer.milliseconds();
-                if (m < 600) robot.carousel.setPower((m/600)*.75+.25);
-                else if (m<1350){
-                    robot.carousel.setPower(.85);
-                }
-                else {
-                    robot.carousel.setPower(0);
-                    carouselTimer = null;
-                }
+        if (Robot.useCarousel && carouselTimer != null) {
+            double m = carouselTimer.milliseconds();
+            if (m < 600) robot.carousel.setPower((m / 600) * .75 + .25);
+            else if (m < 1350) {
+                robot.carousel.setPower(.85);
+            } else {
+                robot.carousel.setPower(0);
+                carouselTimer = null;
             }
+        }
     }
+
     public void carouselStart(boolean direction) {
-            //true =
-            carouselTimer = new ElapsedTime();
-            carouselDirection = direction?-1:1;
+        //true =
+        carouselTimer = new ElapsedTime();
+        carouselDirection = direction ? -1 : 1;
     }
+
     public void pusherMaint() {
         if (pusherTimer != null) {
             if (pusherTimer.milliseconds() > pushTime) {
@@ -356,14 +359,17 @@ public class DriveBrain {
             }
         }
     }
+
     public void pusherStart(double pushms) {
         pusherTimer = new ElapsedTime();
         pushTime = pushms;
         robot.pusherClose();
     }
-    public double getBarcode(){
+
+    public double getBarcode() {
         return 0.5;
     }
+
     public void maint() {
         if (maintArm) {
             robot.setArmMotorPosition(targetArmPos);
@@ -371,13 +377,15 @@ public class DriveBrain {
         carouselMaint();
         pusherMaint();
     }
+
     public void setArmMotorPosition(int pos) {
         targetArmPos = pos;
         maintArm = true;
     }
+
     public void maintTime(double timeoutSeconds) {
         ElapsedTime timer = new ElapsedTime();
-        while (timer.seconds()<timeoutSeconds && opModeIsActive()) {
+        while (timer.seconds() < timeoutSeconds && opModeIsActive()) {
             maint();
             sleep(1);
         }
@@ -397,48 +405,47 @@ public class DriveBrain {
         final double maxRotationPower = .5;
 
         Pid pidX = pidDrivePrototype.clone();
-        pidX.setOutputLimits(-maxPower,maxPower);
+        pidX.setOutputLimits(-maxPower, maxPower);
         Pid pidY = pidDrivePrototype.clone();
-        pidY.setOutputLimits(-maxPower,maxPower);
+        pidY.setOutputLimits(-maxPower, maxPower);
         Pid pidHeading = pidRotatePrototype.clone();
-        pidY.setOutputLimits(-maxRotationPower,maxRotationPower);
+        pidY.setOutputLimits(-maxRotationPower, maxRotationPower);
 
-        double lastTime=0.0;
+        double lastTime = 0.0;
 
         targetPose.x = robot.convertInchesToCounts(targetPose.x);
         targetPose.y = robot.convertInchesToCounts(targetPose.y);
 
-        boolean inTolerance=false;
+        boolean inTolerance = false;
         do {
-            Pose currentPose = new Pose(robot.driveMotors2WheelX[0].getCurrentPosition(), robot.driveMotors2WheelY[0].getCurrentPosition(),robot.getHeading(AngleUnit.DEGREES));
+            Pose currentPose = new Pose(robot.driveMotors2WheelX[0].getCurrentPosition(), robot.driveMotors2WheelY[0].getCurrentPosition(), robot.getHeading(AngleUnit.DEGREES));
 
-            inTolerance=currentPose.isInTolerance(targetPose,toleranceClicks, toleranceDegees);
+            inTolerance = currentPose.isInTolerance(targetPose, toleranceClicks, toleranceDegees);
             if (!inTolerance) elapsedInTolerance.reset();
 
             // keep track of how much time per each loop
-            double currentTime=runtime.seconds();
-            double deltaTime=currentTime-lastTime;
-            lastTime=currentTime;
+            double currentTime = runtime.seconds();
+            double deltaTime = currentTime - lastTime;
+            lastTime = currentTime;
 
-            double powerX=pidX.update(targetPose.x, currentPose.x, deltaTime);
-            double powerY=pidY.update(targetPose.y, currentPose.y, deltaTime);
-            double powerRot=pidHeading.update(targetPose.heading, currentPose.heading, deltaTime);
+            double powerX = pidX.update(targetPose.x, currentPose.x, deltaTime);
+            double powerY = pidY.update(targetPose.y, currentPose.y, deltaTime);
+            double powerRot = pidHeading.update(targetPose.heading, currentPose.heading, deltaTime);
 
-            robot.setDrive(powerY, powerX, powerRot,1);
+            robot.setDrive(powerY, powerX, powerRot, 1);
 
-        } while (inTolerance && elapsedInTolerance.seconds()<minToleranceSeconds && elapsed.seconds()<timeoutSeconds && opModeIsActive());
+        } while (inTolerance && elapsedInTolerance.seconds() < minToleranceSeconds && elapsed.seconds() < timeoutSeconds && opModeIsActive());
 
         robot.setDriveStop();
         return inTolerance;
     }
-    public void convertBarcode(){
-        if(vision.returnvalue == 1){
+
+    public void convertBarcode() {
+        if (vision.returnvalue == 1) {
             setArmMotorPosition(Robot.ARM_LAYER1_POS);
-        }
-        else if(vision.returnvalue == 2){
+        } else if (vision.returnvalue == 2) {
             setArmMotorPosition(Robot.ARM_LAYER2_POS);
-        }
-        else if(vision.returnvalue == 3){
+        } else if (vision.returnvalue == 3) {
             setArmMotorPosition(Robot.ARM_LAYER3_POS);
         }
     }

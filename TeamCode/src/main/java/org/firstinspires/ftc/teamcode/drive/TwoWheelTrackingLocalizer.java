@@ -48,7 +48,7 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
 
     public static double ENC2_X = -3.89;
     public static double ENC2_Y = 3.89;
-    public static double ENC2_DEG =45;
+    public static double ENC2_DEG = 45;
 
     // Parallel/Perpendicular to the forward axis
     // Parallel wheel is parallel to the forward axis
@@ -71,8 +71,9 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
         encoder1.setDirection(Encoder.Direction.REVERSE);
         encoder2.setDirection(Encoder.Direction.REVERSE);
     }
+
     public static double encoderTicksToInches(double ticks) {
-        double correction=Math.sqrt(2);
+        double correction = Math.sqrt(2);
         return WHEEL_RADIUS * 2.0 * Math.PI * GEAR_RATIO * ticks / correction / TICKS_PER_REV;
     }
 

@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuild
 public class AutoBrainRR {
     SampleMecanumDrive drive;
     VisionBrain vision;
-    boolean useVision=false;
+    boolean useVision = false;
     Telemetry telemetry;
     LinearOpMode opmode;
 
@@ -25,13 +25,13 @@ public class AutoBrainRR {
 
     double fixedHeading = 0;
     double verySlowPower = 0.1;
-    double slowPower=0.2;
-    double mediumPower=0.3;
+    double slowPower = 0.2;
+    double mediumPower = 0.3;
     double halfPower = 0.5;
     double highPower = 0.7;
     double veryHighPower = 1;
-    double shortTimeout=2;
-    double mediumTimeout=3;
+    double shortTimeout = 2;
+    double mediumTimeout = 3;
     double highTimeout = 5;
     int armMarkerPos = 0;
 
@@ -74,19 +74,20 @@ public class AutoBrainRR {
         }
     }
 
-    public void sleep (int milliseconds) {
+    public void sleep(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
         } catch (Exception e) {
             ; // eat it
         }
     }
+
     public void red1() throws InterruptedException {
         Pose2d startPose = new Pose2d(-36, -60.4, Math.toRadians(90));
         Pose2d sharedHubPose = new Pose2d(startPose.getX() + 15, startPose.getY() + 26, Math.toRadians(90 - 25));
         Pose2d carouselPose = new Pose2d(startPose.getX() - 30, startPose.getY() + 11, Math.toRadians(90));
         Pose2d parkPose = new Pose2d(carouselPose.getX() + 1, carouselPose.getY() + 24, Math.toRadians(0));
-        Pose2d warePose = new Pose2d(carouselPose.getX() + 106, carouselPose.getY() -15, Math.toRadians(0));
+        Pose2d warePose = new Pose2d(carouselPose.getX() + 106, carouselPose.getY() - 15, Math.toRadians(0));
 
         double pauseSeconds = .25;
 
@@ -94,22 +95,22 @@ public class AutoBrainRR {
 
 //        waitForStart();
 
-        Trajectory traj2hub = drive.trajectoryBuilder(startPose,true)
-                .splineToLinearHeading(sharedHubPose,sharedHubPose.getHeading())
+        Trajectory traj2hub = drive.trajectoryBuilder(startPose, true)
+                .splineToLinearHeading(sharedHubPose, sharedHubPose.getHeading())
                 .build();
-        Trajectory traj2carousel = drive.trajectoryBuilder(sharedHubPose,true)
-                .splineToLinearHeading(carouselPose,carouselPose.getHeading())
+        Trajectory traj2carousel = drive.trajectoryBuilder(sharedHubPose, true)
+                .splineToLinearHeading(carouselPose, carouselPose.getHeading())
                 .build();
 
         Trajectory trajUnitPark = drive.trajectoryBuilder(carouselPose)
-                .splineToLinearHeading(parkPose,parkPose.getHeading())
+                .splineToLinearHeading(parkPose, parkPose.getHeading())
                 .build();
 
         Trajectory trajWarePark = drive.trajectoryBuilder(carouselPose)
                 .lineTo(new Vector2d(warePose.getX(), warePose.getY()))
                 .build();
 
-        TrajectorySequenceBuilder  tsBuilder = drive.trajectorySequenceBuilder(startPose);
+        TrajectorySequenceBuilder tsBuilder = drive.trajectorySequenceBuilder(startPose);
 
         tsBuilder = tsBuilder
                 .addTrajectory(traj2hub)
@@ -132,7 +133,7 @@ public class AutoBrainRR {
         if (doWarehousePark) {
             tsBuilder.addTrajectory(trajWarePark)
                     .turn(Math.toRadians(-90));
-        } else  {
+        } else {
             tsBuilder.addTrajectory(trajUnitPark);
         }
 
@@ -141,7 +142,7 @@ public class AutoBrainRR {
 
     }
 
-    public void red2() throws InterruptedException{
+    public void red2() throws InterruptedException {
         Pose2d startPose = new Pose2d(12.4, -60.4, Math.toRadians(90));
 
         drive.setPoseEstimate(startPose);
@@ -181,14 +182,15 @@ public class AutoBrainRR {
         }
     }
 
-    public void blue1() throws InterruptedException{
+    public void blue1() throws InterruptedException {
         Pose2d startPose = new Pose2d(12.4, -60.4, Math.toRadians(90));
     }
 
-    public void blue2() throws InterruptedException{
+    public void blue2() throws InterruptedException {
         Pose2d startPose = new Pose2d(12.4, -60.4, Math.toRadians(90));
     }
-    public void driftDrive(double x, double y, double timeouts){
+
+    public void driftDrive(double x, double y, double timeouts) {
         ElapsedTime timer = new ElapsedTime();
         while (!opmode.isStopRequested() && timer.seconds() < timeouts) {
             drive.setWeightedDrivePower(
@@ -203,6 +205,6 @@ public class AutoBrainRR {
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.update();
         }
-        drive.setMotorPowers(0,0,0,0);
+        drive.setMotorPowers(0, 0, 0, 0);
     }
 }

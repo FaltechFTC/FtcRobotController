@@ -42,15 +42,15 @@ import java.util.List;
 /**
  * This 2020-2021 OpMode illustrates the basics of using the TensorFlow Object Detection API to
  * determine the position of the Ultimate Goal game elements.
- *
+ * <p>
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
- *
+ * <p>
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  **/
 public class VisionBrainMecanum {
-    faltechBotMecanum robot       = new faltechBotMecanum();
+    faltechBotMecanum robot = new faltechBotMecanum();
     OpMode opmode;
     TFObjectDetector tfod = null;
     int cameraMonitorViewId = opmode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", opmode.hardwareMap.appContext.getPackageName());
@@ -102,13 +102,14 @@ public class VisionBrainMecanum {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(2.5, 16.0/9.0);
+            tfod.setZoom(2.5, 16.0 / 9.0);
         }
 
         /** Wait for the game to begin */
         opmode.telemetry.addData(">", "Press Play to start op mode");
         opmode.telemetry.update();
     }
+
     public void process() {
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
