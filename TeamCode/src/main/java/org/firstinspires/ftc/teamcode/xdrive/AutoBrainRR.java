@@ -122,6 +122,7 @@ public class AutoBrainRR {
         //TODO remember to start spinner
         driftDrive(DRIFT_XPOW, DRIFT_YPOW, 3);
         //TODO remember to stop spinner
+        drive.update();
         Pose2d afterDuckPose = drive.getPoseEstimate();
 
         drive.setPoseEstimate(carouselPose);
