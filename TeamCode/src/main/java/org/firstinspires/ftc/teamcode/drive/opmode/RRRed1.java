@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -25,6 +26,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuild
  * If you are using SampleTankDrive, you should be tuning AXIAL_PID, CROSS_TRACK_PID, and HEADING_PID.
  * These coefficients can be tuned live in dashboard.
  */
+@Disabled
 @Config
 @Autonomous(group = "drive")
 public class RRRed1 extends LinearOpMode {
@@ -68,28 +70,30 @@ public class RRRed1 extends LinearOpMode {
 
         tsBuilder = tsBuilder
                 .addTrajectory(traj2hub)
-                .addTrajectory(traj2hub)
-                .waitSeconds(1.5) // todo
                 .addTrajectory(traj2carousel);
+
+        TrajectorySequence trajectories = tsBuilder.build();
+
+        drive.followTrajectorySequence(trajectories);
+
+        //TODO remember to start spinner
+        driftDrive(DRIFT_XPOW, DRIFT_YPOW, 3);
+        //TODO remember to stop spinner
+        Pose2d afterDuckPose = drive.getPoseEstimate();
+
+        drive.setPoseEstimate(carouselPose);
+        tsBuilder = drive.trajectorySequenceBuilder(carouselPose);
 
         boolean doWarehousePark = true;
         if (doWarehousePark) {
             tsBuilder.addTrajectory(trajWarePark)
                 .turn(Math.toRadians(-90));
         } else  {
-            tsBuilder.addTrajectory(trajWarePark);
+            tsBuilder.addTrajectory(trajUnitPark);
         }
 
-        TrajectorySequence trajectories = tsBuilder.build();
-
+        trajectories = tsBuilder.build();
         drive.followTrajectorySequence(trajectories);
-
-        /*
-        Pose2d afterDuckPose = drive.getPoseEstimate();
-        //TODO remember to start spinner
-        driftDrive(DRIFT_XPOW, DRIFT_YPOW, 3);
-        //TODO remember to stop spinner
-*/
 
 
     }
