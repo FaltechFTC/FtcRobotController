@@ -12,14 +12,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Config
 public class AutoBrain {
+    public static double TEST_CONFIG = 1.0;
+    public static double LONG_MAINT_SECS = 1.4;
     Robot robot;
     DriveBrain driveBrain;
     VisionBrain vision;
     boolean useVision = false;
     Telemetry telemetry;
-
     ElapsedTime runtime = new ElapsedTime();
-
     double fixedHeading = 0;
     double verySlowPower = 0.1;
     double slowPower = 0.2;
@@ -31,8 +31,6 @@ public class AutoBrain {
     double mediumTimeout = 3;
     double highTimeout = 5;
     int armMarkerPos = 0;
-
-    public static double TEST_CONFIG = 1.0;
 
     public void init(LinearOpMode opmode) {
         telemetry = opmode.telemetry;
@@ -89,7 +87,7 @@ public class AutoBrain {
         try {
             Thread.sleep(milliseconds);
         } catch (Exception e) {
-            ; // eat it
+            // eat it
         }
     }
 
@@ -101,7 +99,6 @@ public class AutoBrain {
         telemetry.update();
         sleep(1000);
     }
-
 
     public void autoPosTest() {
         driveBrain.driveDistance(20, mediumPower, 1);
@@ -141,6 +138,8 @@ public class AutoBrain {
         driveBrain.driveDistance(24, slowPower, shortTimeout);
     }
 
+    //carousel = false then we don't do carousel, else do carousel
+
     public void autoPosScore2() {
 
         driveBrain.setArmMotorPosition(Robot.ARM_PARK_POS);
@@ -152,10 +151,6 @@ public class AutoBrain {
         driveBrain.pusherStart(2000);
         driveBrain.maintTime(1);
     }
-
-    //carousel = false then we don't do carousel, else do carousel
-
-    public static double LONG_MAINT_SECS = 1.4;
 
     public void simpleTest() {
         if (false) {
