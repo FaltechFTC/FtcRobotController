@@ -462,5 +462,90 @@ public class VisionBrain {
         return returnvalue;
     }
 
+    public double getBarcodeTSEUpdated(double timeout) {
+        opmode.telemetry.addData("Status", "Processing!");
+        Recognition winner = null;
+        if (tfod != null) {
+            ElapsedTime timer = new ElapsedTime();
 
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
+            List<Recognition> updatedRecognitions = updatedRecognitions = tfod.getUpdatedRecognitions();
+            ;
+            while (updatedRecognitions == null && timer.seconds() < timeout) {
+                try {
+                    sleep(100);
+                } catch (InterruptedException e) {
+                }
+                updatedRecognitions = tfod.getUpdatedRecognitions();
+            }
+            if (updatedRecognitions != null) {
+                opmode.telemetry.addData("# Object Detected", updatedRecognitions.size());
+                // step through the list of recognitions and display boundary info.
+                int i = 0;
+                for (Recognition recognition : updatedRecognitions) {
+                    i++;
+                    opmode.telemetry.addLine()
+                            .addData(String.format("label (%d)", i), recognition.getLabel())
+                            .addData("Conf", "%.02f", recognition.getConfidence())
+                            .addData("Loc", "(%.01f,%.01f,%.01f,%.01f)", recognition.getLeft(), recognition.getTop(), recognition.getRight(), recognition.getBottom());
+                    if (winner == null) {
+                        winner = null;
+                    }
+                    if(winner.getBottom()>500){
+                        winner = null;
+                    }
+                    else {
+                        if(recognition.getLabel().equals("Cube")){
+                            winner = winner;
+                        }
+                        if (recognition.getLabel().equals("Ball")){
+                            winner = winner;
+                        }
+                        if (recognition.getLabel().equals("Marker")){
+                            winner = winner;
+                        }
+                        if (recognition.getLabel().equals("Duck")){
+                            if(winner.getLabel().equals("Duck")){
+                                if(recognition.getConfidence()> winner.getConfidence()){
+                                    winner = recognition;
+                                }
+                                else if(recognition.getConfidence()== winner.getConfidence()){
+                                    winner = recognition;
+                                }
+                                else if(recognition.getConfidence()< winner.getConfidence()){
+                                    winner = winner;
+                                }
+                            }
+                            else if(winner.getLabel().equals("Ball")){
+                                winner = recognition;
+                            }
+                            else if (winner.getLabel().equals("Cube")){
+                                winner = recognition;
+                            }
+                            else if (winner.getLabel().equals("Marker")){
+                                winner = recognition;
+                            }
+                        }
+                    }
+                }
+            } else opmode.telemetry.addData("Status", "Recognitions is NULL");
+        } else opmode.telemetry.addData("Status", "TFOD is NULL");
+        if (winner == null || winner.getLabel().equals("Marker")||winner.getLabel().equals("Ball")||winner.getLabel().equals("Cube")) {
+            returnvalue = 4;
+            return returnvalue;
+        } else {
+            if (winner.getLeft() > 100 && winner.getLeft() < 500) {
+                returnvalue = 2;
+            } else if (winner.getLeft() > 500) {
+                returnvalue = 3;
+            } else {
+                returnvalue = 1;
+            }
+        }
+
+        opmode.telemetry.addData("Return Value", returnvalue);
+        opmode.telemetry.update();
+        return returnvalue;
+    }
 }
