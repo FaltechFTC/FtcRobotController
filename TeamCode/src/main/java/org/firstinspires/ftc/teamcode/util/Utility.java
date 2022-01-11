@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.util;
 
 public class Utility {
     //if the stick value is between -.05 and .05, then call it 0

@@ -11,9 +11,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Pid;
-import org.firstinspires.ftc.teamcode.Pose;
-import org.firstinspires.ftc.teamcode.Utility;
+import org.firstinspires.ftc.teamcode.util.Pid;
+import org.firstinspires.ftc.teamcode.util.Pose;
+import org.firstinspires.ftc.teamcode.util.Utility;
 
 @Config
 public class DriveBrain {

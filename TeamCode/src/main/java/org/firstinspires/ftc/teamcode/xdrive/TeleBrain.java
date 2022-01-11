@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Utility;
+import org.firstinspires.ftc.teamcode.util.Utility;
 
 public class TeleBrain {
     RobotDrive robot = new RobotDrive();

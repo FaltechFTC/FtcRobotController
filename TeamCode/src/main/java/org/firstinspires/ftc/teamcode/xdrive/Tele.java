@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.xdrive;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Utility;
+import org.firstinspires.ftc.teamcode.util.Utility;
 
 @TeleOp(name = "Tele", group = "7079")
 public class Tele extends OpMode {
