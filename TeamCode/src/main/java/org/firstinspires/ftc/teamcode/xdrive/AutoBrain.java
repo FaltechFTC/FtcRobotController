@@ -40,14 +40,12 @@ public class AutoBrain {
         robot = new RobotDrive();
         robot.init(opmode.hardwareMap, telemetry);
         robot.setDriveStopModeBreak();
-        robot.intake.maxUpPower = .3;// slower during auto
         robot.intake.magnetEngage();
         //robot.wristMove(0);
 //        telemetry.addData("Status", "Robot Initialized");
 //        telemetry.update();
 
         driveBrain = new DriveBrain(robot, opmode);
-        robot.intake.maxUpPower = .3; // slower during auto
 //        telemetry.addData("Status", "DriveBrain Ready");
 //        telemetry.update();
 
@@ -134,7 +132,7 @@ public class AutoBrain {
         driveBrain.driveDistance(rp1_d1 / 2, mediumPower, 3);
         driveBrain.rotateToHeadingAbsolute(-15, 2, mediumPower, mediumTimeout);
 
-        robot.intake.wristMove(0);
+//        robot.intake.wristMove(0);
         robot.intake.magnetRelease();
         driveBrain.maintTime(rp1_m2);
 
@@ -210,7 +208,7 @@ public class AutoBrain {
         driveBrain.driveDistance(rp1_d1, mediumPower, 3);
         driveBrain.rotateToHeadingAbsolute(0, 3, mediumPower, mediumTimeout);
 
-        robot.intake.wristMove(0);
+//        robot.intake.wristMove(0);
         robot.intake.magnetRelease();
         driveBrain.maintTime(rp1_m2);
 

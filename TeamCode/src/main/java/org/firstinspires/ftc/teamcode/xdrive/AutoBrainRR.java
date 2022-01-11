@@ -42,7 +42,7 @@ public class AutoBrainRR {
 //        telemetry.update();
 
 
-        drive = new RobotRRDrive(opmode.hardwareMap);
+        drive = new RobotRRDrive(opmode.hardwareMap, opmode.telemetry);
 //        drive.init(opmode.hardwareMap, telemetry);
 //        drive.setDriveStopModeBreak();
 //        drive.maxUpPower=.3;// slower during auto

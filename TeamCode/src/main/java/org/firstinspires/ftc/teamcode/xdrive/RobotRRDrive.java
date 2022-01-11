@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
@@ -52,9 +53,12 @@ import java.util.List;
  */
 @Config
 public class RobotRRDrive extends MecanumDrive {
+
+    public RobotIntake intake = new RobotIntake();
     // TODO !
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(1.5, 0.01, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(4, 0.05, 0);
+
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -75,7 +79,7 @@ public class RobotRRDrive extends MecanumDrive {
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
-    public RobotRRDrive(HardwareMap hardwareMap) {
+    public RobotRRDrive(HardwareMap hardwareMap, Telemetry t) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
@@ -132,6 +136,8 @@ public class RobotRRDrive extends MecanumDrive {
         setLocalizer(new XDriveRRTrackingLocalizer(hardwareMap, this)); // OR THIS ONE?
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+
+        intake.init(hardwareMap, t);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -197,6 +203,7 @@ public class RobotRRDrive extends MecanumDrive {
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
+        intake.update();
     }
 
     public void waitForIdle() {

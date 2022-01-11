@@ -21,8 +21,6 @@ import org.firstinspires.ftc.teamcode.util.Utility;
 public class RobotIntake {
     static final boolean useColorSensor = false;
     static final boolean useIMU = true;
-    public static double MAGNET_ENGAGE_POS = 0.25;
-    public static double MAGNET_RELEASE_POS = 0.7;
     static boolean useGantry = true;
     static boolean useCarousel = true;
     static boolean useDistanceSensor = false;
@@ -47,13 +45,16 @@ a claw system*/
 
     //    public DcMotor  leftArm     = null;
     public Servo intakePusher = null;
-    public Servo intakeWrist = null;
-    public double wristOffset = 0.40;
     public double zPosition = 0;
     public double xyPosition = 0;
+
+    public static double MAGNET_ENGAGE_POS = 0.25;
+    public static double MAGNET_RELEASE_POS = 0.7;
     public static double maxUpPower = 0.6;
     public static double maxDownPower = -0.3;
     public static double verticalPowerConstant = .012;
+    public static double MAX_HPOS = .65, MIN_HPOS = 0.2;
+    public static double MAX_VPOS = 0, MIN_VPOS = 400;
 
 
     static final int ARM_INTAKE_POS = 65;
@@ -89,12 +90,10 @@ a claw system*/
 
         // Define and initialize ALL installed servos.
         intakePusher = hwMap.get(Servo.class, "pusher");
-        intakeWrist = hwMap.get(Servo.class, "wrist");
         xyServo = hwMap.get(Servo.class, "xyServo");
         zEncoder = hwMap.get(DcMotor.class, "frdrive");
 
         magnetEngage();
-        //wristMove();
     }
 
 
@@ -102,20 +101,21 @@ a claw system*/
         return zEncoder.getCurrentPosition();
     }
 
-    public void setGantryPosition(int zPosition, int xyPosition, double timeoutSeconds) {
+    public void setGantryPosition(double zPos, double xyPos, double timeoutSeconds) {
         ElapsedTime timer = new ElapsedTime();
         boolean done = false;
-        setGantryPosition(zPosition, xyPosition);
+        setZPosition(zPos);
+        setXYPosition(xyPos);
         while (timer.seconds() < timeoutSeconds && !done) {
-            done = updateGantry(zPosition);
+            done = updateGantry();
         }
     }
     //lets go to halal bros
     //
-    public boolean updateGantry(int zpos) {
+    public boolean updateGantry() {
         boolean done = false;
         int currentPositionZ = (int) zEncoder.getCurrentPosition();
-        int errorz = (int) zpos - currentPositionZ;
+        int errorz = ((int) zPosition) - currentPositionZ;
         done = Math.abs(errorz) < 3;
         double p = 0;
         if (done) {
@@ -135,7 +135,7 @@ a claw system*/
     }
 
     public void carouselMaint() {
-        if (Robot.useCarousel && carouselTimer != null) {
+        if (useCarousel && carouselTimer != null) {
             double m = carouselTimer.milliseconds();
             if (m < 600) carousel.setPower((m / 600) * .75 + .25);
             else if (m < 1350) {
@@ -148,7 +148,6 @@ a claw system*/
     }
 
     public void carouselStart(boolean direction) {
-        //true =
         carouselTimer = new ElapsedTime();
         carouselDirection = direction ? -1 : 1;
     }
@@ -168,8 +167,10 @@ a claw system*/
         pusherClose();
     }
 
+    /*
+        update() is called by drive.update() to maintain motors and timer based controls
+     */
     public void update () {
-
         if (maintArm) {
             setGantryPosition(0, 0);
         }
@@ -178,41 +179,29 @@ a claw system*/
     }
 
     public void setGantryPosition(double zpos, double xypos) {
-        zPosition = zpos;
-        xyPosition = xypos;
+        setXYPosition(xypos);
+        setZPosition(zpos);
+    }
+
+    public double setXYPosition(double pos) {
+        xyPosition = Utility.clipToRange(pos, MAX_HPOS, MIN_HPOS);
         xyServo.setPosition(xyPosition);
-        updateGantry((int) zPosition);
+        return xyPosition;
     }
 
-    double maxWrist = .65, minWrist = 0.0;
-
-    public double setWristOffset(double offset) {
-        wristOffset = Utility.clipToRange(offset, maxWrist, minWrist);
-        return wristOffset;
+    public double getXYPosition() {
+        return xyPosition;
     }
 
-    public double calculateWristFromArm() {
-        double pos = 0.0;
-        if (zPosition < 100) pos = 0;
-        else if (zPosition < 200) pos = .15;
-        else if (zPosition > 250) pos = zPosition / 1000;
-        pos = Utility.clipToRange(pos, maxWrist, minWrist);
-        return pos;
+    public double setZPosition(double pos) {
+        zPosition =  Utility.clipToRange(pos, MAX_VPOS, MIN_VPOS);
+        updateGantry(); // TODO: perhaps shouldn't be called here and should be called from update() only?
+        return zPosition;
     }
 
-    public double getWristOffset() {
-        return wristOffset;
+    public double getZPosition() {
+        return xyPosition;
     }
-
-    public void wristMove() {
-        intakeWrist.setPosition(wristOffset);
-        telemetry.addData("wrist", wristOffset);
-    }
-
-    public void wristMove(double pos) {
-        intakeWrist.setPosition(pos);
-    }
-
 
     public NormalizedRGBA getRGBA() {
         if (useColorSensor) {

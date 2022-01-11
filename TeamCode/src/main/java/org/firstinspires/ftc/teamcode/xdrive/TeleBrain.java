@@ -15,8 +15,6 @@ public class TeleBrain {
     double fixedHeading = 0;
     double armOffset = 0.0;
     final double ARM_SPEED = 0.05;
-    double zPos = 0;
-    double xyPos = 0;
     boolean lastTMode = false;
 
 
@@ -94,38 +92,27 @@ public class TeleBrain {
                          boolean full_extension, boolean full_retraction, boolean outTakePos,
                          boolean intakePos, boolean wrist_up, boolean wrist_down) {
 
-        if (wrist_up) robot.intake.setWristOffset(robot.intake.getWristOffset() + .01);
-        if (wrist_down) robot.intake.setWristOffset(robot.intake.getWristOffset() - .01);
-        robot.intake.wristMove();
+        if (wrist_up) robot.intake.setXYPosition(robot.intake.getXYPosition() + .01);
+        if (wrist_down) robot.intake.setXYPosition(robot.intake.getXYPosition() - .01);
 
         // PUSHER **************************
         if (pusher_cycle && robot.intake.pusherTimer == null) {
             robot.intake.pusherStart(500);
-        } else if (robot.intake.pusherTimer != null) robot.intake.pusherMaint();
+        } else if (robot.intake.pusherTimer != null) robot.intake.pusherMaint(); // TODO: should be part of a common update()
 
         // ARM **************************************
         if (Robot.useArm) {
-            if (full_retraction) {
-                zPos = Robot.ARM_PARK_POS;
-            } else if (full_extension) {
-                zPos = Robot.ARM_LAYER1_POS;
-            }
-//            else if (arm_intake) {
-//                armPos = Robot.ARM_INTAKE_POS;
-//            }
-            else if (intakePos) {
-                zPos = Robot.ARM_INTAKE_POS;
-                robot.intake.wristMove(.53);
-            }//easter eggo
-            else if (outTakePos) {
-                zPos = Robot.ARM_LAYER1_POS;
-                robot.intake.wristMove(.03);
-            } else
-                zPos += z_power;
-                xyPos += xy_power;
-            zPos = Utility.clipToRange(zPos, 1000, 0);
-            robot.intake.setGantryPosition(zPos, xyPos);
+            double zPos = robot.intake.getZPosition();
+
+            if (full_retraction)  zPos = Robot.ARM_PARK_POS;
+            else if (full_extension) zPos = Robot.ARM_LAYER1_POS;
+            else if (intakePos) zPos = Robot.ARM_INTAKE_POS;
+            else if (outTakePos) zPos = Robot.ARM_LAYER1_POS;
+            else zPos += z_power;
+
+            robot.intake.setZPosition(zPos);
         }
+        // TODO: call intake.update() or let RR drive do it.
     }
 
     public void doCarousel(double carousel_power, boolean carousel_cycle_left,
