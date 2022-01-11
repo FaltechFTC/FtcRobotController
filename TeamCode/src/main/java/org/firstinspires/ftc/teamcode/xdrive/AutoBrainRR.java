@@ -178,17 +178,14 @@ public class AutoBrainRR {
     }
 
     public void blue1() throws InterruptedException {
-        Pose2d startPose = new Pose2d(-36, -60.4, Math.toRadians(-90));//TODO fix the x,y
-        Pose2d sharedHubPose = new Pose2d(startPose.getX() - 15, startPose.getY() - 26, Math.toRadians(90 - 25));
-        Pose2d carouselPose = new Pose2d(startPose.getX() + 30, startPose.getY() - 11, Math.toRadians(90));
-        Pose2d parkPose = new Pose2d(carouselPose.getX() - 1, carouselPose.getY() - 24, Math.toRadians(0));
-        Pose2d warePose = new Pose2d(carouselPose.getX() - 106, carouselPose.getY() + 15, Math.toRadians(0));
-
-        double pauseSeconds = .25;
+        Pose2d startPose = new Pose2d(-36, 60.4, Math.toRadians(-90));//TODO fix the x,y
+        Pose2d sharedHubPose = new Pose2d(-22.19, 35.65, Math.toRadians(315));//TODO
+        Pose2d carouselPose = new Pose2d(-61.93, 38.89, Math.toRadians(290));
+        Pose2d parkPose = new Pose2d(-61.85, 35.96, Math.toRadians(0));
+        Pose2d beforeWarhoseGap = new Pose2d(16.96, 64.93, Math.toRadians(0));
+        Pose2d warePose = new Pose2d(45.16, 64.93, Math.toRadians(0));
 
         drive.setPoseEstimate(startPose);
-
-//        waitForStart();
 
         Trajectory traj2hub = drive.trajectoryBuilder(startPose, true)
                 .splineToLinearHeading(sharedHubPose, sharedHubPose.getHeading())
@@ -201,7 +198,11 @@ public class AutoBrainRR {
                 .splineToLinearHeading(parkPose, parkPose.getHeading())
                 .build();
 
-        Trajectory trajWarePark = drive.trajectoryBuilder(carouselPose)
+        Trajectory trajWareGap = drive.trajectoryBuilder(carouselPose)
+                .splineToLinearHeading(beforeWarhoseGap, beforeWarhoseGap.getHeading())
+                .build();
+
+        Trajectory trajWarePark = drive.trajectoryBuilder(beforeWarhoseGap)
                 .lineTo(new Vector2d(warePose.getX(), warePose.getY()))
                 .build();
 
@@ -216,8 +217,9 @@ public class AutoBrainRR {
         drive.followTrajectorySequence(trajectories);
 
         //TODO remember to start spinner
-        driftDrive(DRIFT_XPOW, DRIFT_YPOW, 3);
+        driftDrive(DRIFT_XPOW, DRIFT_YPOW, 5);
         //TODO remember to stop spinner
+        driftDrive(-DRIFT_XPOW, -DRIFT_YPOW, 3);
         drive.update();
         Pose2d afterDuckPose = drive.getPoseEstimate();
 
@@ -226,6 +228,7 @@ public class AutoBrainRR {
 
         boolean doWarehousePark = true;
         if (doWarehousePark) {
+            tsBuilder.addTrajectory(trajWareGap);
             tsBuilder.addTrajectory(trajWarePark)
                     .turn(Math.toRadians(-90));
         } else {

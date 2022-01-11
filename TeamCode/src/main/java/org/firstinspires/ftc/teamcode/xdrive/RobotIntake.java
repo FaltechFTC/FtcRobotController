@@ -79,6 +79,7 @@ a claw system*/
         if (useCarousel) carousel = hwMap.get(DcMotorSimple.class, "carousel");
         if (useDistanceSensor) distanceSensor = hwMap.get(DistanceSensor.class, "distanceSensor");
 
+        armEncoder = hwMap.get(DcMotor.class, "frdrive");
 
         // Define and initialize ALL installed servos.
         intakePusher = hwMap.get(Servo.class, "pusher");

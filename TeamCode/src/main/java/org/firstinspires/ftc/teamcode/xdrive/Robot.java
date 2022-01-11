@@ -75,7 +75,7 @@ a claw system*/
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
-    private DcMotor armMotorEncoder = hwMap.get(DcMotor.class, "frdrive");
+    private DcMotor armMotorEncoder;
     LynxModule.BulkCachingMode bulkReadMode = LynxModule.BulkCachingMode.AUTO;
 
     private ElapsedTime period = new ElapsedTime();
@@ -133,6 +133,8 @@ a claw system*/
         // Define and initialize ALL installed servos.
         intakePusher = hwMap.get(Servo.class, "pusher");
         intakeWrist = hwMap.get(Servo.class, "wrist");
+
+        armMotorEncoder = hwMap.get(DcMotor.class, "frdrive");
 
         magnetEngage();
         //wristMove();
