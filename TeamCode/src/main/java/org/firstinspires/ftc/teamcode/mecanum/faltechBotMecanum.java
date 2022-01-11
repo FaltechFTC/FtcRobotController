@@ -81,7 +81,7 @@ public class faltechBotMecanum {
 
     /* setting up color sensor*/
     float gain = 2;
-    NormalizedColorSensor colorSensor;
+
     /* Constructor */
 
 
@@ -90,7 +90,7 @@ public class faltechBotMecanum {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
-        colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
+
         //gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("gyro");
         // Define and Initialize Motors
         front_left = hwMap.get(DcMotor.class, "fldrive");
@@ -121,7 +121,6 @@ public class faltechBotMecanum {
 //        rightClaw = hwMap.get(Servo.class, "right_hand");
 //        leftClaw.setPosition(MID_SERVO);
 //        rightClaw.setPosition(MID_SERVO);
-        colorSensor.setGain(gain);
 
     }
 
@@ -221,9 +220,7 @@ public class faltechBotMecanum {
         back_right.setPower(rightPower);
     }
 
-    public NormalizedRGBA getRGBA() {
-        return colorSensor.getNormalizedColors();
-    }
+
 
 
 }

@@ -40,12 +40,6 @@ public class NormalMecDriveVision extends OpMode {
         - Incorporate dead stick logic
         */
 
-        robot.setDrive(forward, strafe, rotate, 1);
-        NormalizedRGBA colors = robot.getRGBA();
-        telemetry.addLine()
-                .addData("Red", "%.3f", colors.red)
-                .addData("Green", "%.3f", colors.green)
-                .addData("Blue", "%.3f", colors.blue);
-        telemetry.update();
+
     }
 }

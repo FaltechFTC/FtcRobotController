@@ -492,38 +492,32 @@ public class VisionBrain {
                     if (winner == null) {
                         winner = null;
                     }
-                    if(winner.getBottom()>500){
+                    if (winner.getBottom() > 500) {
                         winner = null;
-                    }
-                    else {
-                        if(recognition.getLabel().equals("Cube")){
+                    } else {
+                        if (recognition.getLabel().equals("Cube")) {
                             winner = winner;
                         }
-                        if (recognition.getLabel().equals("Ball")){
+                        if (recognition.getLabel().equals("Ball")) {
                             winner = winner;
                         }
-                        if (recognition.getLabel().equals("Marker")){
+                        if (recognition.getLabel().equals("Marker")) {
                             winner = winner;
                         }
-                        if (recognition.getLabel().equals("Duck")){
-                            if(winner.getLabel().equals("Duck")){
-                                if(recognition.getConfidence()> winner.getConfidence()){
+                        if (recognition.getLabel().equals("Duck")) {
+                            if (winner.getLabel().equals("Duck")) {
+                                if (recognition.getConfidence() > winner.getConfidence()) {
                                     winner = recognition;
-                                }
-                                else if(recognition.getConfidence()== winner.getConfidence()){
+                                } else if (recognition.getConfidence() == winner.getConfidence()) {
                                     winner = recognition;
-                                }
-                                else if(recognition.getConfidence()< winner.getConfidence()){
+                                } else if (recognition.getConfidence() < winner.getConfidence()) {
                                     winner = winner;
                                 }
-                            }
-                            else if(winner.getLabel().equals("Ball")){
+                            } else if (winner.getLabel().equals("Ball")) {
                                 winner = recognition;
-                            }
-                            else if (winner.getLabel().equals("Cube")){
+                            } else if (winner.getLabel().equals("Cube")) {
                                 winner = recognition;
-                            }
-                            else if (winner.getLabel().equals("Marker")){
+                            } else if (winner.getLabel().equals("Marker")) {
                                 winner = recognition;
                             }
                         }
@@ -531,7 +525,7 @@ public class VisionBrain {
                 }
             } else opmode.telemetry.addData("Status", "Recognitions is NULL");
         } else opmode.telemetry.addData("Status", "TFOD is NULL");
-        if (winner == null || winner.getLabel().equals("Marker")||winner.getLabel().equals("Ball")||winner.getLabel().equals("Cube")) {
+        if (winner == null || winner.getLabel().equals("Marker") || winner.getLabel().equals("Ball") || winner.getLabel().equals("Cube")) {
             returnvalue = 4;
             return returnvalue;
         } else {
