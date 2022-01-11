@@ -22,46 +22,6 @@ public class Tele extends OpMode {
         doIntake();
         doCarousel();
 
-        // OTHER *********************************************
-        /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        qfkjvliuFAg;QOIHFBAVPIUBIUAWEFDC
-        'R
-        'abvs
-        bdraba
-        NT
-        b
-        arnfgar
-        tsnm
-        ws57ktygxm
-        s 'r6tzfcJP}HA$"O%Emrda54prfyh
-        ]54erd
-         agove
-         r]dyho5
-         haerd
-         [hae
-         ]rdh
-          a5er
-          h
-          3eaorh{a
-          'hrb
-          }{E z;fd
-
-
-         */
         brain.robot.reportEncoders();
         //robot.reportColor();
         //telemetry.addData("cycle time (ms): ", timer.milliseconds() / cycles);
@@ -87,8 +47,8 @@ public class Tele extends OpMode {
 
     public void doIntake() {
 //        double pusher_pos = gamepad2.left_trigger;
-        double arm_power = -4.0 * Utility.deadStick(gamepad2.left_stick_y);
-        if (arm_power > 0) arm_power *= 2;
+        double zPower = -4.0 * Utility.deadStick(gamepad2.left_stick_y/2);if (zPower > 0) zPower *= 2;
+        double xyPower = -4.0 * Utility.deadStick(gamepad2.left_stick_x/2);if (xyPower>0) xyPower *=2;
         boolean pusher_cycle = gamepad1.left_bumper || gamepad2.left_bumper;
         boolean arm_park = gamepad1.y || gamepad2.y;
         boolean arm_layer1 = gamepad1.x || gamepad2.x;
@@ -98,7 +58,7 @@ public class Tele extends OpMode {
         boolean wrist_up = gamepad2.dpad_up;
         boolean wrist_down = gamepad2.dpad_down;
 
-        brain.doIntake(arm_power, pusher_cycle, arm_park,
+        brain.doIntake(zPower, xyPower, pusher_cycle, arm_park,
                 arm_layer1, outTakePos, intakePos, wrist_up, wrist_down);
     }
 
@@ -107,11 +67,6 @@ public class Tele extends OpMode {
         boolean carousel_cycle_left = gamepad2.dpad_left;
         boolean carousel_cycle_right = gamepad2.dpad_right;
         brain.doCarousel(carousel_power, carousel_cycle_left, carousel_cycle_right);
-    }
-
-    public void DeathtoU() {
-        int death = 11;
-        telemetry.addData("I will kill u tonight at ", death);
     }
 
     public void saveLastPos() {

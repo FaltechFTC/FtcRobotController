@@ -31,7 +31,7 @@ public class Auto extends LinearOpMode {
     }
 
     public void doMission() throws Exception {
-        brain.autoPosScore1();
+        brain.autoNothing();
     }
 
 }

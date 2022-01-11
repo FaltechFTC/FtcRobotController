@@ -20,6 +20,7 @@ import java.util.List;
 
 @Config
 public class RobotDrive {
+    public RobotIntake intake = new RobotIntake();
     static final boolean useIMU = true;
     public static double zeroHeadingOffset = 0;
     static boolean useDistanceSensor = false;
@@ -89,6 +90,7 @@ public class RobotDrive {
 
         // Set all motors to run without encoders.
         setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.init(ahwMap, t);
     }
 
     public void setBulkReadMode(LynxModule.BulkCachingMode mode) {

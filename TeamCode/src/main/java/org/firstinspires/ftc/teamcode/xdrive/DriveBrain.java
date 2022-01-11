@@ -18,22 +18,19 @@ import org.firstinspires.ftc.teamcode.Utility;
 @Config
 public class DriveBrain {
 
-    Robot robot;
+    RobotDrive robot;
     VisionBrain vision;
     OpMode opmode;
     private final ElapsedTime runtime = new ElapsedTime();
-    public ElapsedTime carouselTimer = null;
-    public ElapsedTime pusherTimer = null;
     static final double P_DRIVE_COEFF = 0.15;
     static final double P_TURN_COEFF = 0.1;
     static final double HEADING_THRESHOLD = 1;
     int targetArmPos = 0;
     boolean maintArm = false;
     boolean maintTimeout = false;
-    float carouselDirection = 1;
-    public double pushTime = 500;
 
-    public DriveBrain(Robot therobot, OpMode theopmode) {
+
+    public DriveBrain(RobotDrive therobot, OpMode theopmode) {
         robot = therobot;
         opmode = theopmode;
     }
@@ -232,18 +229,18 @@ public class DriveBrain {
             robot.setDrive(forward, 0, 0, power);
         }
 
-        NormalizedRGBA rgba = robot.getRGBA();
+        NormalizedRGBA rgba = robot.intake.getRGBA();
         boolean white = checkWhite(rgba);
 
         while (opModeIsActive() && (runtime.seconds() < timeoutSeconds) && !white) {
-            rgba = robot.getRGBA();
+            rgba = robot.intake.getRGBA();
             white = checkWhite(rgba);
 
             // Display it for the driver.
             opmode.telemetry.addData("white", "%b", white);
             opmode.telemetry.update();
         }
-        carouselMaint();
+        robot.intake.carouselMaint();
         robot.setDriveStop();
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
@@ -292,34 +289,34 @@ public class DriveBrain {
     }
 
     public void carouselMoves(int direction) {
-        if (robot.useCarousel) {
-            robot.carousel.setPower(.3 * direction);
+        if (robot.intake.useCarousel) {
+            robot.intake.carousel.setPower(.3 * direction);
             sleep(2000);
-            robot.carousel.setPower(.4 * direction);
+            robot.intake.carousel.setPower(.4 * direction);
             sleep(500);
-            robot.carousel.setPower(1 * direction);
+            robot.intake.carousel.setPower(1 * direction);
             sleep(800);
-            robot.carousel.setPower(-1 * direction);
+            robot.intake.carousel.setPower(-1 * direction);
             sleep(350);
-            robot.carousel.setPower(0);
+            robot.intake.carousel.setPower(0);
         }
     }
 
     //    public void carouselStart() {
 //        carouselTimer = new ElapsedTime();
 //    }
-    public void carouselMove() {
-        carouselStart(true);
-        if (carouselTimer != null) {
-            if (carouselTimer.milliseconds() > 350) robot.carousel.setPower(.3);
-            else if (carouselTimer.milliseconds() > 700) robot.carousel.setPower(.4);
-            else if (carouselTimer.milliseconds() > 1500) robot.carousel.setPower(1);
-            else {
-                robot.carousel.setPower(0);
-                carouselTimer = null;
-            }
-        }
-    }
+//    public void carouselMove() {
+//        carouselStart(true);
+//        if (carouselTimer != null) {
+//            if (carouselTimer.milliseconds() > 350) robot.intake.carousel.setPower(.3);
+//            else if (carouselTimer.milliseconds() > 700) robot.intake.carousel.setPower(.4);
+//            else if (carouselTimer.milliseconds() > 1500) robot.intake.carousel.setPower(1);
+//            else {
+//                robot.intake.carousel.setPower(0);
+//                carouselTimer = null;
+//            }
+//        }
+//    }
 //    public void pusherStart() {
 //        pusherTimer = new ElapsedTime();
 //    }
@@ -332,55 +329,15 @@ public class DriveBrain {
 //        }
 //    }
 
-    public void carouselMaint() {
-        if (Robot.useCarousel && carouselTimer != null) {
-            double m = carouselTimer.milliseconds();
-            if (m < 600) robot.carousel.setPower((m / 600) * .75 + .25);
-            else if (m < 1350) {
-                robot.carousel.setPower(.85);
-            } else {
-                robot.carousel.setPower(0);
-                carouselTimer = null;
-            }
-        }
-    }
 
-    public void carouselStart(boolean direction) {
-        //true =
-        carouselTimer = new ElapsedTime();
-        carouselDirection = direction ? -1 : 1;
-    }
-
-    public void pusherMaint() {
-        if (pusherTimer != null) {
-            if (pusherTimer.milliseconds() > pushTime) {
-                robot.pusherOpen();
-                pusherTimer = null;
-            }
-        }
-    }
-
-    public void pusherStart(double pushms) {
-        pusherTimer = new ElapsedTime();
-        pushTime = pushms;
-        robot.pusherClose();
-    }
 
     public double getBarcode() {
         return 0.5;
     }
 
     public void maint() {
-        if (maintArm) {
-            robot.setArmMotorPosition(targetArmPos);
-        }
-        carouselMaint();
-        pusherMaint();
-    }
+            robot.intake.update();
 
-    public void setArmMotorPosition(int pos) {
-        targetArmPos = pos;
-        maintArm = true;
     }
 
     public void maintTime(double timeoutSeconds) {
@@ -442,11 +399,11 @@ public class DriveBrain {
 
     public void convertBarcode() {
         if (vision.returnvalue == 1) {
-            setArmMotorPosition(Robot.ARM_LAYER1_POS);
+            robot.intake.setGantryPosition(Robot.ARM_LAYER1_POS,0);
         } else if (vision.returnvalue == 2) {
-            setArmMotorPosition(Robot.ARM_LAYER2_POS);
+            robot.intake.setGantryPosition(Robot.ARM_LAYER2_POS,0);
         } else if (vision.returnvalue == 3) {
-            setArmMotorPosition(Robot.ARM_LAYER3_POS);
+            robot.intake.setGantryPosition(Robot.ARM_LAYER3_POS,0);
         }
     }
 }
