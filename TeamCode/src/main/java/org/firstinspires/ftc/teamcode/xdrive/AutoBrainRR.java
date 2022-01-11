@@ -17,7 +17,7 @@ public class AutoBrainRR {
     public static double DRIFT_YPOW = .11;
     public static double DRIFT_XPOW = -.16;
     public static double TEST_CONFIG = 1.0;
-    SampleMecanumDrive drive;
+    RobotRRDrive drive;
     VisionBrain vision;
     boolean useVision = false;
     Telemetry telemetry;
@@ -42,7 +42,7 @@ public class AutoBrainRR {
 //        telemetry.update();
 
 
-        drive = new SampleMecanumDrive(opmode.hardwareMap);
+        drive = new RobotRRDrive(opmode.hardwareMap);
 //        drive.init(opmode.hardwareMap, telemetry);
 //        drive.setDriveStopModeBreak();
 //        drive.maxUpPower=.3;// slower during auto

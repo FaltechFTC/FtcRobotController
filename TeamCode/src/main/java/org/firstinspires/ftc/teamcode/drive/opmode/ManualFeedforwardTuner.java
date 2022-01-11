@@ -23,6 +23,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.Objects;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /*
  * This routine is designed to tune the open-loop feedforward coefficients. Although it may seem unnecessary,
@@ -41,7 +42,7 @@ import java.util.Objects;
  */
 @Config
 @Autonomous(group = "drive")
-//@Disabled
+@Disabled
 
 public class ManualFeedforwardTuner extends LinearOpMode {
     public static double DISTANCE = 72; // in
