@@ -302,35 +302,6 @@ public class DriveBrain {
         }
     }
 
-    //    public void carouselStart() {
-//        carouselTimer = new ElapsedTime();
-//    }
-//    public void carouselMove() {
-//        carouselStart(true);
-//        if (carouselTimer != null) {
-//            if (carouselTimer.milliseconds() > 350) robot.intake.carousel.setPower(.3);
-//            else if (carouselTimer.milliseconds() > 700) robot.intake.carousel.setPower(.4);
-//            else if (carouselTimer.milliseconds() > 1500) robot.intake.carousel.setPower(1);
-//            else {
-//                robot.intake.carousel.setPower(0);
-//                carouselTimer = null;
-//            }
-//        }
-//    }
-//    public void pusherStart() {
-//        pusherTimer = new ElapsedTime();
-//    }
-//    public void pusherMove() {
-//        pusherStart();
-//        if (pusherTimer!=null) {
-//            if (pusherTimer.milliseconds()>500) {
-//                robot.pusherOpen();
-//            }
-//        }
-//    }
-
-
-
     public double getBarcode() {
         return 0.5;
     }
@@ -397,13 +368,4 @@ public class DriveBrain {
         return inTolerance;
     }
 
-    public void convertBarcode() {
-        if (vision.returnvalue == 1) {
-            robot.intake.setGantryPosition(Robot.ARM_LAYER1_POS,0);
-        } else if (vision.returnvalue == 2) {
-            robot.intake.setGantryPosition(Robot.ARM_LAYER2_POS,0);
-        } else if (vision.returnvalue == 3) {
-            robot.intake.setGantryPosition(Robot.ARM_LAYER3_POS,0);
-        }
-    }
 }

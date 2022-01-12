@@ -56,7 +56,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
  * is explained below.
  **/
 public class VisionBrain {
-    Robot robot = new Robot();
+    RobotDrive robot = new RobotDrive();
     OpMode opmode;
     boolean useWebCam = false;
     boolean showCamera = false;
@@ -541,5 +541,14 @@ public class VisionBrain {
         opmode.telemetry.addData("Return Value", returnvalue);
         opmode.telemetry.update();
         return returnvalue;
+    }
+    public void convertBarcode() {
+        if (returnvalue == 1) {
+            robot.intake.setGantryPosition(Robot.ARM_LAYER1_POS,0);
+        } else if (returnvalue == 2) {
+            robot.intake.setGantryPosition(Robot.ARM_LAYER2_POS,0);
+        } else if (returnvalue == 3) {
+            robot.intake.setGantryPosition(Robot.ARM_LAYER3_POS,0);
+        }
     }
 }

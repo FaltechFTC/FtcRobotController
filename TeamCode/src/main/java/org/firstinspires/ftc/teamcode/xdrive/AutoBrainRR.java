@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
+import org.firstinspires.ftc.teamcode.util.Pose;
 
 @Config
 public class AutoBrainRR {
@@ -19,7 +21,7 @@ public class AutoBrainRR {
     public static double TEST_CONFIG = 1.0;
     RobotRRDrive drive;
     VisionBrain vision;
-    boolean useVision = false;
+    static public boolean useVision = false;
     Telemetry telemetry;
     LinearOpMode opmode;
     ElapsedTime runtime = new ElapsedTime();
@@ -34,38 +36,23 @@ public class AutoBrainRR {
     double mediumTimeout = 3;
     double highTimeout = 5;
     int armMarkerPos = 0;
+    public static boolean doWarehousePark = true;
 
     public void init(LinearOpMode opmode) {
         this.opmode = opmode;
         telemetry = opmode.telemetry;
-//        telemetry.addData("Status", "RunOpMode");
-//        telemetry.update();
-
 
         drive = new RobotRRDrive(opmode.hardwareMap, opmode.telemetry);
-//        drive.init(opmode.hardwareMap, telemetry);
-//        drive.setDriveStopModeBreak();
-//        drive.maxUpPower=.3;// slower during auto
-//        drive.magnetEngage();
-//        //robot.wristMove(0);
-////        telemetry.addData("Status", "Robot Initialized");
-////        telemetry.update();
-//
-//        drive.maxUpPower=.3; // slower during auto
-//        telemetry.addData("Status", "DriveBrain Ready");
-//        telemetry.update();
 
         if (useVision) {
 
             vision = new VisionBrain();
+            vision.activate();
             vision.showCamera = true; // useful for sighting on phone only
             vision.showCameraOD = false; // useful for seeing object detection on phone only
             vision.zoom = 1f;  // 1.0 is no zoom, greater number is greater zoom
             vision.init(opmode);
-//            telemetry.addData("Status", "Vision Ready");
-//            telemetry.update();
 
-            // vision.activate();
         }
     }
 
@@ -82,17 +69,16 @@ public class AutoBrainRR {
         Pose2d sharedHubPose = new Pose2d(startPose.getX() + 15, startPose.getY() + 26, Math.toRadians(90 - 25));
         Pose2d carouselPose = new Pose2d(startPose.getX() - 30, startPose.getY() + 11, Math.toRadians(90));
         Pose2d parkPose = new Pose2d(carouselPose.getX() + 1, carouselPose.getY() + 24, Math.toRadians(0));
+        Pose2d beforeWarehouseGap = new Pose2d(carouselPose.getX() + 106, carouselPose.getY() - 15, Math.toRadians(0));
         Pose2d warePose = new Pose2d(carouselPose.getX() + 106, carouselPose.getY() - 15, Math.toRadians(0));
 
-        double pauseSeconds = .25;
-
         drive.setPoseEstimate(startPose);
-
-//        waitForStart();
 
         Trajectory traj2hub = drive.trajectoryBuilder(startPose, true)
                 .splineToLinearHeading(sharedHubPose, sharedHubPose.getHeading())
                 .build();
+        vision.getBarcodeDuck(10);
+        vision.convertBarcode();
         Trajectory traj2carousel = drive.trajectoryBuilder(sharedHubPose, true)
                 .splineToLinearHeading(carouselPose, carouselPose.getHeading())
                 .build();
@@ -115,16 +101,16 @@ public class AutoBrainRR {
 
         drive.followTrajectorySequence(trajectories);
 
-        //TODO remember to start spinner
-        driftDrive(DRIFT_XPOW, DRIFT_YPOW, 3);
-        //TODO remember to stop spinner
+        drive.intake.carousel.setPower(.35);
+        driftDrive(DRIFT_XPOW, DRIFT_YPOW, 5);
+        drive.intake.carousel.setPower(0);
+        driftDrive(-DRIFT_XPOW, -DRIFT_YPOW, 3);
         drive.update();
         Pose2d afterDuckPose = drive.getPoseEstimate();
 
         drive.setPoseEstimate(carouselPose);
         tsBuilder = drive.trajectorySequenceBuilder(carouselPose);
 
-        boolean doWarehousePark = true;
         if (doWarehousePark) {
             tsBuilder.addTrajectory(trajWarePark)
                     .turn(Math.toRadians(-90));
@@ -141,8 +127,6 @@ public class AutoBrainRR {
         Pose2d startPose = new Pose2d(12.4, -60.4, Math.toRadians(90));
 
         drive.setPoseEstimate(startPose);
-
-//        waitForStart();
 
         while (!opmode.isStopRequested()) {
             double pauseSeconds = .25;
@@ -172,18 +156,21 @@ public class AutoBrainRR {
                     .turn(Math.toRadians(90))
                     .back(.5)
                     .build();
-
             drive.followTrajectorySequence(traj);
         }
     }
 
     public void blue1() throws InterruptedException {
-        Pose2d startPose = new Pose2d(-36, 60.4, Math.toRadians(-90));//TODO fix the x,y
+//        vision.getBarcodeDuck(3);
+//        vision.convertBarcode();
+        Pose2d startPose = new Pose2d(-36, 60.4, Math.toRadians(-90));
         Pose2d sharedHubPose = new Pose2d(-22.19, 35.65, Math.toRadians(315));//TODO
-        Pose2d carouselPose = new Pose2d(-61.93, 38.89, Math.toRadians(290));
+        Pose2d carouselPose = new Pose2d(-61.53, 50.76, Math.toRadians( 330));
         Pose2d parkPose = new Pose2d(-61.85, 35.96, Math.toRadians(0));
-        Pose2d beforeWarhoseGap = new Pose2d(16.96, 64.93, Math.toRadians(0));
-        Pose2d warePose = new Pose2d(45.16, 64.93, Math.toRadians(0));
+        Pose2d beforeStraight = new Pose2d(-47.04, 84.23, Math.toRadians(270));
+        Pose2d warehouseAfterStraight = new Pose2d(45, 84.23, Math.toRadians(0));
+        Pose2d beforeWarehouseGap = new Pose2d(10, 70, Math.toRadians(10));
+        Pose2d warePose = new Pose2d(45, 70, Math.toRadians(0));
 
         drive.setPoseEstimate(startPose);
 
@@ -197,14 +184,20 @@ public class AutoBrainRR {
         Trajectory trajUnitPark = drive.trajectoryBuilder(carouselPose)
                 .splineToLinearHeading(parkPose, parkPose.getHeading())
                 .build();
-
-        Trajectory trajWareGap = drive.trajectoryBuilder(carouselPose)
-                .splineToLinearHeading(beforeWarhoseGap, beforeWarhoseGap.getHeading())
+        Trajectory traj2BeforeStraight = drive.trajectoryBuilder(parkPose)
+                .splineToLinearHeading(beforeStraight, beforeStraight.getHeading())
+                .build();
+        Trajectory traj2Straight = drive.trajectoryBuilder(beforeStraight)
+                .lineTo(new Vector2d(warehouseAfterStraight.getX(), warehouseAfterStraight.getY()))
                 .build();
 
-        Trajectory trajWarePark = drive.trajectoryBuilder(beforeWarhoseGap)
-                .lineTo(new Vector2d(warePose.getX(), warePose.getY()))
-                .build();
+//        Trajectory trajWareGap = drive.trajectoryBuilder(carouselPose)
+//                .splineToLinearHeading(beforeWarehouseGap, beforeWarehouseGap.getHeading())
+//                .build();
+//
+//        Trajectory trajWarePark = drive.trajectoryBuilder(beforeWarehouseGap)
+//                .lineTo(new Vector2d(warePose.getX(), warePose.getY()))
+//                .build();
 
         TrajectorySequenceBuilder tsBuilder = drive.trajectorySequenceBuilder(startPose);
 
@@ -216,20 +209,19 @@ public class AutoBrainRR {
 
         drive.followTrajectorySequence(trajectories);
 
-        //TODO remember to start spinner
+        drive.intake.carousel.setPower(-.35);
         driftDrive(DRIFT_XPOW, DRIFT_YPOW, 5);
-        //TODO remember to stop spinner
-        driftDrive(-DRIFT_XPOW, -DRIFT_YPOW, 3);
+        drive.intake.carousel.setPower(0);
+        driftDrive(-DRIFT_XPOW, -DRIFT_YPOW, .5);
         drive.update();
         Pose2d afterDuckPose = drive.getPoseEstimate();
 
         drive.setPoseEstimate(carouselPose);
         tsBuilder = drive.trajectorySequenceBuilder(carouselPose);
 
-        boolean doWarehousePark = true;
         if (doWarehousePark) {
-            tsBuilder.addTrajectory(trajWareGap);
-            tsBuilder.addTrajectory(trajWarePark)
+            tsBuilder.addTrajectory(traj2BeforeStraight);
+            tsBuilder.addTrajectory(traj2Straight)
                     .turn(Math.toRadians(-90));
         } else {
             tsBuilder.addTrajectory(trajUnitPark);
