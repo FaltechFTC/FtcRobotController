@@ -451,9 +451,9 @@ public class VisionBrain {
             returnvalue = 3;
             return returnvalue;
         } else {
-            if (winner.getLeft() > 100 && winner.getLeft() < 500) {
+            if (winner.getLeft() > 100 && winner.getLeft() < 480) {
                 returnvalue = 2;
-            } else if (winner.getLeft() > 500) {
+            } else if (winner.getLeft() > 480) {
                 returnvalue = 3;
             } else {
                 returnvalue = 1;
