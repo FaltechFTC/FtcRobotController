@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -58,6 +59,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 public class VisionBrain {
     RobotDrive robot = new RobotDrive();
     OpMode opmode;
+    private Telemetry telemetry = null;
     boolean useWebCam = false;
     boolean showCamera = false;
     boolean showCameraOD = false;
@@ -87,7 +89,8 @@ public class VisionBrain {
     private static final String LABEL_SECOND_ELEMENT = "Silver Mineral";
 */
 
-    public void init(OpMode theopmode) {
+    public void init(OpMode theopmode, Telemetry t) {
+        telemetry = t;
         opmode = theopmode;
 
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that

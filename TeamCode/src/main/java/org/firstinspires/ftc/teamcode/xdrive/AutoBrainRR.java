@@ -52,6 +52,8 @@ public class AutoBrainRR {
             vision.showCameraOD = false; // useful for seeing object detection on phone only
             vision.zoom = 1f;  // 1.0 is no zoom, greater number is greater zoom
             vision.init(opmode);
+//            telemetry.addData("Status", "Vision Ready");
+//            telemetry.update();
 
         }
     }
