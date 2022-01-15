@@ -84,19 +84,15 @@ public class TeleBrain {
         lastTMode = drive_tmode; // remember
     }
 
-    public void doIntake(double z_power, double xy_power, boolean claw,
+    public void doIntake(double z_power, double xy_power, boolean magnet,
                          boolean full_extension, boolean full_retraction, boolean outTakePos,
-                         boolean intakePos, boolean magnet_activate) {
-        // MAGNET **************************************
-        if (magnet_activate) {
-            robot.intake.magnetEngage();
-        } else {
-            robot.intake.magnetRelease();
-        }
+                         boolean intakePos, boolean clawToggle) {
         // CLAW **************************************
-        if (claw && robot.intake.clawTimer == null) robot.intake.clawStart(500);
-        else if (robot.intake.clawTimer != null)
-            robot.intake.clawMaint(); // TODO: should be part of a common update()
+        if (clawToggle) {
+            robot.intake.clawToggle();
+        }
+        // Magnet **************************************
+        if (magnet && robot.intake.magnetTimer == null) robot.intake.magnetStart(500);
         // ARM **************************************
         if (RobotIntake.useGantry) {
             double zPos = robot.intake.getZPosition();

@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.util.Utility;
 public class Tele extends OpMode {
     public static double xyMultiplier = 0.2;
     public static double zMultiplier = -12.0;
+    boolean clawButtonPressed = false;
     TeleBrain brain = new TeleBrain();
     Robot robot = new Robot();
 
@@ -55,6 +56,8 @@ public class Tele extends OpMode {
         double xyPower = xyMultiplier * Utility.deadStick(gamepad2.left_stick_x);
 //        if (xyPower > 0) xyPower *=2;
         boolean claw = gamepad2.right_bumper;
+        boolean clawToggle = claw && !clawButtonPressed;
+        clawButtonPressed = claw;
         boolean arm_park = gamepad1.y || gamepad2.y;
         boolean arm_layer1 = gamepad1.a || gamepad2.x;//in here magnus thinks that arm layer one means shared hub
         boolean outTakePos = gamepad2.a;
@@ -63,7 +66,7 @@ public class Tele extends OpMode {
         boolean topperPos = gamepad1.x;
         boolean magnet = gamepad2.left_bumper;
 
-        brain.doIntake(zPower, xyPower, claw, arm_park,
+        brain.doIntake(zPower, xyPower, clawToggle, arm_park,
                 arm_layer1, outTakePos, intakePos, magnet);
     }
 

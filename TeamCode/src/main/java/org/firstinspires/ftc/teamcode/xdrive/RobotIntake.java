@@ -34,12 +34,13 @@ public class RobotIntake {
     public int[] curPos = new int[4];
     public BNO055IMU imu = null;
     public DistanceSensor distanceSensor;
-    public double clawTime = 500;
+    public double magnetTime = 500;
     static public float carouselDirection = 1;
     boolean maintArm = false;
     boolean maintTimeout = false;
     public ElapsedTime carouselTimer = null;
-    public ElapsedTime clawTimer = null;
+    public ElapsedTime magnetTimer = null;
+    boolean isClawOpen = false;
 /* we might need to leave this code for the arm here so that we can use it later is we are using
 a claw system*/
 
@@ -51,8 +52,8 @@ a claw system*/
 
     public static double MAGNET_ENGAGE_POS = 0.25;
     public static double MAGNET_RELEASE_POS = 0.7;
-    public static double CLAW_OPEN_POS = 0;
-    public static double CLAW_CLOSE_POS = 0;
+    public static double CLAW_OPEN_POS = 0.25;
+    public static double CLAW_CLOSE_POS = 0.7;
     public static double maxUpPower = 0.7;
     public static double maxDownPower = -0.2;
     public static double verticalPowerConstant = .009;
@@ -162,19 +163,19 @@ a claw system*/
         carouselDirection = direction ? -1 : 1;
     }
 
-    public void clawMaint() {
-        if (clawTimer != null) {
-            if (clawTimer.milliseconds() > clawTime) {
-                clawOpen();
-                clawTimer = null;
+    public void magnetMaint() {
+        if (magnetTimer != null) {
+            if (magnetTimer.milliseconds() > magnetTime) {
+                magnetEngage();
+                magnetTimer = null;
             }
         }
     }
 
-    public void clawStart(double clawms) {
-        clawTimer = new ElapsedTime();
-        clawTime = clawms;
-        clawClose();
+    public void magnetStart(double magnetms) {
+        magnetTimer = new ElapsedTime();
+        magnetTime = magnetms;
+        magnetRelease();
     }
 
     /*
@@ -183,7 +184,7 @@ a claw system*/
     public void update() {
         updateGantry();
         carouselMaint();
-        clawMaint();
+        magnetMaint();
     }
 
     public void setGantryPosition(double zpos, double xypos) {
@@ -237,6 +238,7 @@ a claw system*/
 
     public void clawOpen() {
         claw.setPosition(CLAW_OPEN_POS);
+        isClawOpen = true;
     }
 
     public void magnetEngage() {
@@ -245,10 +247,18 @@ a claw system*/
 
     public void clawClose() {
         claw.setPosition(CLAW_CLOSE_POS);
+        isClawOpen = false;
     }
 
     public void magnetRelease() {
         magnet.setPosition(MAGNET_RELEASE_POS);
+    }
+
+    public void clawToggle() {
+        if (isClawOpen) {
+            clawClose();
+        }
+        else clawOpen();
     }
 
 }
