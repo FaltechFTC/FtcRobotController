@@ -66,8 +66,8 @@ public class Tele extends OpMode {
         boolean topperPos = gamepad1.x;
         boolean magnet = gamepad2.left_bumper;
 
-        brain.doIntake(zPower, xyPower, clawToggle, arm_park,
-                arm_layer1, outTakePos, intakePos, magnet);
+        brain.doIntake(zPower, xyPower, magnet, arm_park,
+                arm_layer1, outTakePos, intakePos, clawToggle);
     }
 
     public void doCarousel() {
