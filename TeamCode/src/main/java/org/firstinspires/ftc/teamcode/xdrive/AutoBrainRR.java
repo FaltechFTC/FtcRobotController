@@ -44,11 +44,12 @@ public class AutoBrainRR {
         if (useVision) {
 
             vision = new VisionBrain();
-            vision.activate();
-            vision.showCamera = true; // useful for sighting on phone only
-            vision.showCameraOD = false; // useful for seeing object detection on phone only
+            vision.useWebCam = true;
+            vision.showCamera = false; // useful for sighting on phone only
+            vision.showCameraOD = true; // useful for seeing object detection on phone only
             vision.zoom = 1f;  // 1.0 is no zoom, greater number is greater zoom
             vision.init(opmode, telemetry);
+            vision.activate();
 //            telemetry.addData("Status", "Vision Ready");
 //            telemetry.update();
 
@@ -77,7 +78,7 @@ public class AutoBrainRR {
                 .splineToLinearHeading(sharedHubPose, sharedHubPose.getHeading())
                 .build();
         vision.getBarcodeDuck(10);
-        vision.convertBarcode();
+    //    vision.convertBarcode();
         Trajectory traj2carousel = drive.trajectoryBuilder(sharedHubPose, true)
                 .splineToLinearHeading(carouselPose, carouselPose.getHeading())
                 .build();
