@@ -30,6 +30,6 @@ public class AutoBlue2 extends LinearOpMode {
     }
 
     public void doMission() throws Exception {
-        brain.autoPark2Blue();
+       // brain.autoPark2Blue();
     }
 }

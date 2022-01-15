@@ -31,7 +31,7 @@ public class TeleTesterVision extends OpMode {
 
     @Override
     public void loop() {
-        visionBrain.getBarcodeDuck(2000);
+        visionBrain.getBarcodeTSEUpdated(2000);
         //teleDrive();
     }
 
