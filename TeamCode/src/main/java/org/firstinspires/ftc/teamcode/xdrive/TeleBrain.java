@@ -1,28 +1,23 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.util.Utility;
-
+@Config
 public class TeleBrain {
+    static final double DRIVE_OVERDRIVE_MULTIPLE = 2;
+    final double ARM_SPEED = 0.05;
     RobotDrive robot = new RobotDrive();
-
-
     DriveBrain driveBrain;
     double fixedHeading = 0;
     double armOffset = 0.0;
-    final double ARM_SPEED = 0.05;
     boolean lastTMode = false;
-
-
     ElapsedTime timer;
     int cycles;
-
-    static final double DRIVE_OVERDRIVE_MULTIPLE = 2;
-
     Telemetry telemetry;
 
     public void init(OpMode opmode) {
@@ -33,7 +28,8 @@ public class TeleBrain {
         timer = new ElapsedTime();
         cycles = 0;
 
-        telemetry.addData("Zero Offset", Robot.zeroHeadingOffset);
+
+        telemetry.addData("Zero Offset", RobotDrive.zeroHeadingOffset);
 
     }
 
@@ -44,7 +40,7 @@ public class TeleBrain {
             robot.setZeroHeading();
         }
 
-        // DRIVING *******************************************
+        // DRIVING **************************************
         if (drive_overdrive) {
             drive_forward *= DRIVE_OVERDRIVE_MULTIPLE;
             drive_strafe *= DRIVE_OVERDRIVE_MULTIPLE;
@@ -88,37 +84,51 @@ public class TeleBrain {
         lastTMode = drive_tmode; // remember
     }
 
-    public void doIntake(double z_power, double xy_power, boolean pusher_cycle,
+    public void doIntake(double z_power, double xy_power, boolean claw,
                          boolean full_extension, boolean full_retraction, boolean outTakePos,
-                         boolean intakePos, boolean wrist_up, boolean wrist_down) {
-
-        if (wrist_up) robot.intake.setXYPosition(robot.intake.getXYPosition() + .01);
-        if (wrist_down) robot.intake.setXYPosition(robot.intake.getXYPosition() - .01);
-
-        // PUSHER **************************
-        if (pusher_cycle && robot.intake.pusherTimer == null) {
-            robot.intake.pusherStart(500);
-        } else if (robot.intake.pusherTimer != null) robot.intake.pusherMaint(); // TODO: should be part of a common update()
-
+                         boolean intakePos, boolean magnet_activate) {
+        // MAGNET **************************************
+        if (magnet_activate) {
+            robot.intake.magnetEngage();
+        } else {
+            robot.intake.magnetRelease();
+        }
+        // CLAW **************************************
+        if (claw && robot.intake.clawTimer == null) robot.intake.clawStart(500);
+        else if (robot.intake.clawTimer != null)
+            robot.intake.clawMaint(); // TODO: should be part of a common update()
         // ARM **************************************
-        if (Robot.useArm) {
+        if (RobotIntake.useGantry) {
             double zPos = robot.intake.getZPosition();
+            double xyPos = robot.intake.getXYPosition();
 
-            if (full_retraction)  zPos = Robot.ARM_PARK_POS;
-            else if (full_extension) zPos = Robot.ARM_LAYER1_POS;
-            else if (intakePos) zPos = Robot.ARM_INTAKE_POS;
-            else if (outTakePos) zPos = Robot.ARM_LAYER1_POS;
-            else zPos += z_power;
+//            if (full_retraction) {
+//                zPos = Robot.ARM_PARK_POS;
+//                xyPos = Robot.ARM_PARK_POS;
+//            } else if (full_extension) {
+//                zPos = Robot.ARM_LAYER1_POS;
+//                xyPos = Robot.ARM_LAYER1_POS;
+//            } else if (intakePos) {
+//                zPos = Robot.ARM_INTAKE_POS;
+//                xyPos = Robot.ARM_INTAKE_POS;
+//            } else if (outTakePos) {
+//                zPos = Robot.ARM_LAYER1_POS;
+//                xyPos = Robot.ARM_LAYER1_POS;
+//            } else {
+                zPos += z_power;
+                xyPos += xy_power;
+
 
             robot.intake.setZPosition(zPos);
+            robot.intake.setXYPosition(xyPos);
         }
-        // TODO: call intake.update() or let RR drive do it.
+        robot.intake.update();
     }
 
     public void doCarousel(double carousel_power, boolean carousel_cycle_left,
                            boolean carousel_cycle_right) {
 
-        if (Robot.useCarousel) {
+        if (RobotIntake.useCarousel) {
             if (carousel_cycle_left && robot.intake.carouselTimer == null) {
                 robot.intake.carouselStart(false);
             } else if (carousel_cycle_right && robot.intake.carouselTimer == null) {
@@ -129,7 +139,6 @@ public class TeleBrain {
                 robot.intake.carouselMaint();
             } else
                 robot.intake.carousel.setPower(carousel_power);
-//            telemetry.addData("Carousel Power:", carousel_power);
         }
     }
 

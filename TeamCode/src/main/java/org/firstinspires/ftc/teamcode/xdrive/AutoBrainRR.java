@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -9,10 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.util.Pose;
 
 @Config
 public class AutoBrainRR {
@@ -51,7 +48,7 @@ public class AutoBrainRR {
             vision.showCamera = true; // useful for sighting on phone only
             vision.showCameraOD = false; // useful for seeing object detection on phone only
             vision.zoom = 1f;  // 1.0 is no zoom, greater number is greater zoom
-            vision.init(opmode);
+            vision.init(opmode, telemetry);
 //            telemetry.addData("Status", "Vision Ready");
 //            telemetry.update();
 
@@ -166,8 +163,8 @@ public class AutoBrainRR {
 //        vision.getBarcodeDuck(3);
 //        vision.convertBarcode();
         Pose2d startPose = new Pose2d(-36, 60.4, Math.toRadians(-90));
-        Pose2d sharedHubPose = new Pose2d(-22.19, 35.65, Math.toRadians(315));//TODO
-        Pose2d carouselPose = new Pose2d(-61.53, 50.76, Math.toRadians( 330));
+        Pose2d sharedHubPose = new Pose2d(-22.19, 35.65, Math.toRadians(315));
+        Pose2d carouselPose = new Pose2d(-61.53, 50.76, Math.toRadians(330));
         Pose2d parkPose = new Pose2d(-61.85, 35.96, Math.toRadians(0));
         Pose2d beforeStraight = new Pose2d(-47.04, 84.23, Math.toRadians(270));
         Pose2d warehouseAfterStraight = new Pose2d(45, 84.23, Math.toRadians(0));

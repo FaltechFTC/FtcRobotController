@@ -46,19 +46,18 @@ public class TeleJ extends OpMode {
     }
 
     public void doIntake() {
-        double arm_power = -4.0 * Utility.deadStick(gamepad2.left_stick_y);
-        if (arm_power > 0) arm_power *= 2;
+        double zPower = -4.0 * Utility.deadStick(gamepad2.left_stick_y);
+        if (zPower > 0) zPower *= 2;
         double xypower = -4.0 * Utility.deadStick(gamepad2.left_stick_y);
-        if (arm_power > 0) arm_power *= 2;
+        if (xypower > 0) xypower *= 2;
         boolean pusher_cycle = gamepad1.a || gamepad2.left_bumper;
         boolean arm_park = gamepad1.y || gamepad2.y;
         boolean arm_layer1 = gamepad1.x || gamepad2.x;
         boolean outTakePos = gamepad2.a;
         boolean intakePos = gamepad2.b || gamepad1.b;
-        boolean wrist_up = gamepad2.dpad_up;
-        boolean wrist_down = gamepad2.dpad_down;
-        brain.doIntake(arm_power,xypower, pusher_cycle, arm_park,
-                arm_layer1, outTakePos, intakePos, wrist_up, wrist_down);
+        boolean magnet_engage = gamepad2.dpad_up;
+        brain.doIntake(zPower, xypower, pusher_cycle, arm_park,
+                arm_layer1, outTakePos, intakePos, magnet_engage);
     }
 
     public void doCarousel() {

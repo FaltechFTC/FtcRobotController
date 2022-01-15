@@ -34,33 +34,37 @@ public class RobotIntake {
     public int[] curPos = new int[4];
     public BNO055IMU imu = null;
     public DistanceSensor distanceSensor;
-    public double pushTime = 500;
+    public double clawTime = 500;
     static public float carouselDirection = 1;
     boolean maintArm = false;
     boolean maintTimeout = false;
     public ElapsedTime carouselTimer = null;
-    public ElapsedTime pusherTimer = null;
+    public ElapsedTime clawTimer = null;
 /* we might need to leave this code for the arm here so that we can use it later is we are using
 a claw system*/
 
     //    public DcMotor  leftArm     = null;
-    public Servo intakePusher = null;
+    public Servo magnet = null;
+    public Servo claw = null;
     public double zPosition = 0;
     public double xyPosition = 0;
 
     public static double MAGNET_ENGAGE_POS = 0.25;
     public static double MAGNET_RELEASE_POS = 0.7;
-    public static double maxUpPower = 0.6;
-    public static double maxDownPower = -0.3;
-    public static double verticalPowerConstant = .012;
-    public static double MAX_HPOS = .65, MIN_HPOS = 0.2;
-    public static double MAX_VPOS = 0, MIN_VPOS = 400;
+    public static double CLAW_OPEN_POS = 0;
+    public static double CLAW_CLOSE_POS = 0;
+    public static double maxUpPower = 0.7;
+    public static double maxDownPower = -0.2;
+    public static double verticalPowerConstant = .009;
+    public static double MAX_HPOS = .65, MIN_HPOS = 0;
+    public static double MAX_VPOS = 3400, MIN_VPOS = 0;
+    public static double ARM_TOLERANCE = 3;
 
 
     static final int ARM_INTAKE_POS = 65;
-    static final int ARM_LAYER1_POS = 224;
-    static final int ARM_LAYER2_POS = 353;
-    static final int ARM_LAYER3_POS = 513;
+    static final int ARM_LAYER1_POS = 678;
+    static final int ARM_LAYER2_POS = 1453;
+    static final int ARM_LAYER3_POS = 2547;
     static final int ARM_PARK_POS = 800; //to-do: set to park position
 
     /* local OpMode members. */
@@ -89,9 +93,13 @@ a claw system*/
 
 
         // Define and initialize ALL installed servos.
-        intakePusher = hwMap.get(Servo.class, "pusher");
+        magnet = hwMap.get(Servo.class, "magnet");
+        claw = hwMap.get(Servo.class, "claw");
         xyServo = hwMap.get(Servo.class, "xyServo");
         zEncoder = hwMap.get(DcMotor.class, "frdrive");
+        zEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        zEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         magnetEngage();
     }
@@ -110,13 +118,15 @@ a claw system*/
             done = updateGantry();
         }
     }
+
     //lets go to halal bros
     //
     public boolean updateGantry() {
         boolean done = false;
-        int currentPositionZ = (int) zEncoder.getCurrentPosition();
+        xyServo.setPosition(xyPosition);
+        int currentPositionZ = (int) -zEncoder.getCurrentPosition();
         int errorz = ((int) zPosition) - currentPositionZ;
-        done = Math.abs(errorz) < 3;
+        done = Math.abs(errorz) < ARM_TOLERANCE;
         double p = 0;
         if (done) {
             p = 0;
@@ -124,7 +134,7 @@ a claw system*/
             p = verticalPowerConstant * errorz;
             p = Utility.clipToRange(p, maxUpPower, maxDownPower);
         }
-        zMotor.setPower(-p);
+        zMotor.setPower(p);
         telemetry.addLine()
                 .addData("GantryPositionZ:", currentPositionZ)
                 .addData("errorZ:", errorz)
@@ -152,30 +162,28 @@ a claw system*/
         carouselDirection = direction ? -1 : 1;
     }
 
-    public void pusherMaint() {
-        if (pusherTimer != null) {
-            if (pusherTimer.milliseconds() > pushTime) {
-                pusherOpen();
-                pusherTimer = null;
+    public void clawMaint() {
+        if (clawTimer != null) {
+            if (clawTimer.milliseconds() > clawTime) {
+                clawOpen();
+                clawTimer = null;
             }
         }
     }
 
-    public void pusherStart(double pushms) {
-        pusherTimer = new ElapsedTime();
-        pushTime = pushms;
-        pusherClose();
+    public void clawStart(double clawms) {
+        clawTimer = new ElapsedTime();
+        clawTime = clawms;
+        clawClose();
     }
 
     /*
         update() is called by drive.update() to maintain motors and timer based controls
      */
-    public void update () {
-        if (maintArm) {
-            setGantryPosition(0, 0);
-        }
+    public void update() {
+        updateGantry();
         carouselMaint();
-        pusherMaint();
+        clawMaint();
     }
 
     public void setGantryPosition(double zpos, double xypos) {
@@ -185,7 +193,6 @@ a claw system*/
 
     public double setXYPosition(double pos) {
         xyPosition = Utility.clipToRange(pos, MAX_HPOS, MIN_HPOS);
-        xyServo.setPosition(xyPosition);
         return xyPosition;
     }
 
@@ -194,13 +201,13 @@ a claw system*/
     }
 
     public double setZPosition(double pos) {
-        zPosition =  Utility.clipToRange(pos, MAX_VPOS, MIN_VPOS);
-        updateGantry(); // TODO: perhaps shouldn't be called here and should be called from update() only?
+        zPosition = Utility.clipToRange(pos, MAX_VPOS, MIN_VPOS);
+//        updateGantry(); // TODO: perhaps shouldn't be called here and should be called from update() only?
         return zPosition;
     }
 
     public double getZPosition() {
-        return xyPosition;
+        return zPosition;
     }
 
     public NormalizedRGBA getRGBA() {
@@ -228,21 +235,20 @@ a claw system*/
         }
     }
 
-    public void pusherOpen() {
-        intakePusher.setPosition(MAGNET_ENGAGE_POS);
+    public void clawOpen() {
+        claw.setPosition(CLAW_OPEN_POS);
     }
 
     public void magnetEngage() {
-        intakePusher.setPosition(MAGNET_ENGAGE_POS);
+        magnet.setPosition(MAGNET_ENGAGE_POS);
     }
 
-
-    public void pusherClose() {
-        intakePusher.setPosition(MAGNET_RELEASE_POS);
+    public void clawClose() {
+        claw.setPosition(CLAW_CLOSE_POS);
     }
 
     public void magnetRelease() {
-        intakePusher.setPosition(MAGNET_RELEASE_POS);
+        magnet.setPosition(MAGNET_RELEASE_POS);
     }
 
 }

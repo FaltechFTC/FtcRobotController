@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.util.Utility;
-
+@Config
 @TeleOp(name = "Tele", group = "7079")
 public class Tele extends OpMode {
+    public static double xyMultiplier = 0.2;
+    public static double zMultiplier = -12.0;
     TeleBrain brain = new TeleBrain();
     Robot robot = new Robot();
 
@@ -36,9 +39,9 @@ public class Tele extends OpMode {
 
         boolean drive_heading_lock = gamepad1.left_trigger > 0.05;
         boolean drive_tmode = gamepad1.right_trigger > 0.05;
-        boolean drive_overdrive = gamepad1.right_bumper || gamepad2.right_bumper;
+        boolean drive_overdrive = gamepad1.right_bumper;
         boolean drive_rotate_90 = gamepad1.dpad_left;
-        boolean drive_global = gamepad1.a;
+        boolean drive_global = gamepad1.dpad_right;
         boolean reset_heading = gamepad1.dpad_down;
 
         brain.doDriving(drive_forward, drive_strafe, drive_rotate, drive_heading_lock,
@@ -47,19 +50,21 @@ public class Tele extends OpMode {
 
     public void doIntake() {
 //        double pusher_pos = gamepad2.left_trigger;
-        double zPower = -4.0 * Utility.deadStick(gamepad2.left_stick_y/2);if (zPower > 0) zPower *= 2;
-        double xyPower = -4.0 * Utility.deadStick(gamepad2.left_stick_x/2);if (xyPower>0) xyPower *=2;
-        boolean pusher_cycle = gamepad1.left_bumper || gamepad2.left_bumper;
+        double zPower = zMultiplier * Utility.deadStick(gamepad2.left_stick_y);
+        if (zPower > 0) zPower *= 2;
+        double xyPower = xyMultiplier * Utility.deadStick(gamepad2.left_stick_x);
+//        if (xyPower > 0) xyPower *=2;
+        boolean claw = gamepad2.right_bumper;
         boolean arm_park = gamepad1.y || gamepad2.y;
-        boolean arm_layer1 = gamepad1.x || gamepad2.x;
+        boolean arm_layer1 = gamepad1.a || gamepad2.x;//in here magnus thinks that arm layer one means shared hub
         boolean outTakePos = gamepad2.a;
         boolean intakePos = gamepad2.b || gamepad1.b;
+        boolean scoreTop = gamepad1.y;
+        boolean topperPos = gamepad1.x;
+        boolean magnet = gamepad2.left_bumper;
 
-        boolean wrist_up = gamepad2.dpad_up;
-        boolean wrist_down = gamepad2.dpad_down;
-
-        brain.doIntake(zPower, xyPower, pusher_cycle, arm_park,
-                arm_layer1, outTakePos, intakePos, wrist_up, wrist_down);
+        brain.doIntake(zPower, xyPower, claw, arm_park,
+                arm_layer1, outTakePos, intakePos, magnet);
     }
 
     public void doCarousel() {
