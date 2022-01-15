@@ -48,7 +48,7 @@ a claw system*/
     public Servo magnet = null;
     public Servo claw = null;
     public double zPosition = 0;
-    public double xyPosition = 0;
+    public double xyPosition = MAX_HPOS;
 
     public static double MAGNET_ENGAGE_POS = 0.25;
     public static double MAGNET_RELEASE_POS = 0.7;
@@ -57,7 +57,7 @@ a claw system*/
     public static double maxUpPower = 0.7;
     public static double maxDownPower = -0.2;
     public static double verticalPowerConstant = .009;
-    public static double MAX_HPOS = .65, MIN_HPOS = 0;
+    public static double MAX_HPOS = 1, MIN_HPOS = 0;
     public static double MAX_VPOS = 3400, MIN_VPOS = 0;
     public static double ARM_TOLERANCE = 3;
 
@@ -136,6 +136,7 @@ a claw system*/
             p = Utility.clipToRange(p, maxUpPower, maxDownPower);
         }
         zMotor.setPower(p);
+
         telemetry.addLine()
                 .addData("GantryPositionZ:", currentPositionZ)
                 .addData("errorZ:", errorz)

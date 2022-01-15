@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.util.Utility;
 @Config
 @TeleOp(name = "Tele", group = "7079")
 public class Tele extends OpMode {
-    public static double xyMultiplier = 0.2;
+    public static double xyMultiplier = -1;
     public static double zMultiplier = -12.0;
     boolean clawButtonPressed = false;
     TeleBrain brain = new TeleBrain();
@@ -54,7 +54,6 @@ public class Tele extends OpMode {
         double zPower = zMultiplier * Utility.deadStick(gamepad2.left_stick_y);
         if (zPower > 0) zPower *= 2;
         double xyPower = xyMultiplier * Utility.deadStick(gamepad2.left_stick_x);
-//        if (xyPower > 0) xyPower *=2;
         boolean claw = gamepad2.right_bumper;
         boolean clawToggle = claw && !clawButtonPressed;
         clawButtonPressed = claw;
