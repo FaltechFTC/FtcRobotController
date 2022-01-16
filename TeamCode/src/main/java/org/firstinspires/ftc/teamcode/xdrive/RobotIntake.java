@@ -178,6 +178,7 @@ a claw system*/
                 magnetTimer = null;
             }
         }
+        magnet.setPosition(magnetPosition);
     }
 
     public void magnetStart(double magnetms) {
