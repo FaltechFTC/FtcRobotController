@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Disabled
 @Autonomous(name = "Auto Generic", group = "7079")
-//@Disabled
+
 public class Auto extends LinearOpMode {
     AutoBrain brain = new AutoBrain();
 
@@ -16,7 +16,7 @@ public class Auto extends LinearOpMode {
 
         telemetry.addData("Status", "Ready to run");    //
         telemetry.update();
-        // Wait for the game to start (driver presses PLAY)
+
         waitForStart();
 
         try {
@@ -24,7 +24,7 @@ public class Auto extends LinearOpMode {
         } catch (Exception e) {
             e.printStackTrace();
             telemetry.addLine("Exception in doMission()");
-            // TODO log this properly
+
         }
 
         brain.robot.setDriveStop();

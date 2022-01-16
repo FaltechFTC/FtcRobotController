@@ -85,7 +85,7 @@ public class AutoBrain {
         try {
             Thread.sleep(milliseconds);
         } catch (Exception e) {
-            // eat it
+
         }
     }
 
@@ -100,7 +100,7 @@ public class AutoBrain {
 
 
 
-    //carousel = false then we don't do carousel, else do carousel
+
 
 
 

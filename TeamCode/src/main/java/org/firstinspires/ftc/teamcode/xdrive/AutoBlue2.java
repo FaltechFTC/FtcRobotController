@@ -13,9 +13,7 @@ public class AutoBlue2 extends LinearOpMode {
     public void runOpMode() {
         brain.init(this);
 
-//        telemetry.addData("Status", "Ready to run");    //
-//        telemetry.update();
-        // Wait for the game to start (driver presses PLAY)
+
         waitForStart();
 
         try {
@@ -30,6 +28,6 @@ public class AutoBlue2 extends LinearOpMode {
     }
 
     public void doMission() throws Exception {
-       // brain.autoPark2Blue();
+
     }
 }

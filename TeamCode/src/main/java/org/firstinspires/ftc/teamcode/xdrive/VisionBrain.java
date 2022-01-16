@@ -57,14 +57,14 @@ import com.acmerobotics.dashboard.FtcDashboard;
  * is explained below.
  **/
 public class VisionBrain {
-    RobotDrive robot = new RobotDrive();
+
     OpMode opmode;
     private Telemetry telemetry = null;
     boolean useWebCam = false;
     boolean showCamera = false;
     boolean showCameraOD = false;
     float zoom = 0.8f;
-    double returnvalue = 0;
+    int returnvalue = 0;
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
@@ -475,7 +475,7 @@ public class VisionBrain {
         return returnvalue;
     }
 
-    public double getBarcodeTSEUpdated(double timeout) {
+    public int getBarcodeTSEUpdated(double timeout) {
         opmode.telemetry.addData("Status", "Processing!");
         Recognition winner = null;
         if (tfod != null) {
@@ -530,15 +530,6 @@ public class VisionBrain {
         opmode.telemetry.update();
         return returnvalue;
     }
-    public void convertBarcode() {
-        if (returnvalue == 1) {
-            robot.intake.setGantryPosition(Robot.ARM_LAYER1_POS,0);
-        } else if (returnvalue == 2) {
-            robot.intake.setGantryPosition(Robot.ARM_LAYER2_POS,0);
-        } else if (returnvalue == 3) {
-            robot.intake.setGantryPosition(Robot.ARM_LAYER3_POS,0);
-        } else{
-            telemetry.addData("No objects found in vision",404);
-        }
+
     }
-}
+

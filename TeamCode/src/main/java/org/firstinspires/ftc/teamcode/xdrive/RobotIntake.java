@@ -65,11 +65,14 @@ a claw system*/
     public static double ARM_TOLERANCE = 3;
 
 
-    static final int ARM_INTAKE_POS = 65;
-    static final int ARM_LAYER1_POS = 678;
-    static final int ARM_LAYER2_POS = 1453;
-    static final int ARM_LAYER3_POS = 2547;
-    static final int ARM_PARK_POS = 800; //to-do: set to park position
+    public static double ARM_INTAKE_POS = 65.0;
+    public static double ARM_LAYER1_POSZ = 678.0;
+    public static double ARM_LAYER2_POSZ = 1453.0;
+    public static double ARM_LAYER3_POSZ = 2547.0;
+    public static double ARM_LAYER1_POSXY = 0.2;
+    public static double ARM_LAYER2_POSXY = 0.5;
+    public static double ARM_LAYER3_POSXY = 0.8;
+    public static double ARM_PARK_POS = 800.0;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
