@@ -12,7 +12,6 @@ public class Tele extends OpMode {
     public static double zMultiplier = -12.0;
     boolean clawButtonPressed = false;
     TeleBrain brain = new TeleBrain();
-    Robot robot = new Robot();
 
     @Override
     public void init() {
@@ -26,7 +25,10 @@ public class Tele extends OpMode {
         doIntake();
         doCarousel();
 
+        brain.robot.intake.update();
+
         brain.robot.reportEncoders();
+        brain.robot.intake.reportIntake();
         //robot.reportColor();
         //telemetry.addData("cycle time (ms): ", timer.milliseconds() / cycles);
         //brain.robot.reportDistance();
@@ -76,19 +78,19 @@ public class Tele extends OpMode {
         brain.doCarousel(carousel_power, carousel_cycle_left, carousel_cycle_right);
     }
 
-    public void saveLastPos() {
-        if (gamepad2.right_bumper && gamepad2.a) {
-            int x = 0;
-            while (x == 3) {
-                double currentwrist = robot.getWristOffset();
-                double currentArm = robot.getArmPosition();
-            }
-            double currentwrist = robot.getWristOffset();
-            double currentArm = robot.getArmPosition();
-
-        }
-
-    }
+//    public void saveLastPos() {
+//        if (gamepad2.right_bumper && gamepad2.a) {
+//            int x = 0;
+//            while (x == 3) {
+//                double currentwrist = robot.getWristOffset();
+//                double currentArm = robot.getArmPosition();
+//            }
+//            double currentwrist = robot.getWristOffset();
+//            double currentArm = robot.getArmPosition();
+//
+//        }
+//
+//    }
 
 }
 //Hi this is matthew, tell me if you see this!

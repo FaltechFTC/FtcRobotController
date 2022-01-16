@@ -30,7 +30,7 @@ public class RobotIntake {
     public DcMotorSimple zMotor = null;
     private DcMotor zEncoder = null;
     //    public DcMotorSimple[] armArray = new DcMotorSimple[1];
-    public DcMotorSimple carousel = null;
+    DcMotorSimple carousel = null;
     public int[] curPos = new int[4];
     public BNO055IMU imu = null;
     public DistanceSensor distanceSensor;
@@ -41,17 +41,20 @@ public class RobotIntake {
     public ElapsedTime carouselTimer = null;
     public ElapsedTime magnetTimer = null;
     boolean isClawOpen = false;
+    double clawPosition = 0;
+    double magnetPosition = 0;
+    double carouselPower = 0;
 /* we might need to leave this code for the arm here so that we can use it later is we are using
 a claw system*/
 
     //    public DcMotor  leftArm     = null;
-    public Servo magnet = null;
-    public Servo claw = null;
+    Servo magnet = null;
+    Servo claw = null;
     public double zPosition = 0;
     public double xyPosition = MAX_HPOS;
 
-    public static double MAGNET_ENGAGE_POS = 0.25;
-    public static double MAGNET_RELEASE_POS = 0.7;
+    public static double MAGNET_ENGAGE_POS = 0.66;
+    public static double MAGNET_RELEASE_POS = 0.5;
     public static double CLAW_OPEN_POS = 0.25;
     public static double CLAW_CLOSE_POS = 0.7;
     public static double maxUpPower = 0.7;
@@ -149,13 +152,14 @@ a claw system*/
     public void carouselMaint() {
         if (useCarousel && carouselTimer != null) {
             double m = carouselTimer.milliseconds();
-            if (m < 600) carousel.setPower((m / 600) * .75 + .25);
+            if (m < 600) carouselPower = ((m / 600) * .75 + .25);
             else if (m < 1350) {
-                carousel.setPower(.85);
+                carouselPower = .85;
             } else {
-                carousel.setPower(0);
+                carouselPower = 0;
                 carouselTimer = null;
             }
+            setCarouselPower(carouselPower);
         }
     }
 
@@ -230,7 +234,12 @@ a claw system*/
                     .addData("L", "%.3f", colors.alpha);
         }
     }
-
+    public void reportIntake() {
+            telemetry.addLine()
+                    .addData("Carousel Power", "%.3f", carouselPower)
+                    .addData("Claw Pos", "%.3f", clawPosition)
+                    .addData("Magnet Pos", "%.3f", magnetPosition);
+    }
     public void reportDistance() {
         if (useDistanceSensor) {
             telemetry.addData("Distance Sensor Reading:", distanceSensor.getDistance(DistanceUnit.INCH));
@@ -240,19 +249,23 @@ a claw system*/
     public void clawOpen() {
         claw.setPosition(CLAW_OPEN_POS);
         isClawOpen = true;
+        clawPosition = CLAW_OPEN_POS;
     }
 
     public void magnetEngage() {
         magnet.setPosition(MAGNET_ENGAGE_POS);
+        magnetPosition = MAGNET_ENGAGE_POS;
     }
 
     public void clawClose() {
         claw.setPosition(CLAW_CLOSE_POS);
         isClawOpen = false;
+        clawPosition = CLAW_CLOSE_POS;
     }
 
     public void magnetRelease() {
         magnet.setPosition(MAGNET_RELEASE_POS);
+        magnetPosition = MAGNET_RELEASE_POS;
     }
 
     public void clawToggle() {
@@ -262,4 +275,8 @@ a claw system*/
         else clawOpen();
     }
 
+    public void setCarouselPower(double power) {
+        carouselPower = power;
+        carousel.setPower(carouselPower);
+    }
 }
