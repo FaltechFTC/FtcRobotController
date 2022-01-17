@@ -159,7 +159,7 @@ public class AutoBrainRR {
     public void blue1() throws InterruptedException {
         Pose2d startPose = new Pose2d(-36, 60.4, Math.toRadians(-90));
         Pose2d sharedHubPose = new Pose2d(-22.19, 35.65, Math.toRadians(315));
-        Pose2d carouselPose = new Pose2d(-61.53, 50.76, Math.toRadians(330));
+        Pose2d carouselPose = new Pose2d(-61.53, 50.76, Math.toRadians(-150));
         Pose2d parkPose = new Pose2d(-61.85, 35.96, Math.toRadians(0));
         Pose2d beforeStraight = new Pose2d(-47.04, 84.23, Math.toRadians(270));
         Pose2d warehouseAfterStraight = new Pose2d(45, 84.23, Math.toRadians(0));
@@ -197,14 +197,16 @@ public class AutoBrainRR {
 
     //    drive.followTrajectorySequence(trajectories);
         drive.intake.clawClose();
-        drive.intake.setGantryPosition(RobotIntake.ARM_LAYER1_POSZ,RobotIntake.MAX_HPOS);
+        drive.intake.setGantryPosition(RobotIntake.ARM_LAYER3_POSZ,RobotIntake.MAX_HPOS);
        // wait(2);
-        convertBarcode(vision.getBarcodeTSEUpdated(2));
+//        convertBarcode(vision.getBarcodeTSEUpdated(2));
      //   wait(2);
         drive.intake.update();
         sleep(500);
         drive.followTrajectory(traj2hub);
         drive.intake.clawOpen();
+        drive.intake.magnetRelease();
+        sleep(500);
         drive.followTrajectory(traj2carousel);
 
 
@@ -222,6 +224,7 @@ public class AutoBrainRR {
             tsBuilder.addTrajectory(traj2BeforeStraight);
             tsBuilder.addTrajectory(traj2Straight)
                     .turn(Math.toRadians(-90));
+            drive.intake.setGantryPosition(RobotIntake.ARM_INTAKE_POS, RobotIntake.MAX_HPOS/2);
         } else {
             tsBuilder.addTrajectory(trajUnitPark);
         }

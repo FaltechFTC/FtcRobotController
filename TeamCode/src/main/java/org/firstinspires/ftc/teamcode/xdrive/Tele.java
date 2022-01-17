@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.util.Utility;
 @Config
 @TeleOp(name = "Tele", group = "7079")
 public class Tele extends OpMode {
-    public static double xyMultiplier = -1;
+    public static double xyMultiplier = -0.01;
     public static double zMultiplier = -12.0;
     boolean clawButtonPressed = false;
     TeleBrain brain = new TeleBrain();
@@ -25,7 +25,6 @@ public class Tele extends OpMode {
         doIntake();
         doCarousel();
 
-        brain.robot.intake.update();
 
         brain.robot.reportEncoders();
         brain.robot.intake.reportIntake();
