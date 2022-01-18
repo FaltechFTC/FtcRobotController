@@ -99,17 +99,17 @@ public class TeleBrain {
             double xyPos = robot.intake.getXYPosition();
 
             if (arm_layer1) {
-                zPos = Robot.ARM_LAYER1_POS;
+                zPos = robot.intake.ARM_LAYER1_POSZ;
             } else if (intakePos) {
-                zPos = Robot.ARM_INTAKE_POS;
+                zPos = robot.intake.ARM_INTAKE_POS;
             } else if (upLevel) {
-                if (zPos < Robot.ARM_INTAKE_POS) zPos = Robot.ARM_INTAKE_POS;
-                else if (zPos < Robot.ARM_LAYER1_POS) zPos = Robot.ARM_LAYER1_POS;
-                else if (zPos < Robot.ARM_LAYER3_POS) zPos = Robot.ARM_LAYER3_POS;
+                if (zPos < robot.intake.ARM_INTAKE_POS) zPos = robot.intake.ARM_INTAKE_POS;
+                else if (zPos < robot.intake.ARM_LAYER1_POSZ) zPos = robot.intake.ARM_LAYER1_POSZ;
+                else if (zPos < robot.intake.ARM_LAYER3_POSZ) zPos = robot.intake.ARM_LAYER3_POSZ;
             } else if (downLevel) {
-                if (zPos > Robot.ARM_LAYER3_POS) zPos = Robot.ARM_LAYER3_POS;
-                else if (zPos > Robot.ARM_LAYER1_POS) zPos = Robot.ARM_LAYER1_POS;
-                else if (zPos > Robot.ARM_INTAKE_POS) zPos = Robot.ARM_INTAKE_POS;
+                if (zPos > robot.intake.ARM_LAYER3_POSZ) zPos = robot.intake.ARM_LAYER3_POSZ;
+                else if (zPos > robot.intake.ARM_LAYER1_POSZ) zPos = robot.intake.ARM_LAYER1_POSZ;
+                else if (zPos > robot.intake.ARM_INTAKE_POS) zPos = robot.intake.ARM_INTAKE_POS;
             } else {
                 zPos += z_power;
                 xyPos += xy_power;
