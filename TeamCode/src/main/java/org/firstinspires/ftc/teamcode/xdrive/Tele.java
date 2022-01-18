@@ -65,16 +65,18 @@ public class Tele extends OpMode {
         boolean claw = gamepad2.right_bumper;
         boolean clawToggle = claw && !clawButtonPressed;
         clawButtonPressed = claw;
-        boolean arm_park = gamepad1.y || gamepad2.y;
+//        boolean arm_park = gamepad1.y || gamepad2.y;
         boolean arm_layer1 = gamepad1.a || gamepad2.x;//in here magnus thinks that arm layer one means shared hub
-        boolean outTakePos = gamepad2.a;
+//        boolean outTakePos = gamepad2.a;
         boolean intakePos = gamepad2.b || gamepad1.b;
-        boolean scoreTop = gamepad1.y;
-        boolean topperPos = gamepad1.x;
-        boolean magnet = gamepad2.left_bumper;
+//        boolean scoreTop = gamepad1.y;
+//        boolean topperPos = gamepad1.x;
+        boolean upLevel = gamepad1.y || gamepad2.dpad_up;
+        boolean downLevel = gamepad1.x || gamepad2.dpad_down;
+        boolean magnet = gamepad1.left_bumper || gamepad2.left_bumper;
 
-        brain.doIntake(zPower, xyPower, magnet, arm_park,
-                arm_layer1, outTakePos, intakePos, clawToggle);
+        brain.doIntake(zPower, xyPower, magnet, downLevel, upLevel,
+                arm_layer1, intakePos, clawToggle);
     }
 
     public void doCarousel() {

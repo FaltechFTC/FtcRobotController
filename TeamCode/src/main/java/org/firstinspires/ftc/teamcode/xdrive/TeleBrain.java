@@ -85,7 +85,7 @@ public class TeleBrain {
     }
 
     public void doIntake(double z_power, double xy_power, boolean magnet,
-                         boolean full_extension, boolean full_retraction, boolean outTakePos,
+                         boolean downLevel, boolean upLevel, boolean arm_layer1,
                          boolean intakePos, boolean clawToggle) {
         // CLAW **************************************
         if (clawToggle) {
@@ -98,22 +98,22 @@ public class TeleBrain {
             double zPos = robot.intake.getZPosition();
             double xyPos = robot.intake.getXYPosition();
 
-//            if (full_retraction) {
-//                zPos = Robot.ARM_PARK_POS;
-//                xyPos = Robot.ARM_PARK_POS;
-//            } else if (full_extension) {
-//                zPos = Robot.ARM_LAYER1_POS;
-//                xyPos = Robot.ARM_LAYER1_POS;
-//            } else if (intakePos) {
-//                zPos = Robot.ARM_INTAKE_POS;
-//                xyPos = Robot.ARM_INTAKE_POS;
-//            } else if (outTakePos) {
-//                zPos = Robot.ARM_LAYER1_POS;
-//                xyPos = Robot.ARM_LAYER1_POS;
-//            } else {
+            if (arm_layer1) {
+                zPos = Robot.ARM_LAYER1_POS;
+            } else if (intakePos) {
+                zPos = Robot.ARM_INTAKE_POS;
+            } else if (upLevel) {
+                if (zPos < Robot.ARM_INTAKE_POS) zPos = Robot.ARM_INTAKE_POS;
+                else if (zPos < Robot.ARM_LAYER1_POS) zPos = Robot.ARM_LAYER1_POS;
+                else if (zPos < Robot.ARM_LAYER3_POS) zPos = Robot.ARM_LAYER3_POS;
+            } else if (downLevel) {
+                if (zPos > Robot.ARM_LAYER3_POS) zPos = Robot.ARM_LAYER3_POS;
+                else if (zPos > Robot.ARM_LAYER1_POS) zPos = Robot.ARM_LAYER1_POS;
+                else if (zPos > Robot.ARM_INTAKE_POS) zPos = Robot.ARM_INTAKE_POS;
+            } else {
                 zPos += z_power;
                 xyPos += xy_power;
-
+            }
 
             robot.intake.setZPosition(zPos);
             robot.intake.setXYPosition(xyPos);
