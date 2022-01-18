@@ -11,6 +11,8 @@ public class Tele extends OpMode {
     public static double xyMultiplier = -1;
     public static double zMultiplier = -12.0;
     boolean clawButtonPressed = false;
+    boolean globalButtonPressed = false;
+    boolean isGlobalOn = false;
     TeleBrain brain = new TeleBrain();
 
     @Override
@@ -45,10 +47,15 @@ public class Tele extends OpMode {
         boolean drive_overdrive = gamepad1.right_bumper;
         boolean drive_rotate_90 = gamepad1.dpad_left;
         boolean drive_global = gamepad1.dpad_right;
+        boolean globalToggle = drive_global && !globalButtonPressed;
+        globalButtonPressed = drive_global;
+        if (globalToggle) {
+            isGlobalOn = !isGlobalOn;
+        }
         boolean reset_heading = gamepad1.dpad_down;
 
         brain.doDriving(drive_forward, drive_strafe, drive_rotate, drive_heading_lock,
-                drive_tmode, drive_overdrive, drive_rotate_90, drive_global, reset_heading);
+                drive_tmode, drive_overdrive, drive_rotate_90, isGlobalOn, reset_heading);
     }//not an easter egg
 
     public void doIntake() {
