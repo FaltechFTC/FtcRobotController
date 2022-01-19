@@ -95,6 +95,7 @@ public class TeleBrain {
         if (magnet && robot.intake.magnetTimer == null) robot.intake.magnetStart(500);
         // ARM **************************************
         if (RobotIntake.useGantry) {
+
             double zPos = robot.intake.getZPosition();
             double xyPos = robot.intake.getXYPosition();
 
@@ -112,11 +113,15 @@ public class TeleBrain {
                 else if (zPos > robot.intake.ARM_INTAKE_POS) zPos = robot.intake.ARM_INTAKE_POS;
             } else {
                 zPos += z_power;
-                xyPos += xy_power;
             }
 
             robot.intake.setZPosition(zPos);
-            robot.intake.setXYPosition(xyPos);
+
+            if (xy_power!=0.0) {
+                xyPos = robot.intake.getXYPosition();
+                xyPos += xy_power;
+                robot.intake.setXYPosition(xyPos);
+            }
         }
         robot.intake.update();
     }

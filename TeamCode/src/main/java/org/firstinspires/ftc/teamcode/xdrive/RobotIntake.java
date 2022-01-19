@@ -28,7 +28,7 @@ public class RobotIntake {
     private Telemetry telemetry = null;
     public Servo xyServo = null;
     public DcMotorSimple zMotor = null;
-    private DcMotor zEncoder = null;
+    public DcMotor zEncoder = null;
     //    public DcMotorSimple[] armArray = new DcMotorSimple[1];
     DcMotorSimple carousel = null;
     public int[] curPos = new int[4];
@@ -58,17 +58,17 @@ a claw system*/
     public static double CLAW_OPEN_POS = 0.7;
     public static double CLAW_CLOSE_POS = 0.25;
     public static double maxUpPower = 0.7;
-    public static double maxDownPower = -0.2;
+    public static double maxDownPower = -0.3;
     public static double verticalPowerConstant = .009;
     public static double MAX_HPOS = .72, MIN_HPOS = 0;
-    public static double MAX_VPOS = 3400, MIN_VPOS = 0;
+    public static double MAX_VPOS = 3500, MIN_VPOS = 0;
     public static double ARM_TOLERANCE = 3;
 
 
     public static double ARM_INTAKE_POS = 65.0;
-    public static double ARM_LAYER1_POSZ = 678.0;
+    public static double ARM_LAYER1_POSZ = 1190.0;
     public static double ARM_LAYER2_POSZ = 1453.0;
-    public static double ARM_LAYER3_POSZ = 2547.0;
+    public static double ARM_LAYER3_POSZ = 2913.0;
     public static double ARM_LAYER1_POSXY = 0.2;
     public static double ARM_LAYER2_POSXY = 0.5;
     public static double ARM_LAYER3_POSXY = 0.8;
@@ -104,7 +104,7 @@ a claw system*/
         claw = hwMap.get(Servo.class, "claw");
         xyServo = hwMap.get(Servo.class, "xyServo");
         zEncoder = hwMap.get(DcMotor.class, "frdrive");
-        zEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         zEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         xyPosition = xyServo.getPosition();
 
