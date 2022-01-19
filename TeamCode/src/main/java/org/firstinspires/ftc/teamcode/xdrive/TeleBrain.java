@@ -102,15 +102,15 @@ public class TeleBrain {
             if (arm_layer1) {
                 zPos = robot.intake.ARM_LAYER1_POSZ;
             } else if (intakePos) {
-                zPos = robot.intake.ARM_INTAKE_POS;
+                zPos = robot.intake.ARM_INTAKE_POSZ;
             } else if (upLevel) {
-                if (zPos < robot.intake.ARM_INTAKE_POS) zPos = robot.intake.ARM_INTAKE_POS;
+                if (zPos < robot.intake.ARM_INTAKE_POSZ) zPos = robot.intake.ARM_INTAKE_POSZ;
                 else if (zPos < robot.intake.ARM_LAYER1_POSZ) zPos = robot.intake.ARM_LAYER1_POSZ;
                 else if (zPos < robot.intake.ARM_LAYER3_POSZ) zPos = robot.intake.ARM_LAYER3_POSZ;
             } else if (downLevel) {
                 if (zPos > robot.intake.ARM_LAYER3_POSZ) zPos = robot.intake.ARM_LAYER3_POSZ;
                 else if (zPos > robot.intake.ARM_LAYER1_POSZ) zPos = robot.intake.ARM_LAYER1_POSZ;
-                else if (zPos > robot.intake.ARM_INTAKE_POS) zPos = robot.intake.ARM_INTAKE_POS;
+                else if (zPos > robot.intake.ARM_INTAKE_POSZ) zPos = robot.intake.ARM_INTAKE_POSZ;
             } else {
                 zPos += z_power;
             }

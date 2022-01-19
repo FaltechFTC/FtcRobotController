@@ -65,14 +65,15 @@ a claw system*/
     public static double ARM_TOLERANCE = 3;
 
 
-    public static double ARM_INTAKE_POS = 65.0;
+    public static double ARM_INTAKE_POSZ = 65.0;
     public static double ARM_LAYER1_POSZ = 1190.0;
     public static double ARM_LAYER2_POSZ = 1453.0;
     public static double ARM_LAYER3_POSZ = 2913.0;
-    public static double ARM_LAYER1_POSXY = 0.2;
-    public static double ARM_LAYER2_POSXY = 0.5;
-    public static double ARM_LAYER3_POSXY = 0.8;
-    public static double ARM_PARK_POS = 800.0;
+
+    public static double ARM_INTAKE_POSXY = MAX_HPOS/2;
+    public static double ARM_LAYER1_POSXY = 0.4;
+    public static double ARM_LAYER2_POSXY = 0.3;
+    public static double ARM_LAYER3_POSXY = .1;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
