@@ -92,7 +92,10 @@ public class TeleBrain {
             robot.intake.clawToggle();
         }
         // Magnet **************************************
-        if (magnet && robot.intake.magnetTimer == null) robot.intake.magnetStart(500);
+        if (magnet && robot.intake.magnetTimer == null) {
+            robot.intake.clawOpen();
+            robot.intake.magnetStart(500);
+        }
         // ARM **************************************
         if (RobotIntake.useGantry) {
             double zPos = robot.intake.getZPosition();
