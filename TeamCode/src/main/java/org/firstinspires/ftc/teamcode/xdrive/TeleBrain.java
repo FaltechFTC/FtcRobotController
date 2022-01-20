@@ -140,10 +140,10 @@ public class TeleBrain {
                 robot.intake.carouselStart(true);
             }
 
-            if (robot.intake.carouselTimer == null && carousel_right > 0.25) {
+            if (robot.intake.carouselTimer == null && Utility.deadStick(carousel_right) > 0.25) {
                 robot.intake.setCarouselPower(carousel_right);
             }
-            if (robot.intake.carouselTimer == null && carousel_left > .25) {
+            if (robot.intake.carouselTimer == null && Utility.deadStick(carousel_left) > .25) {
                 robot.intake.setCarouselPower(-carousel_left);
             }
         }

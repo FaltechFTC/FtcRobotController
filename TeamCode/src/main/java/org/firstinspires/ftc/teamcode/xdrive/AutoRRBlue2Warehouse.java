@@ -1,19 +1,19 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Disabled
-@Autonomous(name = "Auto Blue 2", group = "7079")
-public class AutoBlue2 extends LinearOpMode {
-    AutoBrain brain = new AutoBrain();
+@Autonomous(name = "Auto RR Blue 2", group = "7079")
+public class AutoRRBlue2Warehouse extends LinearOpMode {
+    AutoBrainRR brain = new AutoBrainRR();
 
     @Override
     public void runOpMode() {
         brain.init(this);
 
-
+//        telemetry.addData("Status", "Ready to run");    //
+//        telemetry.update();
+        // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         try {
@@ -24,10 +24,10 @@ public class AutoBlue2 extends LinearOpMode {
             // TODO log this properly
         }
 
-        brain.robot.setDriveStop();
+        brain.drive.setMotorPowers(0, 0, 0, 0);
     }
 
     public void doMission() throws Exception {
-
+        brain.blue2warehouse();
     }
 }
