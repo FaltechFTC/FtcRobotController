@@ -44,6 +44,7 @@ public class RobotIntake {
     double clawPosition = 0;
     double magnetPosition = 0;
     double carouselPower = 0;
+    public static double safeXY = .5;
 /* we might need to leave this code for the arm here so that we can use it later is we are using
 a claw system*/
 
@@ -285,5 +286,8 @@ a claw system*/
     public void setCarouselPower(double power) {
         carouselPower = power;
         carousel.setPower(carouselPower);
+    }
+    public void setSafeGantryPosition() {
+        setGantryPosition(ARM_INTAKE_POSZ, safeXY);
     }
 }

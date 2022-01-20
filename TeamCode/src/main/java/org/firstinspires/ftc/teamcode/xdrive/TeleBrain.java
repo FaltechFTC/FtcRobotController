@@ -84,7 +84,7 @@ public class TeleBrain {
         lastTMode = drive_tmode; // remember
     }
 
-    public void doIntake(double z_power, double xy_power, boolean magnet,
+    public void doIntake(double z_power, double xy_power, boolean safeGantry, boolean magnet,
                          boolean downLevel, boolean upLevel, boolean arm_layer1,
                          boolean intakePos, boolean clawToggle) {
         // CLAW **************************************
@@ -97,11 +97,12 @@ public class TeleBrain {
             robot.intake.magnetStart(500);
         }
         // ARM **************************************
-        if (RobotIntake.useGantry) {
+        if (RobotIntake.useGantry && safeGantry) {
+            robot.intake.setSafeGantryPosition();
+        } else if (RobotIntake.useGantry){
 
             double zPos = robot.intake.getZPosition();
             double xyPos = robot.intake.getXYPosition();
-
             if (arm_layer1) {
                 zPos = robot.intake.ARM_LAYER1_POSZ;
             } else if (intakePos) {
@@ -149,7 +150,7 @@ public class TeleBrain {
     }
 
     double calculateLockHeading(double heading, double lockMultipleDeg, boolean tmode) {
-        double lockOffset = tmode ? 0 : 45;
+        double lockOffset = tmode ? 45 : 0;
         double lockMultiple = Math.round((heading - lockOffset) / lockMultipleDeg);
         heading = lockMultiple * lockMultipleDeg + lockOffset;
         return Utility.wrapDegrees360(heading);

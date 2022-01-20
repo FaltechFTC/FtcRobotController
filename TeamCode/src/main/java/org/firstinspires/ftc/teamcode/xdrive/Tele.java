@@ -41,8 +41,8 @@ public class Tele extends OpMode {
         double drive_strafe = 0.5 * Utility.deadStick(gamepad1.left_stick_x);
         double drive_rotate = 0.25 * -Utility.deadStick(gamepad1.right_stick_x);
 
-        boolean drive_heading_lock = gamepad1.right_trigger > 0.05;
-        boolean drive_tmode = gamepad1.left_trigger > 0.05;
+        boolean drive_heading_lock = gamepad1.left_trigger > 0.05;
+        boolean drive_tmode = gamepad1.right_trigger > 0.05;
         boolean drive_overdrive = gamepad1.right_bumper;
         boolean drive_rotate_90 = gamepad1.dpad_left;
         boolean drive_global = gamepad1.dpad_right;
@@ -75,8 +75,9 @@ public class Tele extends OpMode {
         boolean upLevel = gamepad1.y || gamepad2.dpad_up;
         boolean downLevel = gamepad1.x || gamepad2.dpad_down;
         boolean magnet = gamepad1.left_bumper || gamepad2.left_bumper;
+        boolean safeGantry = gamepad2.a;
 
-        brain.doIntake(zPower, xyPower, magnet, downLevel, upLevel,
+        brain.doIntake(zPower, xyPower, safeGantry, magnet, downLevel, upLevel,
                 arm_layer1, intakePos, clawToggle);
     }
 

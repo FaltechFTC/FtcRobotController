@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuild
 
 @Config
 public class AutoBrainRR {
-    public static double safeXY = .5;
     public static double DRIFT_YPOW = .11;
     public static double DRIFT_XPOW = -.16;
     RobotRRDrive drive;
@@ -106,7 +105,7 @@ public class AutoBrainRR {
         drive.followTrajectory(traj2hub);
         releaseFreight();
 
-        setSafeGantryPosition();
+        drive.intake.setSafeGantryPosition();
         drive.followTrajectory(middlePoint);
         drive.followTrajectory(traj2carousel);
 
@@ -146,7 +145,7 @@ public class AutoBrainRR {
         setupGantryToHubLevel();
         drive.followTrajectorySequence(traj2hub);
         releaseFreight();
-        setSafeGantryPosition();
+        drive.intake.setSafeGantryPosition();
 
         TrajectorySequence traj2warehouse = drive.trajectorySequenceBuilder(traj2hub.end())
                 .back(15)
@@ -205,7 +204,7 @@ public class AutoBrainRR {
 
         releaseFreight();
 
-        setSafeGantryPosition();
+        drive.intake.setSafeGantryPosition();
         drive.followTrajectory(middlePoint);
         sleepWithUpdate(1000);
         drive.followTrajectory(traj2carousel);
@@ -258,7 +257,7 @@ public class AutoBrainRR {
         setupGantryToHubLevel();
         drive.followTrajectorySequence(traj2hub);
         releaseFreight();
-        setSafeGantryPosition();
+        drive.intake.setSafeGantryPosition();
         drive.followTrajectorySequence(traj2wall);
         drive.followTrajectorySequence(traj2warehouse);
 
@@ -309,9 +308,6 @@ public class AutoBrainRR {
         drive.intake.clawOpen();
         drive.intake.magnetRelease();
         sleepWithUpdate(500);
-    }
-    public void setSafeGantryPosition() {
-        drive.intake.setGantryPosition(RobotIntake.ARM_INTAKE_POSZ, safeXY);
     }
 
 }
