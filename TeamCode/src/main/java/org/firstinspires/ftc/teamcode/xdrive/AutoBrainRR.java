@@ -307,7 +307,7 @@ public class AutoBrainRR {
         drive.followTrajectory(traj2hub);
         releaseFreight();
 
-        setSafeGantryPosition();
+        drive.intake.setSafeGantryPosition();
         drive.followTrajectory(middlePoint);
         drive.followTrajectory(traj2carousel);
 
@@ -403,7 +403,7 @@ public void blue1unitpark() throws InterruptedException{
 
     releaseFreight();
 
-    setSafeGantryPosition();
+    drive.intake.setSafeGantryPosition();
     drive.followTrajectory(middlePoint);
     sleepWithUpdate(1000);
     drive.followTrajectory(traj2carousel);
