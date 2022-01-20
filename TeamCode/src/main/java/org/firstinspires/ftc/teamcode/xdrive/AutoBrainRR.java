@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuild
 
 @Config
 public class AutoBrainRR {
+    public static double safeXY = .5;
     public static double DRIFT_YPOW = .11;
     public static double DRIFT_XPOW = -.16;
     RobotRRDrive drive;
@@ -68,7 +69,7 @@ public class AutoBrainRR {
         Pose2d midPoint = new Pose2d(startPose.getX() + 10, startPose.getY() + 20, Math.toRadians(90 - 25));
         Pose2d carouselPose = new Pose2d(startPose.getX() - 30, startPose.getY() + 11, Math.toRadians(90));
         Pose2d parkPose = new Pose2d(carouselPose.getX() + 1, carouselPose.getY() + 24, Math.toRadians(0));
-        Pose2d beforeStraight = new Pose2d(-47.04, -84.23, Math.toRadians(-270));
+        Pose2d beforeStraight = new Pose2d(-45.04, -84.23, Math.toRadians(-270));
         Pose2d warehouseAfterStraight = new Pose2d(45, -84.23, Math.toRadians(0));
         Pose2d beforeWarehouseGap = new Pose2d(carouselPose.getX() + 106, carouselPose.getY() - 15, Math.toRadians(0));
         Pose2d warePose = new Pose2d(carouselPose.getX() + 106, carouselPose.getY() - 15, Math.toRadians(0));
@@ -105,19 +106,14 @@ public class AutoBrainRR {
         drive.followTrajectory(traj2hub);
         releaseFreight();
 
-        drive.intake.setGantryPosition(RobotIntake.ARM_INTAKE_POSZ, RobotIntake.MAX_HPOS);
+        setSafeGantryPosition();
         drive.followTrajectory(middlePoint);
         drive.followTrajectory(traj2carousel);
-
-        TrajectorySequence trajectories = tsBuilder.build();
-
-        drive.followTrajectorySequence(trajectories);
 
         drive.intake.carousel.setPower(.35);
         driftDrive(DRIFT_XPOW, DRIFT_YPOW, 5);
         drive.intake.carousel.setPower(0);
         drive.update();
-        Pose2d afterDuckPose = drive.getPoseEstimate();
 
         drive.setPoseEstimate(carouselPose);
         tsBuilder = drive.trajectorySequenceBuilder(carouselPose);
@@ -129,8 +125,8 @@ public class AutoBrainRR {
         } else {
             tsBuilder.addTrajectory(trajUnitPark);
         }
+        TrajectorySequence trajectories = tsBuilder.build();
 
-        trajectories = tsBuilder.build();
         drive.followTrajectorySequence(trajectories);
 
     }
@@ -142,7 +138,7 @@ public class AutoBrainRR {
 
         TrajectorySequence traj2hub = drive.trajectorySequenceBuilder(startPose)
                 .forward(20)
-                .turn(Math.toRadians(45))
+                .turn(Math.toRadians(60))
                 .forward(15)
                 .build();
 
@@ -150,11 +146,12 @@ public class AutoBrainRR {
         setupGantryToHubLevel();
         drive.followTrajectorySequence(traj2hub);
         releaseFreight();
+        setSafeGantryPosition();
 
         TrajectorySequence traj2warehouse = drive.trajectorySequenceBuilder(traj2hub.end())
                 .back(15)
                 .turn(Math.toRadians(-45))
-                .back(20 - .5)
+                .back(30)
                 .turn(Math.toRadians(-90))
                 .forward(36)
                 .turn(Math.toRadians(45))
@@ -165,12 +162,12 @@ public class AutoBrainRR {
     }
 
     public void blue1() throws InterruptedException {
-        Pose2d startPose = new Pose2d(-36, 60.4, Math.toRadians(-90));
-        Pose2d sharedHubPose = new Pose2d(-22.19, 35.65, Math.toRadians(315));
+        Pose2d startPose = new Pose2d(-36, -60.4, Math.toRadians(-90));
+        Pose2d sharedHubPose = new Pose2d(-22.19, 33.65, Math.toRadians(315));
         Pose2d carouselPose = new Pose2d(-61.53, 50.76, Math.toRadians(45 - 90));
         Pose2d midPoint = new Pose2d(-40, 40, Math.toRadians(45 - 90));
         Pose2d parkPose = new Pose2d(-61.85, 35.96, Math.toRadians(0));
-        Pose2d beforeStraight = new Pose2d(-47.04, 84.23, Math.toRadians(270));
+        Pose2d beforeStraight = new Pose2d(-47.04, 84.23, Math.toRadians(0));
         Pose2d warehouseAfterStraight = new Pose2d(45, 84.23, Math.toRadians(0));
         Pose2d beforeWarehouseGap = new Pose2d(10, 70, Math.toRadians(10));
         Pose2d warePose = new Pose2d(45, 70, Math.toRadians(0));
@@ -208,7 +205,7 @@ public class AutoBrainRR {
 
         releaseFreight();
 
-        drive.intake.setGantryPosition(RobotIntake.ARM_INTAKE_POSZ, RobotIntake.MAX_HPOS);
+        setSafeGantryPosition();
         drive.followTrajectory(middlePoint);
         sleepWithUpdate(1000);
         drive.followTrajectory(traj2carousel);
@@ -235,7 +232,7 @@ public class AutoBrainRR {
     }
 
     public void blue2() throws InterruptedException {
-        Pose2d startPose = new Pose2d(12.4, -60.4, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(12.4, 60.4, Math.toRadians(-90));
 
         drive.setPoseEstimate(startPose);
 
@@ -244,14 +241,16 @@ public class AutoBrainRR {
                 .turn(Math.toRadians(-45))
                 .forward(15)
                 .build();
-        TrajectorySequence traj2warehouse = drive.trajectorySequenceBuilder(traj2hub.end())
+        TrajectorySequence traj2wall = drive.trajectorySequenceBuilder(traj2hub.end())
                 .back(15)
                 .turn(Math.toRadians(45))
-                .back(20 - .5)
+                .back(30)
+                .build();
+        TrajectorySequence traj2warehouse = drive.trajectorySequenceBuilder(traj2wall.end())
                 .turn(Math.toRadians(90))
                 .forward(36)
                 .turn(Math.toRadians(-45))
-                .forward(14)
+                .forward(16)
                 .turn(Math.toRadians(45))
                 .build();
 
@@ -259,6 +258,8 @@ public class AutoBrainRR {
         setupGantryToHubLevel();
         drive.followTrajectorySequence(traj2hub);
         releaseFreight();
+        setSafeGantryPosition();
+        drive.followTrajectorySequence(traj2wall);
         drive.followTrajectorySequence(traj2warehouse);
 
     }
@@ -284,7 +285,7 @@ public class AutoBrainRR {
 
     public void setupClaw() {
         drive.intake.clawClose();
-        sleepWithUpdate(500);
+        sleepWithUpdate(750);
     }
 
     public void setupGantryToHubLevel() {
@@ -308,6 +309,9 @@ public class AutoBrainRR {
         drive.intake.clawOpen();
         drive.intake.magnetRelease();
         sleepWithUpdate(500);
+    }
+    public void setSafeGantryPosition() {
+        drive.intake.setGantryPosition(RobotIntake.ARM_INTAKE_POSZ, safeXY);
     }
 
 }

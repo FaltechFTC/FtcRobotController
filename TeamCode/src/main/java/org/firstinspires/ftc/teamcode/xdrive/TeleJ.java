@@ -61,10 +61,11 @@ public class TeleJ extends OpMode {
     }
 
     public void doCarousel() {
-        double carousel_power = Utility.deadStick(gamepad2.right_stick_x);
+        double carouselRight = gamepad2.right_trigger;
+        double carouselLeft = gamepad2.left_trigger;
         boolean carousel_cycle_left = gamepad2.dpad_left;
         boolean carousel_cycle_right = gamepad2.dpad_right;
-        brain.doCarousel(carousel_power, carousel_cycle_left, carousel_cycle_right);
+        brain.doCarousel(carouselRight, carouselLeft, carousel_cycle_left, carousel_cycle_right);
     }
 }
 //Hi this is matthew, tell me if you see this!

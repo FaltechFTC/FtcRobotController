@@ -129,7 +129,7 @@ public class TeleBrain {
         robot.intake.update();
     }
 
-    public void doCarousel(double carousel_power, boolean carousel_cycle_left,
+    public void doCarousel(double carousel_right, double carousel_left, boolean carousel_cycle_left,
                            boolean carousel_cycle_right) {
 
         if (RobotIntake.useCarousel) {
@@ -139,8 +139,11 @@ public class TeleBrain {
                 robot.intake.carouselStart(true);
             }
 
-            if (robot.intake.carouselTimer == null) {
-                robot.intake.setCarouselPower(carousel_power);
+            if (robot.intake.carouselTimer == null && carousel_right > 0.25) {
+                robot.intake.setCarouselPower(carousel_right);
+            }
+            if (robot.intake.carouselTimer == null && carousel_left > .25) {
+                robot.intake.setCarouselPower(-carousel_left);
             }
         }
     }

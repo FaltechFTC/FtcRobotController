@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.util.Utility;
 @Config
 @TeleOp(name = "Tele", group = "7079")
 public class Tele extends OpMode {
-    public static double xyMultiplier = -0.01;
+    public static double xyMultiplier = 0.01;
     public static double zMultiplier = -12.0;
     boolean clawButtonPressed = false;
     boolean globalButtonPressed = false;
@@ -61,7 +61,7 @@ public class Tele extends OpMode {
 //        double pusher_pos = gamepad2.left_trigger;
         double zPower = zMultiplier * Utility.deadStick(gamepad2.left_stick_y);
         if (zPower > 0) zPower *= 2;
-        double xyPower = xyMultiplier * Utility.deadStick(gamepad2.left_stick_x);
+        double xyPower = xyMultiplier * Utility.deadStick(gamepad2.right_stick_y);
         boolean claw = gamepad2.right_bumper;
         boolean clawToggle = claw && !clawButtonPressed;
         clawButtonPressed = claw;
@@ -71,6 +71,7 @@ public class Tele extends OpMode {
         boolean intakePos = gamepad2.b || gamepad1.b;
 //        boolean scoreTop = gamepad1.y;
 //        boolean topperPos = gamepad1.x;
+
         boolean upLevel = gamepad1.y || gamepad2.dpad_up;
         boolean downLevel = gamepad1.x || gamepad2.dpad_down;
         boolean magnet = gamepad1.left_bumper || gamepad2.left_bumper;
@@ -80,10 +81,11 @@ public class Tele extends OpMode {
     }
 
     public void doCarousel() {
-        double carousel_power = Utility.deadStick(gamepad2.right_stick_x);
+        double carouselRight = Utility.deadStick(gamepad2.right_trigger);
+        double carouselLeft = Utility.deadStick(gamepad2.left_trigger);
         boolean carousel_cycle_left = gamepad2.dpad_left;
         boolean carousel_cycle_right = gamepad2.dpad_right;
-        brain.doCarousel(carousel_power, carousel_cycle_left, carousel_cycle_right);
+        brain.doCarousel(carouselRight, carouselLeft, carousel_cycle_left, carousel_cycle_right);
     }
 
 //    public void saveLastPos() {
