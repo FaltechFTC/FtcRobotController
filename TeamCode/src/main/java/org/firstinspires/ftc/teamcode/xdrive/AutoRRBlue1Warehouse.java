@@ -1,15 +1,11 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Disabled
-@Config
-@Autonomous(name = "Auto Red 1", group = "7079")
-public class AutoRed1 extends LinearOpMode {
-    AutoBrain brain = new AutoBrain();
+@Autonomous(name = "Auto RR Blue 1", group = "7079")
+public class AutoRRBlue1Warehouse extends LinearOpMode {
+    AutoBrainRR brain = new AutoBrainRR();
 
     @Override
     public void runOpMode() {
@@ -28,11 +24,11 @@ public class AutoRed1 extends LinearOpMode {
             // TODO log this properly
         }
 
-        brain.robot.setDriveStop();
+        brain.drive.setMotorPowers(0, 0, 0, 0);
     }
 
     public void doMission() throws Exception {
-       // brain.autoPark1Red();
+        brain.blue1warehouse();
     }
 
 }
