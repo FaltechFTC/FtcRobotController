@@ -16,13 +16,13 @@ public class AutoRRRed2Warehouse extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        try {
-            doMission();
-        } catch (Exception e) {
-            e.printStackTrace();
-            telemetry.addLine("Exception in doMission()");
-            // TODO log this properly
-        }
+            try {
+                doMission();
+            } catch (Exception e) {
+                e.printStackTrace();
+                telemetry.addLine("Exception in doMission()");
+                // TODO log this properly
+            }
 
         brain.drive.setMotorPowers(0, 0, 0, 0);
     }

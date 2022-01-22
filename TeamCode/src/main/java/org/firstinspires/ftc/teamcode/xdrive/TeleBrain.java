@@ -133,17 +133,17 @@ public class TeleBrain {
     public void doCarousel(double carousel_right, double carousel_left, boolean carousel_cycle_left,
                            boolean carousel_cycle_right) {
 
-        if (RobotIntake.useCarousel) {
-            if (carousel_cycle_left && robot.intake.carouselTimer == null) {
+        if (RobotIntake.useCarousel && robot.intake.carouselTimer == null) {
+            if (carousel_cycle_left) {
                 robot.intake.carouselStart(false);
-            } else if (carousel_cycle_right && robot.intake.carouselTimer == null) {
+            } else if (carousel_cycle_right) {
                 robot.intake.carouselStart(true);
             }
 
-            if (robot.intake.carouselTimer == null && Utility.deadStick(carousel_right) > 0.25) {
+            else if (carousel_right > carousel_left) {
                 robot.intake.setCarouselPower(carousel_right);
             }
-            if (robot.intake.carouselTimer == null && Utility.deadStick(carousel_left) > .25) {
+            else {
                 robot.intake.setCarouselPower(-carousel_left);
             }
         }

@@ -10,17 +10,41 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
+import org.firstinspires.ftc.teamcode.util.Pose;
 
 @Config
 public class AutoBrainRR {
+
+    public static double RED1BSX = -40.04;
+    public static double RED1BSY = -84.23;
+    public static int RED1BSH = -270;
+
+    public static int RED1WASX = 45;
+    public static double RED1WASY = -84.23;
+    public static int RED1WASH = 0;
+
+    public static int BLUE1MX = -42;
+    public static int BLUE1MY = 45;
+
+    public static int RED1CPX = -66;
+    public static double RED1CPY = -49.4;
+    public static int RED1CPH = 90;
+
+    public static int RED1HUBX = -21;
+    public static double RED1HUBY = -34.4;
+    public static int RED1HUBH = 90 - 25;
+
+    public static double BLUE1X = -15.19;
+    public static double BLUE1Y = 26.65;
+
     public static double DRIFT_YPOW = .11;
     public static double DRIFT_XPOW = -.16;
     RobotRRDrive drive;
     VisionBrain vision;
-    static public boolean useVision = false;
+    static public boolean useVision = true;
     Telemetry telemetry;
     LinearOpMode opmode;
-    public static boolean doWarehousePark = true;
+    public boolean doWarehousePark = true;
     int barcode = 0;
 
     public void init(LinearOpMode opmode) {
@@ -63,27 +87,31 @@ public class AutoBrainRR {
     }
 
     public void red1warehouse() throws InterruptedException {
-        Pose2d startPose = new Pose2d(-36, 60.4, Math.toRadians(90));
-        Pose2d sharedHubPose = new Pose2d(startPose.getX() + 15, startPose.getY() + 26, Math.toRadians(90 - 25));
+        Pose2d startPose = new Pose2d(-36, -60.4, Math.toRadians(90));
+        Pose2d sharedHubPose = new Pose2d(RED1HUBX, RED1HUBY, Math.toRadians(RED1HUBH));
         Pose2d midPoint = new Pose2d(startPose.getX() + 10, startPose.getY() + 20, Math.toRadians(90 - 25));
-        Pose2d carouselPose = new Pose2d(startPose.getX() - 30, startPose.getY() + 11, Math.toRadians(90));
-        Pose2d parkPose = new Pose2d(carouselPose.getX() + 1, carouselPose.getY() + 24, Math.toRadians(0));
-        Pose2d beforeStraight = new Pose2d(-45.04, -84.23, Math.toRadians(-270));
-        Pose2d warehouseAfterStraight = new Pose2d(45, -84.23, Math.toRadians(0));
+        Pose2d carouselPose = new Pose2d(RED1CPX, RED1CPY, Math.toRadians(RED1CPH));
+        Pose2d parkPose = new Pose2d(carouselPose.getX() + 5, carouselPose.getY() + 24, Math.toRadians(-90));
+        Pose2d beforeStraight = new Pose2d(RED1BSX+10, RED1BSY, Math.toRadians(RED1BSH));
+        Pose2d warehouseAfterStraight = new Pose2d(RED1WASX+15, RED1WASY, Math.toRadians(RED1WASH));
         Pose2d beforeWarehouseGap = new Pose2d(carouselPose.getX() + 106, carouselPose.getY() - 15, Math.toRadians(0));
+        Pose2d bbStraight = new Pose2d(RED1BSX+10, carouselPose.getY(), -270);
         Pose2d warePose = new Pose2d(carouselPose.getX() + 106, carouselPose.getY() - 15, Math.toRadians(0));
 
         drive.setPoseEstimate(startPose);
-        Trajectory traj2hub = drive.trajectoryBuilder(startPose, true)
+        Trajectory traj2hub = drive.trajectoryBuilder(startPose, false)
                 .splineToLinearHeading(sharedHubPose, sharedHubPose.getHeading())
                 .build();
-        Trajectory middlePoint = drive.trajectoryBuilder(sharedHubPose)
+        Trajectory middlePoint = drive.trajectoryBuilder(sharedHubPose, true)
                 .splineToLinearHeading(midPoint, midPoint.getHeading())
                 .build();
-        Trajectory traj2carousel = drive.trajectoryBuilder(midPoint, true)
+        Trajectory traj2carousel = drive.trajectoryBuilder(midPoint, false)
                 .splineToLinearHeading(carouselPose, carouselPose.getHeading())
                 .build();
-        Trajectory traj2BeforeStraight = drive.trajectoryBuilder(carouselPose)
+        Trajectory traj2BBStraight = drive.trajectoryBuilder(carouselPose)
+                .lineTo(new Vector2d(RED1BSX+10, carouselPose.getY()))
+                .build();
+        Trajectory traj2BeforeStraight = drive.trajectoryBuilder(bbStraight)
                 .splineToLinearHeading(beforeStraight, beforeStraight.getHeading())
                 .build();
         Trajectory straightAway = drive.trajectoryBuilder(beforeStraight)
@@ -103,10 +131,13 @@ public class AutoBrainRR {
         setupClaw();
         setupGantryToHubLevel();
         drive.followTrajectory(traj2hub);
+        sleepWithUpdate(1000);
         releaseFreight();
+        drive.intake.setXYPosition(RobotIntake.safeXY);
+        sleepWithUpdate(250);
 
-        drive.intake.setSafeGantryPosition();
         drive.followTrajectory(middlePoint);
+        drive.intake.setSafeGantryPosition();
         drive.followTrajectory(traj2carousel);
 
         drive.intake.carousel.setPower(.35);
@@ -118,7 +149,6 @@ public class AutoBrainRR {
         tsBuilder = drive.trajectorySequenceBuilder(carouselPose);
 
         if (doWarehousePark) {
-            tsBuilder.addTrajectory(traj2BeforeStraight);
             tsBuilder.addTrajectory(straightAway)
                     .turn(Math.toRadians(-90));
         } else {
@@ -144,9 +174,10 @@ public class AutoBrainRR {
         setupClaw();
         setupGantryToHubLevel();
         drive.followTrajectorySequence(traj2hub);
+        sleepWithUpdate(1000);
         releaseFreight();
-        drive.intake.setSafeGantryPosition();
-
+        drive.intake.setXYPosition(RobotIntake.safeXY);
+        sleepWithUpdate(500);
         TrajectorySequence traj2warehouse = drive.trajectorySequenceBuilder(traj2hub.end())
                 .back(15)
                 .turn(Math.toRadians(-45))
@@ -157,17 +188,19 @@ public class AutoBrainRR {
                 .forward(14)
                 .turn(Math.toRadians(-45))
                 .build();
+        drive.intake.setSafeGantryPosition();
         drive.followTrajectorySequence(traj2warehouse);
     }
 
     public void blue1warehouse() throws InterruptedException {
-        Pose2d startPose = new Pose2d(-36, -60.4, Math.toRadians(-90));
-        Pose2d sharedHubPose = new Pose2d(-22.19, 33.65, Math.toRadians(315));
-        Pose2d carouselPose = new Pose2d(-61.53, 50.76, Math.toRadians(45 - 90));
-        Pose2d midPoint = new Pose2d(-40, 40, Math.toRadians(45 - 90));
-        Pose2d parkPose = new Pose2d(-61.85, 35.96, Math.toRadians(0));
+        Pose2d startPose = new Pose2d(-36, 60.4, Math.toRadians(-90));
+        Pose2d sharedHubPose = new Pose2d(BLUE1X-6.5, BLUE1Y+5.5, Math.toRadians(315));
+        Pose2d carouselPose = new Pose2d(-61.53, 50.76, Math.toRadians(45));
+        Pose2d midPoint = new Pose2d(BLUE1MX, BLUE1MY, Math.toRadians(45 - 90));
+        Pose2d parkPose = new Pose2d(-61.85, 35.96-14, Math.toRadians(90));
         Pose2d beforeStraight = new Pose2d(-47.04, 84.23, Math.toRadians(0));
-        Pose2d warehouseAfterStraight = new Pose2d(45, 84.23, Math.toRadians(0));
+        Pose2d warehouseAfterStraight = new Pose2d(45+7, 84.23, Math.toRadians(-90));
+        Pose2d mid2Point = new Pose2d(-47.04+10, 84.23, Math.toRadians(-90));
         Pose2d beforeWarehouseGap = new Pose2d(10, 70, Math.toRadians(10));
         Pose2d warePose = new Pose2d(45, 70, Math.toRadians(0));
 
@@ -176,18 +209,20 @@ public class AutoBrainRR {
         Trajectory traj2hub = drive.trajectoryBuilder(startPose, false)
                 .splineToLinearHeading(sharedHubPose, sharedHubPose.getHeading())
                 .build();
-        Trajectory middlePoint = drive.trajectoryBuilder(sharedHubPose)
+        Trajectory middlePoint = drive.trajectoryBuilder(sharedHubPose, true)
                 .splineToLinearHeading(midPoint, midPoint.getHeading())
                 .build();
 
-        Trajectory traj2carousel = drive.trajectoryBuilder(midPoint, true)
+        Trajectory traj2carousel = drive.trajectoryBuilder(midPoint, false)
                 .splineToLinearHeading(carouselPose, carouselPose.getHeading())
                 .build();
-
+        Trajectory trajMid2Point = drive.trajectoryBuilder(parkPose)
+                .lineTo(new Vector2d(mid2Point.getX(), mid2Point.getY()))
+                .build();
         Trajectory trajUnitPark = drive.trajectoryBuilder(carouselPose)
                 .splineToLinearHeading(parkPose, parkPose.getHeading())
                 .build();
-        Trajectory traj2BeforeStraight = drive.trajectoryBuilder(parkPose)
+        Trajectory traj2BeforeStraight = drive.trajectoryBuilder(mid2Point)
                 .splineToLinearHeading(beforeStraight, beforeStraight.getHeading())
                 .build();
         Trajectory traj2Straight = drive.trajectoryBuilder(beforeStraight)
@@ -199,24 +234,26 @@ public class AutoBrainRR {
 
         setupClaw();
         setupGantryToHubLevel();
-
+        sleepWithUpdate(1000);
         drive.followTrajectory(traj2hub);
 
         releaseFreight();
+        drive.intake.setXYPosition(RobotIntake.safeXY);
+        sleepWithUpdate(250);
 
-        drive.intake.setSafeGantryPosition();
         drive.followTrajectory(middlePoint);
-        sleepWithUpdate(1000);
+        drive.intake.setSafeGantryPosition();
         drive.followTrajectory(traj2carousel);
 
         drive.intake.carousel.setPower(-.35);
-        driftDrive(DRIFT_XPOW, DRIFT_YPOW, 5);
+        driftDrive(0, DRIFT_YPOW+.05, 5);
         drive.intake.carousel.setPower(0);
 
         Pose2d afterDuckPose = drive.getPoseEstimate();
         drive.setPoseEstimate(carouselPose);
         tsBuilder = drive.trajectorySequenceBuilder(carouselPose);
         if (doWarehousePark) {
+            tsBuilder.addTrajectory(trajMid2Point);
             tsBuilder.addTrajectory(traj2BeforeStraight);
             tsBuilder.addTrajectory(traj2Straight);
         } else {
@@ -226,7 +263,7 @@ public class AutoBrainRR {
         trajectories = tsBuilder.build();
         drive.followTrajectorySequence(trajectories);
 
-        drive.intake.setGantryPosition(RobotIntake.ARM_INTAKE_POSZ, RobotIntake.ARM_INTAKE_POSXY);
+        drive.intake.setGantryPosition(RobotIntake.ARM_INTAKE_POSZ, RobotIntake.safeXY);
         sleepWithUpdate(1000);
     }
 
@@ -249,16 +286,22 @@ public class AutoBrainRR {
                 .turn(Math.toRadians(90))
                 .forward(36)
                 .turn(Math.toRadians(-45))
-                .forward(16)
+                .forward(25)
                 .turn(Math.toRadians(45))
                 .build();
 
+
+
         setupClaw();
         setupGantryToHubLevel();
+        sleepWithUpdate(1000);
         drive.followTrajectorySequence(traj2hub);
         releaseFreight();
-        drive.intake.setSafeGantryPosition();
+        drive.intake.setXYPosition(RobotIntake.safeXY);
+        sleepWithUpdate(250);
         drive.followTrajectorySequence(traj2wall);
+        drive.intake.setSafeGantryPosition();
+
         drive.followTrajectorySequence(traj2warehouse);
 
     }
@@ -304,11 +347,14 @@ public class AutoBrainRR {
 
         setupClaw();
         setupGantryToHubLevel();
+        sleepWithUpdate(1000);
         drive.followTrajectory(traj2hub);
         releaseFreight();
+        drive.intake.setXYPosition(RobotIntake.safeXY);
+        sleepWithUpdate(250);
 
-        drive.intake.setSafeGantryPosition();
         drive.followTrajectory(middlePoint);
+        drive.intake.setSafeGantryPosition();
         drive.followTrajectory(traj2carousel);
 
         drive.intake.carousel.setPower(.35);
@@ -324,7 +370,6 @@ public class AutoBrainRR {
         TrajectorySequence trajectories = tsBuilder.build();
 
         drive.followTrajectorySequence(trajectories);
-
     }
 
 //    public void red2unitpark() throws InterruptedException{
@@ -358,73 +403,73 @@ public class AutoBrainRR {
 //        drive.followTrajectorySequence(traj2warehouse);
 //   }
 
-public void blue1unitpark() throws InterruptedException{
-    doWarehousePark = false;
-    Pose2d startPose = new Pose2d(-36, -60.4, Math.toRadians(-90));
-    Pose2d sharedHubPose = new Pose2d(-22.19, 33.65, Math.toRadians(315));
-    Pose2d carouselPose = new Pose2d(-61.53, 50.76, Math.toRadians(45 - 90));
-    Pose2d midPoint = new Pose2d(-40, 40, Math.toRadians(45 - 90));
-    Pose2d parkPose = new Pose2d(-61.85, 35.96, Math.toRadians(0));
-    Pose2d beforeStraight = new Pose2d(-47.04, 84.23, Math.toRadians(0));
-    Pose2d warehouseAfterStraight = new Pose2d(45, 84.23, Math.toRadians(0));
-    Pose2d beforeWarehouseGap = new Pose2d(10, 70, Math.toRadians(10));
-    Pose2d warePose = new Pose2d(45, 70, Math.toRadians(0));
+    public void blue1unitpark() throws InterruptedException{
+        doWarehousePark = false;
+        Pose2d startPose = new Pose2d(-36, -60.4, Math.toRadians(-90));
+        Pose2d sharedHubPose = new Pose2d(-22.19, 33.65, Math.toRadians(315));
+        Pose2d carouselPose = new Pose2d(-61.53, 50.76, Math.toRadians(45 - 90));
+        Pose2d midPoint = new Pose2d(-40, 40, Math.toRadians(45 - 90));
+        Pose2d parkPose = new Pose2d(-61.85, 35.96, Math.toRadians(0));
+        Pose2d beforeStraight = new Pose2d(-47.04, 84.23, Math.toRadians(0));
+        Pose2d warehouseAfterStraight = new Pose2d(45+12, 84.23, Math.toRadians(0));
+        Pose2d beforeWarehouseGap = new Pose2d(10, 70, Math.toRadians(10));
+        Pose2d warePose = new Pose2d(45, 70, Math.toRadians(0));
 
-    drive.setPoseEstimate(startPose);
+        drive.setPoseEstimate(startPose);
 
-    Trajectory traj2hub = drive.trajectoryBuilder(startPose, false)
-            .splineToLinearHeading(sharedHubPose, sharedHubPose.getHeading())
-            .build();
-    Trajectory middlePoint = drive.trajectoryBuilder(sharedHubPose)
-            .splineToLinearHeading(midPoint, midPoint.getHeading())
-            .build();
+        Trajectory traj2hub = drive.trajectoryBuilder(startPose, false)
+                .splineToLinearHeading(sharedHubPose, sharedHubPose.getHeading())
+                .build();
+        Trajectory middlePoint = drive.trajectoryBuilder(sharedHubPose)
+                .splineToLinearHeading(midPoint, midPoint.getHeading())
+                .build();
 
-    Trajectory traj2carousel = drive.trajectoryBuilder(midPoint, true)
-            .splineToLinearHeading(carouselPose, carouselPose.getHeading())
-            .build();
+        Trajectory traj2carousel = drive.trajectoryBuilder(midPoint, true)
+                .splineToLinearHeading(carouselPose, carouselPose.getHeading())
+                .build();
 
-    Trajectory trajUnitPark = drive.trajectoryBuilder(carouselPose)
-            .splineToLinearHeading(parkPose, parkPose.getHeading())
-            .build();
-    Trajectory traj2BeforeStraight = drive.trajectoryBuilder(parkPose)
-            .splineToLinearHeading(beforeStraight, beforeStraight.getHeading())
-            .build();
-    Trajectory traj2Straight = drive.trajectoryBuilder(beforeStraight)
-            .lineTo(new Vector2d(warehouseAfterStraight.getX(), warehouseAfterStraight.getY()))
-            .build();
+        Trajectory trajUnitPark = drive.trajectoryBuilder(carouselPose)
+                .splineToLinearHeading(parkPose, parkPose.getHeading())
+                .build();
+        Trajectory traj2BeforeStraight = drive.trajectoryBuilder(parkPose)
+                .splineToLinearHeading(beforeStraight, beforeStraight.getHeading())
+                .build();
+        Trajectory traj2Straight = drive.trajectoryBuilder(beforeStraight)
+                .lineTo(new Vector2d(warehouseAfterStraight.getX(), warehouseAfterStraight.getY()))
+                .build();
 
-    TrajectorySequenceBuilder tsBuilder = drive.trajectorySequenceBuilder(startPose);
-    TrajectorySequence trajectories;
+        TrajectorySequenceBuilder tsBuilder = drive.trajectorySequenceBuilder(startPose);
+        TrajectorySequence trajectories;
 
-    setupClaw();
-    setupGantryToHubLevel();
+        setupClaw();
+        setupGantryToHubLevel();
+        sleepWithUpdate(1000);
+        drive.followTrajectory(traj2hub);
 
-    drive.followTrajectory(traj2hub);
+        releaseFreight();
+        drive.intake.setXYPosition(RobotIntake.safeXY);
+        sleepWithUpdate(250);
 
-    releaseFreight();
+        drive.followTrajectory(middlePoint);
+        drive.intake.setSafeGantryPosition();
+        drive.followTrajectory(traj2carousel);
 
-    drive.intake.setSafeGantryPosition();
-    drive.followTrajectory(middlePoint);
-    sleepWithUpdate(1000);
-    drive.followTrajectory(traj2carousel);
+        drive.intake.carousel.setPower(-.35);
+        driftDrive(DRIFT_XPOW, DRIFT_YPOW+.05, 5);
+        drive.intake.carousel.setPower(0);
 
-    drive.intake.carousel.setPower(-.35);
-    driftDrive(DRIFT_XPOW, DRIFT_YPOW, 5);
-    drive.intake.carousel.setPower(0);
-
-    Pose2d afterDuckPose = drive.getPoseEstimate();
-    drive.setPoseEstimate(carouselPose);
-    tsBuilder = drive.trajectorySequenceBuilder(carouselPose);
-    tsBuilder.addTrajectory(trajUnitPark);
+        Pose2d afterDuckPose = drive.getPoseEstimate();
+        drive.setPoseEstimate(carouselPose);
+        tsBuilder = drive.trajectorySequenceBuilder(carouselPose);
+        tsBuilder.addTrajectory(trajUnitPark);
 
 
-    trajectories = tsBuilder.build();
-    drive.followTrajectorySequence(trajectories);
+        trajectories = tsBuilder.build();
+        drive.followTrajectorySequence(trajectories);
 
-    drive.intake.setGantryPosition(RobotIntake.ARM_INTAKE_POSZ, RobotIntake.ARM_INTAKE_POSXY);
-    sleepWithUpdate(1000);
-}
-
+        drive.intake.setGantryPosition(RobotIntake.ARM_INTAKE_POSZ, RobotIntake.ARM_INTAKE_POSXY);
+        sleepWithUpdate(1000);
+    }
 
 //public void blue2unitpark() throws InterruptedException{
 //    Pose2d startPose = new Pose2d(12.4, 60.4, Math.toRadians(-90));
@@ -473,6 +518,8 @@ public void blue1unitpark() throws InterruptedException{
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
+            telemetry.addData("hehe", "Not an easter egg");
+
             telemetry.update();
         }
         drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
@@ -485,7 +532,10 @@ public void blue1unitpark() throws InterruptedException{
     }
 
     public void setupGantryToHubLevel() {
-        if(useVision)barcode=vision.getBarcodeTSEUpdated(2);
+        if(useVision)
+            barcode=vision.getBarcodeTSEUpdated(1.5);
+        telemetry.addData("Barcode:", barcode);
+        telemetry.update();
         setupGantryToLevel(barcode);
         sleepWithUpdate(500);
     }
@@ -494,17 +544,26 @@ public void blue1unitpark() throws InterruptedException{
     public void setupGantryToLevel(int level) {
         telemetry.addData("Moving to level", level);
         if (level == 1) {
-            drive.intake.setGantryPosition(RobotIntake.ARM_LAYER1_POSZ, RobotIntake.ARM_LAYER1_POSXY);
+            drive.intake.setGantryPosition(RobotIntake.ARM_LAYER1_POSZ, RobotIntake.ARM_LAYER1_POSXY+.1);
         } else if (level == 2) {
-            drive.intake.setGantryPosition(RobotIntake.ARM_LAYER2_POSZ, RobotIntake.ARM_LAYER2_POSXY);
+            drive.intake.setGantryPosition(RobotIntake.ARM_LAYER2_POSZ+12, RobotIntake.ARM_LAYER2_POSXY);
         } else {
-            drive.intake.setGantryPosition(RobotIntake.ARM_LAYER3_POSZ, RobotIntake.ARM_LAYER3_POSXY);
+            drive.intake.setGantryPosition(RobotIntake.ARM_LAYER3_POSZ, RobotIntake.ARM_LAYER3_POSXY-.0274);
         }
     }
     public void releaseFreight() {
         drive.intake.clawOpen();
         drive.intake.magnetRelease();
         sleepWithUpdate(500);
+    }
+    public void setBarcodeGantryPosition(int barcode){
+        if (barcode ==1){
+            setupGantryToLevel(1);
+        }else if (barcode == 2){
+            setupGantryToLevel(2);
+        }else{
+            setupGantryToLevel(3);
+        }
     }
 
 }

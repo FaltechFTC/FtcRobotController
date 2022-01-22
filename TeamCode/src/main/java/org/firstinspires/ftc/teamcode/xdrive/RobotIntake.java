@@ -54,15 +54,15 @@ a claw system*/
     public double zPosition = 0;
     public double xyPosition;
 
-    public static double MAGNET_ENGAGE_POS = 0.66;
-    public static double MAGNET_RELEASE_POS = 0.35;
+    public static double MAGNET_ENGAGE_POS = 0.74;
+    public static double MAGNET_RELEASE_POS = 0.38;
     public static double CLAW_OPEN_POS = 0.7;
     public static double CLAW_CLOSE_POS = 0.25;
     public static double maxUpPower = 0.7;
     public static double maxDownPower = -0.3;
     public static double verticalPowerConstant = .009;
     public static double MAX_HPOS = .72, MIN_HPOS = 0;
-    public static double MAX_VPOS = 3500, MIN_VPOS = 0;
+    public static double MAX_VPOS = 3550, MIN_VPOS = 0;
     public static double ARM_TOLERANCE = 3;
 
 
@@ -157,9 +157,9 @@ a claw system*/
     public void carouselMaint() {
         if (useCarousel && carouselTimer != null) {
             double m = carouselTimer.milliseconds();
-            if (m < 600) carouselPower = ((m / 600) * .75 + .25);
-            else if (m < 1350) {
-                carouselPower = .85;
+            if (m < 600) carouselPower = ((m / 600) * .6 + .2);
+            else if (m < 1450) {
+                carouselPower = .8;
             } else {
                 carouselPower = 0;
                 carouselTimer = null;

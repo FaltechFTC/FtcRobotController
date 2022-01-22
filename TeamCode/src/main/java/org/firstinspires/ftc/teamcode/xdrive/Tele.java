@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.util.Utility;
 @TeleOp(name = "Tele", group = "7079")
 public class Tele extends OpMode {
     public static double xyMultiplier = 0.01;
-    public static double zMultiplier = -12.0;
+    public static double zMultiplier = -14.0;
     boolean clawButtonPressed = false;
     boolean globalButtonPressed = false;
     boolean isGlobalOn = false;
@@ -33,6 +33,7 @@ public class Tele extends OpMode {
         //robot.reportColor();
         //telemetry.addData("cycle time (ms): ", timer.milliseconds() / cycles);
         //brain.robot.reportDistance();
+
         telemetry.update();
     }
 
@@ -107,3 +108,4 @@ public class Tele extends OpMode {
 //Hi this is matthew, tell me if you see this!
 //I saw it
 //Me II
+// ok cool hi dou lol me big bwain...

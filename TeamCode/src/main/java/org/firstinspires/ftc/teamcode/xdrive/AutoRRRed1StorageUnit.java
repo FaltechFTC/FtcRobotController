@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Disabled
+
 @Config
-@Autonomous(name = "Auto Red 1", group = "7079")
+@Autonomous(name = "Auto Red 1 Storage", group = "7079")
 public class AutoRRRed1StorageUnit extends LinearOpMode {
     AutoBrainRR brain = new AutoBrainRR();
 
@@ -32,7 +32,8 @@ public class AutoRRRed1StorageUnit extends LinearOpMode {
     }
 
     public void doMission() throws Exception {
-       brain.blue1unitpark();
+       brain.doWarehousePark = false;
+       brain.red1warehouse();
     }
 
 }
