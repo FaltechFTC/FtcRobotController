@@ -72,6 +72,7 @@ public class Tele extends OpMode {
         boolean intakePos = gamepad2.b || gamepad1.b;
 //        boolean scoreTop = gamepad1.y;
 //        boolean topperPos = gamepad1.x;
+        boolean debug = gamepad2.back;
 
         boolean upLevel = gamepad1.y || gamepad2.dpad_up;
         boolean downLevel = gamepad1.x || gamepad2.dpad_down;
@@ -79,7 +80,7 @@ public class Tele extends OpMode {
         boolean safeGantry = gamepad2.a;
 
         brain.doIntake(zPower, xyPower, safeGantry, magnet, downLevel, upLevel,
-                arm_layer1, intakePos, clawToggle);
+                arm_layer1, intakePos, clawToggle, debug);
     }
 
     public void doCarousel() {

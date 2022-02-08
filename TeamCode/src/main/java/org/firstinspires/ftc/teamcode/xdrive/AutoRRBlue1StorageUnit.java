@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Autonomous(name = "Auto Blue 1 Storage", group = "7079")
 public class AutoRRBlue1StorageUnit extends LinearOpMode {
     AutoBrainRR brain = new AutoBrainRR();
-
+//easter egg
     @Override
     public void runOpMode() {
         brain.init(this);

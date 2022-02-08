@@ -16,6 +16,7 @@ public class TeleBrain {
     double fixedHeading = 0;
     double armOffset = 0.0;
     boolean lastTMode = false;
+    boolean lastDebug = false;
     ElapsedTime timer;
     int cycles;
     Telemetry telemetry;
@@ -86,7 +87,7 @@ public class TeleBrain {
 
     public void doIntake(double z_power, double xy_power, boolean safeGantry, boolean magnet,
                          boolean downLevel, boolean upLevel, boolean arm_layer1,
-                         boolean intakePos, boolean clawToggle) {
+                         boolean intakePos, boolean clawToggle, boolean debug) {
         // CLAW **************************************
         if (clawToggle) {
             robot.intake.clawToggle();
@@ -119,7 +120,7 @@ public class TeleBrain {
                 zPos += z_power;
             }
 
-            robot.intake.setZPosition(zPos);
+            robot.intake.setZPosition(zPos, debug);
 
             if (xy_power!=0.0) {
                 xyPos = robot.intake.getXYPosition();
@@ -128,6 +129,11 @@ public class TeleBrain {
             }
         }
         robot.intake.update();
+
+        if (!debug && lastDebug) {
+            robot.intake.resetZPos();
+        }
+        lastDebug = debug;
     }
 
     public void doCarousel(double carousel_right, double carousel_left, boolean carousel_cycle_left,
