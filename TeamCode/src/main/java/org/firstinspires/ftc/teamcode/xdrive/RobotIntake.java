@@ -60,7 +60,8 @@ a claw system*/
     public static double CLAW_CLOSE_POS = 0.25;
     public static double maxUpPower = 0.7;
     public static double maxDownPower = -0.3;
-    public static double verticalPowerConstant = .009;
+    public static double verticalUpPowerConstant = .009;
+    public static double verticalDownPowerConstant = .005;
     public static double MAX_HPOS = .72, MIN_HPOS = 0;
     public static double MAX_VPOS = 3550, MIN_VPOS = 0;
     public static double ARM_TOLERANCE = 3;
@@ -75,13 +76,14 @@ a claw system*/
     public static double ARM_LAYER1_POSXY = 0.4;
     public static double ARM_LAYER2_POSXY = 0.3;
     public static double ARM_LAYER3_POSXY = .1;
+    public static double REQUIRED_VERTICAL_TIME = 0.4;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
     LynxModule.BulkCachingMode bulkReadMode = LynxModule.BulkCachingMode.AUTO;
 
     private ElapsedTime period = new ElapsedTime();
-
+    private ElapsedTime verticalTimer = new ElapsedTime();
     /* setting up color sensor*/
     float colorSensorGain = 2;
     NormalizedColorSensor colorSensor = null;
@@ -119,29 +121,33 @@ a claw system*/
         return zEncoder.getCurrentPosition();
     }
 
-    public void setGantryPosition(double zPos, double xyPos, double timeoutSeconds) {
-        ElapsedTime timer = new ElapsedTime();
-        boolean done = false;
-        setZPosition(zPos);
-        setXYPosition(xyPos);
-        while (timer.seconds() < timeoutSeconds && !done) {
-            done = updateGantry();
-        }
-    }
+
 
     //lets go to halal bros
     //
     public boolean updateGantry() {
+
         boolean done = false;
 
-        int currentPositionZ = (int) -zEncoder.getCurrentPosition();
-        int errorz = ((int) zPosition) - currentPositionZ;
+        double currentPositionZ = (double) -zEncoder.getCurrentPosition();
+        double errorz = ((double) zPosition) - currentPositionZ;
         done = Math.abs(errorz) < ARM_TOLERANCE;
+        if(!done){
+            verticalTimer.reset();
+        }
+        else if (verticalTimer.seconds()<REQUIRED_VERTICAL_TIME){
+            done = false;
+        }
         double p = 0;
         if (done) {
             p = 0;
         } else {
-            p = verticalPowerConstant * errorz;
+            if(errorz>0){
+                p = verticalUpPowerConstant * errorz;
+            }
+            else{
+                p = verticalDownPowerConstant*errorz;
+            }
             p = Utility.clipToRange(p, maxUpPower, maxDownPower);
         }
         zMotor.setPower(p);

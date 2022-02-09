@@ -1,3 +1,4 @@
+//mau is dumb lol
 package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -18,6 +19,8 @@ public class AutoBrainRR {
     public static double RED1BSX = -40.04;
     public static double RED1BSY = -84.23;
     public static int RED1BSH = -270;
+
+    public static int iwilldothislater = 0;
 
     public static int RED1WASX = 45;
     public static double RED1WASY = -84.23;
@@ -159,7 +162,25 @@ public class AutoBrainRR {
         drive.followTrajectorySequence(trajectories);
 
     }
+    public void red2warehouseblockcycle() throws InterruptedException{
+        Pose2d startPose = new Pose2d(12.4, -60.4, Math.toRadians(90));
 
+        drive.setPoseEstimate(startPose);
+
+        TrajectorySequence traj2hub = drive.trajectorySequenceBuilder(startPose)
+                .forward(20)
+                .turn(Math.toRadians(60))
+                .forward(15)
+                .build();
+
+        setupClaw();
+        setupGantryToHubLevel();
+        drive.followTrajectorySequence(traj2hub);
+        sleepWithUpdate(1000);
+        releaseFreight();
+        drive.intake.setXYPosition(RobotIntake.safeXY);
+        sleepWithUpdate(500);
+    }
     public void red2warehouse() throws InterruptedException {
         Pose2d startPose = new Pose2d(12.4, -60.4, Math.toRadians(90));
 
