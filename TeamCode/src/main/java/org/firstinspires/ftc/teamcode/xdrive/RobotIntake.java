@@ -305,5 +305,6 @@ a claw system*/
     }
     public void resetZPos() {
         zOffset = zEncoder.getCurrentPosition();
+        zPosition = getZPosition();
     }
 }
