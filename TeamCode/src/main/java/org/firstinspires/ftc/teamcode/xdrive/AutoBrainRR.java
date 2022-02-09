@@ -573,7 +573,7 @@ public class AutoBrainRR {
         }
     }
     public void releaseFreight() {
-        drive.intake.clawOpen();
+        drive.intake.clawMiddle();
         drive.intake.magnetRelease();
         sleepWithUpdate(500);
     }

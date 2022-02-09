@@ -45,6 +45,7 @@ public class RobotIntake {
     double magnetPosition = 0;
     double carouselPower = 0;
     public static double safeXY = .5;
+    int zOffset = 0;
 /* we might need to leave this code for the arm here so that we can use it later is we are using
 a claw system*/
 
@@ -57,6 +58,7 @@ a claw system*/
     public static double MAGNET_ENGAGE_POS = 0.74;
     public static double MAGNET_RELEASE_POS = 0.38;
     public static double CLAW_OPEN_POS = 0.7;
+    public static double CLAW_MIDDLE_POS = 0.5;
     public static double CLAW_CLOSE_POS = 0.25;
     public static double maxUpPower = 0.7;
     public static double maxDownPower = -0.3;
@@ -129,8 +131,8 @@ a claw system*/
 
         boolean done = false;
 
-        double currentPositionZ = (double) -zEncoder.getCurrentPosition();
-        double errorz = ((double) zPosition) - currentPositionZ;
+        int currentPositionZ = (int) -zEncoder.getCurrentPosition() + zOffset;
+        int errorz = ((int) zPosition) - currentPositionZ;
         done = Math.abs(errorz) < ARM_TOLERANCE;
         if(!done){
             verticalTimer.reset();
@@ -206,7 +208,7 @@ a claw system*/
 
     public void setGantryPosition(double zpos, double xypos) {
         setXYPosition(xypos);
-        setZPosition(zpos);
+        setZPosition(zpos, false);
     }
 
     public double setXYPosition(double pos) {
@@ -220,9 +222,13 @@ a claw system*/
         return xyPosition;
     }
 
-    public double setZPosition(double pos) {
-        zPosition = Utility.clipToRange(pos, MAX_VPOS, MIN_VPOS);
-//        updateGantry(); // TODO: perhaps shouldn't be called here and should be called from update() only?
+    public double setZPosition(double pos, boolean debug) {
+        if (debug) {
+            zPosition = pos;
+        }
+        else {
+            zPosition = Utility.clipToRange(pos, MAX_VPOS, MIN_VPOS);
+        }
         return zPosition;
     }
 
@@ -266,6 +272,13 @@ a claw system*/
         clawPosition = CLAW_OPEN_POS;
     }
 
+    public void clawMiddle() {
+        claw.setPosition(CLAW_MIDDLE_POS);
+        isClawOpen = true;
+        clawPosition = CLAW_MIDDLE_POS;
+    }
+
+
     public void magnetEngage() {
         magnet.setPosition(MAGNET_ENGAGE_POS);
         magnetPosition = MAGNET_ENGAGE_POS;
@@ -286,7 +299,7 @@ a claw system*/
         if (isClawOpen) {
             clawClose();
         }
-        else clawOpen();
+        else clawMiddle();
     }
 
     public void setCarouselPower(double power) {
@@ -295,5 +308,8 @@ a claw system*/
     }
     public void setSafeGantryPosition() {
         setGantryPosition(ARM_INTAKE_POSZ, safeXY);
+    }
+    public void resetZPos() {
+        zOffset = zEncoder.getCurrentPosition();
     }
 }

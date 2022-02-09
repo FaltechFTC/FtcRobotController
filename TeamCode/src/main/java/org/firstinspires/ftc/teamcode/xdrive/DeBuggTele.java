@@ -81,7 +81,7 @@ public class DeBuggTele extends OpMode {
         boolean safeGantry = gamepad2.a;
 
         brain.doIntake(zPower, xyPower, safeGantry, magnet, downLevel, upLevel,
-                arm_layer1, intakePos, clawToggle);
+                arm_layer1, intakePos, clawToggle, false);
     }
 
     public void doCarousel() {
