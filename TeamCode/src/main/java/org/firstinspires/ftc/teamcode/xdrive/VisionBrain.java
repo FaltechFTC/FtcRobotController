@@ -93,26 +93,17 @@ public class VisionBrain {
         telemetry = t;
         opmode = theopmode;
 
-        // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
-        // first.
+
         initVuforia();
         initTfod();
     }
 
     public void activate() {
-        /**
-         * Activate TensorFlow Object Detection before we wait for the start command.
-         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-         **/
+
         if (tfod != null) {
             tfod.activate();
 
-            // The TensorFlow software will scale the input images from the camera to a lower resolution.
-            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
-            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
-            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
-            // should be set to the value of the images used to create the TensorFlow Object Detection model
-            // (typically 16/9).
+
             tfod.setZoom(zoom, 16.0 / 9.0);
         }
 
@@ -372,8 +363,7 @@ public class VisionBrain {
 
                     if (winner == null) {
                         winner = recognition;
-                    }
-                    else {
+                    } else {
                         if (winner.getLabel().equals("Cube")) {
                             if (recognition.getLabel().equals("Cube")) {
                                 if (recognition.getConfidence() >= winner.getConfidence()) {
@@ -391,8 +381,7 @@ public class VisionBrain {
                             if (recognition.getLabel().equals("Marker")) {
                                 winner = winner;
                             }
-                        }
-                        else if (winner.getLabel().equals("Ball")) {
+                        } else if (winner.getLabel().equals("Ball")) {
                             if (recognition.getLabel().equals("Cube")) {
                                 winner = winner;
                             }
@@ -409,8 +398,7 @@ public class VisionBrain {
                             if (recognition.getLabel().equals("Marker")) {
                                 winner = winner;
                             }
-                        }
-                        else if (winner.getLabel().equals("Duck")) {
+                        } else if (winner.getLabel().equals("Duck")) {
                             if (recognition.getLabel().equals("Duck")) {
                                 if (recognition.getConfidence() > winner.getConfidence()) {
                                     winner = recognition;
@@ -428,8 +416,7 @@ public class VisionBrain {
                             if (recognition.getLabel().equals("Marker")) {
                                 winner = winner;
                             }
-                        }
-                        else if (winner.getLabel().equals("Marker")) {
+                        } else if (winner.getLabel().equals("Marker")) {
                             if (recognition.getLabel().equals("Marker")) {
                                 if (recognition.getConfidence() > winner.getConfidence()) {
                                     winner = recognition;
@@ -451,16 +438,14 @@ public class VisionBrain {
                 }
             } else opmode.telemetry.addData("Status", "Recognitions is NULL");
         } else opmode.telemetry.addData("Status", "TFOD is NULL");
-        if (winner == null ) {
+        if (winner == null) {
             returnvalue = 4;
-            opmode.telemetry.addData("Object is not there",returnvalue);
+            opmode.telemetry.addData("Object is not there", returnvalue);
             return returnvalue;
-        }
-        else if(winner.getLabel().equals("Marker")){
+        } else if (winner.getLabel().equals("Marker")) {
             returnvalue = 5;
-            opmode.telemetry.addData("Object is a marker",returnvalue);
-        }
-        else {
+            opmode.telemetry.addData("Object is a marker", returnvalue);
+        } else {
             if (winner.getLeft() > 100 && winner.getLeft() < 420) {
                 returnvalue = 2;
             } else if (winner.getLeft() > 420) {
@@ -503,8 +488,8 @@ public class VisionBrain {
                             .addData("Conf", "%.02f", recognition.getConfidence())
                             .addData("Loc", "(%.01f,%.01f,%.01f,%.01f)", recognition.getLeft(), recognition.getTop(), recognition.getRight(), recognition.getBottom());
 
-                    if(recognition.getLabel().equals("Duck")&&recognition.getBottom()>140){
-                        if(winner == null||recognition.getConfidence()> winner.getConfidence()){
+                    if (recognition.getLabel().equals("Duck") && recognition.getBottom() > 140) {
+                        if (winner == null || recognition.getConfidence() > winner.getConfidence()) {
                             winner = recognition;
                         }
                     }
@@ -514,7 +499,7 @@ public class VisionBrain {
         } else opmode.telemetry.addData("Status", "TFOD is NULL");
         if (winner == null || winner.getLabel().equals("Marker") || winner.getLabel().equals("Ball") || winner.getLabel().equals("Cube")) {
             returnvalue = 0;
-            opmode.telemetry.addData("Object is not detect or object is not a duck",returnvalue);
+            opmode.telemetry.addData("Object is not detect or object is not a duck", returnvalue);
             return returnvalue;
         } else {
             if (winner.getLeft() > 100 && winner.getLeft() < 420) {
@@ -530,6 +515,7 @@ public class VisionBrain {
         opmode.telemetry.update();
         return returnvalue;
     }
+}
 
-    }
+
 
