@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.xdrive;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -16,6 +17,7 @@ public class TeleBrain {
     double fixedHeading = 0;
     double armOffset = 0.0;
     boolean lastTMode = false;
+    boolean debugg = false;
     boolean lastDebug = false;
     ElapsedTime timer;
     int cycles;
@@ -25,6 +27,7 @@ public class TeleBrain {
         telemetry = opmode.telemetry;
         robot.init(opmode.hardwareMap, telemetry);
         driveBrain = new DriveBrain(robot, opmode);
+        RobotIntake.MIN_VPOS=0;
 
         timer = new ElapsedTime();
         cycles = 0;
@@ -105,17 +108,19 @@ public class TeleBrain {
             double zPos = robot.intake.getZPosition();
             double xyPos = robot.intake.getXYPosition();
             if (arm_layer1) {
-                zPos = robot.intake.ARM_LAYER1_POSZ;
+                zPos = RobotIntake.ARM_LAYER1_POSZ;
             } else if (intakePos) {
-                zPos = robot.intake.ARM_INTAKE_POSZ;
+                zPos = RobotIntake.ARM_INTAKE_POSZ;
             } else if (upLevel) {
-                if (zPos < robot.intake.ARM_INTAKE_POSZ) zPos = robot.intake.ARM_INTAKE_POSZ;
-                else if (zPos < robot.intake.ARM_LAYER1_POSZ) zPos = robot.intake.ARM_LAYER1_POSZ;
-                else if (zPos < robot.intake.ARM_LAYER3_POSZ) zPos = robot.intake.ARM_LAYER3_POSZ;
+                if (zPos < RobotIntake.ARM_INTAKE_POSZ) zPos = RobotIntake.ARM_INTAKE_POSZ;
+                else if (zPos < RobotIntake.ARM_LAYER1_POSZ) zPos = RobotIntake.ARM_LAYER1_POSZ;
+                else if (zPos < RobotIntake.ARM_LAYER2_POSZ) zPos = RobotIntake.ARM_LAYER2_POSZ;
+                else if (zPos < RobotIntake.ARM_LAYER3_POSZ) zPos = RobotIntake.ARM_LAYER3_POSZ;
             } else if (downLevel) {
-                if (zPos > robot.intake.ARM_LAYER3_POSZ) zPos = robot.intake.ARM_LAYER3_POSZ;
-                else if (zPos > robot.intake.ARM_LAYER1_POSZ) zPos = robot.intake.ARM_LAYER1_POSZ;
-                else if (zPos > robot.intake.ARM_INTAKE_POSZ) zPos = robot.intake.ARM_INTAKE_POSZ;
+                if (zPos > RobotIntake.ARM_LAYER3_POSZ) zPos = RobotIntake.ARM_LAYER3_POSZ;
+                else if (zPos > RobotIntake.ARM_LAYER2_POSZ) zPos = RobotIntake.ARM_LAYER2_POSZ;
+                else if (zPos > RobotIntake.ARM_LAYER1_POSZ) zPos = RobotIntake.ARM_LAYER1_POSZ;
+                else if (zPos > RobotIntake.ARM_INTAKE_POSZ) zPos = RobotIntake.ARM_INTAKE_POSZ;
             } else {
                 zPos += z_power;
             }

@@ -14,11 +14,13 @@ public class DeBuggTele extends OpMode {
     boolean clawButtonPressed = false;
     boolean globalButtonPressed = false;
     boolean isGlobalOn = false;
+
     TeleBrain brain = new TeleBrain();
 
     @Override
     public void init() {
         brain.init(this);
+        brain.debugg = true;
         brain.robot.intake.zEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         brain.robot.intake.zEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }

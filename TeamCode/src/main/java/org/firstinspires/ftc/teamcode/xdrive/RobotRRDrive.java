@@ -148,6 +148,15 @@ public class RobotRRDrive extends MecanumDrive {
         return new TrajectoryBuilder(startPose, reversed, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }
 
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double maxVelo, double maxAccel) {
+        MinVelocityConstraint myVelConstraint = new MinVelocityConstraint(Arrays.asList(
+                new AngularVelocityConstraint(maxAccel),
+                new MecanumVelocityConstraint(maxVelo, TRACK_WIDTH)
+        ));
+        ProfileAccelerationConstraint myAccelConstraint = new ProfileAccelerationConstraint(maxAccel);
+        return new TrajectoryBuilder(startPose, myVelConstraint, myAccelConstraint);
+    }
+
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
         return new TrajectoryBuilder(startPose, startHeading, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }

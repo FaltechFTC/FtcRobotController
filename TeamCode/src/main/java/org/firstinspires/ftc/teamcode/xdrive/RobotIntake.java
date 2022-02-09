@@ -60,30 +60,33 @@ a claw system*/
     public static double CLAW_OPEN_POS = 0.7;
     public static double CLAW_MIDDLE_POS = 0.5;
     public static double CLAW_CLOSE_POS = 0.25;
-    public static double maxUpPower = 0.7;
-    public static double maxDownPower = -0.3;
-    public static double verticalPowerConstant = .009;
+    public static double maxUpPower = 1;
+    public static double maxDownPower = -0.55;
+    public static double verticalUpPowerConstant = 0.006;
+    public static double verticalDownPowerConstant = 0.023;
     public static double MAX_HPOS = .72, MIN_HPOS = 0;
     public static double MAX_VPOS = 3550, MIN_VPOS = 0;
     public static double ARM_TOLERANCE = 3;
 
 
     public static double ARM_INTAKE_POSZ = 65.0;
-    public static double ARM_LAYER1_POSZ = 1190.0;
-    public static double ARM_LAYER2_POSZ = 1453.0;
+    public static double ARM_LAYER1_POSZ = 1190.0;//TODO Get the new claw
+    public static double ARM_LAYER2_POSZ = 1528.0;
     public static double ARM_LAYER3_POSZ = 2913.0;
 
     public static double ARM_INTAKE_POSXY = MAX_HPOS/2;
     public static double ARM_LAYER1_POSXY = 0.4;
-    public static double ARM_LAYER2_POSXY = 0.3;
+    public static double ARM_LAYER2_POSXY = 0.428;
     public static double ARM_LAYER3_POSXY = .1;
+    public static double REQUIRED_VERTICAL_TIME = 0.3;
+    public static boolean debuggGantry = false;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
     LynxModule.BulkCachingMode bulkReadMode = LynxModule.BulkCachingMode.AUTO;
 
     private ElapsedTime period = new ElapsedTime();
-
+    private ElapsedTime verticalTimer = new ElapsedTime();
     /* setting up color sensor*/
     float colorSensorGain = 2;
     NormalizedColorSensor colorSensor = null;
@@ -121,29 +124,33 @@ a claw system*/
         return zEncoder.getCurrentPosition();
     }
 
-    public void setGantryPosition(double zPos, double xyPos, double timeoutSeconds) {
-        ElapsedTime timer = new ElapsedTime();
-        boolean done = false;
-        setZPosition(zPos, false);
-        setXYPosition(xyPos);
-        while (timer.seconds() < timeoutSeconds && !done) {
-            done = updateGantry();
-        }
-    }
+
 
     //lets go to halal bros
     //
     public boolean updateGantry() {
+
         boolean done = false;
 
         int currentPositionZ = (int) -zEncoder.getCurrentPosition() + zOffset;
         int errorz = ((int) zPosition) - currentPositionZ;
         done = Math.abs(errorz) < ARM_TOLERANCE;
+        if(!done){
+            verticalTimer.reset();
+        }
+        else if (verticalTimer.seconds()<REQUIRED_VERTICAL_TIME){
+            done = false;
+        }
         double p = 0;
         if (done) {
             p = 0;
         } else {
-            p = verticalPowerConstant * errorz;
+            if(errorz>0){
+                p = verticalUpPowerConstant * errorz;
+            }
+            else{
+                p = verticalDownPowerConstant*errorz;
+            }
             p = Utility.clipToRange(p, maxUpPower, maxDownPower);
         }
         zMotor.setPower(p);
@@ -305,5 +312,6 @@ a claw system*/
     }
     public void resetZPos() {
         zOffset = zEncoder.getCurrentPosition();
+        zPosition = getZPosition();
     }
 }
