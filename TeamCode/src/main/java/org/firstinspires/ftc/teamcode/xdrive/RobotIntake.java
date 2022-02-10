@@ -55,11 +55,11 @@ a claw system*/
     public double zPosition = 0;
     public double xyPosition;
 
-    public static double MAGNET_ENGAGE_POS = 0.74;
-    public static double MAGNET_RELEASE_POS = 0.38;
-    public static double CLAW_OPEN_POS = 0.7;
-    public static double CLAW_MIDDLE_POS = 0.5;
-    public static double CLAW_CLOSE_POS = 0.25;
+    public static double MAGNET_ENGAGE_POS = 0.0;
+    public static double MAGNET_RELEASE_POS = 0.427;
+    public static double CLAW_OPEN_POS = 0.35;
+    public static double CLAW_MIDDLE_POS = 0.35;
+    public static double CLAW_CLOSE_POS = 1;
     public static double maxUpPower = 1;
     public static double maxDownPower = -0.55;
     public static double verticalUpPowerConstant = 0.006;
