@@ -23,11 +23,15 @@ public class TeleBrain {
     int cycles;
     Telemetry telemetry;
 
+
+
     public void init(OpMode opmode) {
         telemetry = opmode.telemetry;
         robot.init(opmode.hardwareMap, telemetry);
         driveBrain = new DriveBrain(robot, opmode);
         RobotIntake.MIN_VPOS=0;
+        RobotIntake.verticalDownPowerConstant = 0.023;
+        RobotIntake.verticalUpPowerConstant = 0.006;
 
         timer = new ElapsedTime();
         cycles = 0;

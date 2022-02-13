@@ -44,7 +44,7 @@ public class RobotIntake {
     double clawPosition = 0;
     double magnetPosition = 0;
     double carouselPower = 0;
-    public static double safeXY = .5;
+    public static double safeXY = .625;
     int zOffset = 0;
 /* we might need to leave this code for the arm here so that we can use it later is we are using
 a claw system*/
@@ -65,17 +65,17 @@ a claw system*/
     public static double verticalUpPowerConstant = 0.006;
     public static double verticalDownPowerConstant = 0.023;
     public static double MAX_HPOS = .72, MIN_HPOS = 0;
-    public static double MAX_VPOS = 3550, MIN_VPOS = 0;
+    public static double MAX_VPOS = 3580, MIN_VPOS = 0;
     public static double ARM_TOLERANCE = 3;
 
 
     public static double ARM_INTAKE_POSZ = 65.0;
-    public static double ARM_LAYER1_POSZ = 1190.0;//TODO Get the new claw
-    public static double ARM_LAYER2_POSZ = 1528.0;
+    public static double ARM_LAYER1_POSZ = 957;//TODO Get the new claw
+    public static double ARM_LAYER2_POSZ = 1548.0;
     public static double ARM_LAYER3_POSZ = 2913.0;
 
     public static double ARM_INTAKE_POSXY = MAX_HPOS/2;
-    public static double ARM_LAYER1_POSXY = 0.4;
+    public static double ARM_LAYER1_POSXY = 0.44;
     public static double ARM_LAYER2_POSXY = 0.428;
     public static double ARM_LAYER3_POSXY = .1;
     public static double REQUIRED_VERTICAL_TIME = 0.3;
@@ -308,6 +308,7 @@ a claw system*/
         carousel.setPower(carouselPower);
     }
     public void setSafeGantryPosition() {
+        clawOpen();
         setGantryPosition(ARM_INTAKE_POSZ, safeXY);
     }
     public void resetZPos() {
