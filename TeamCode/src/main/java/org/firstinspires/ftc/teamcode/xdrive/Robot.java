@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.xdrive;
 
 
-import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+// i am cool
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -23,7 +24,7 @@ import org.firstinspires.ftc.teamcode.util.Utility;
 
 import java.util.List;
 
-@Config
+//@Config
 public class Robot {
     static final boolean useColorSensor = false;
     static final boolean useIMU = true;
